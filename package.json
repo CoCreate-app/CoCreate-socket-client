@@ -31,12 +31,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/CoCreate-app/CoCreate-socket.git"
+    "url": "git+https://github.com/CoCreate-app/CoCreate-socket-client.git"
   },
   "author": "CoCreate LLC",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/CoCreate-app/CoCreate-socket/issues"
+    "url": "https://github.com/CoCreate-app/CoCreate-socket-client/issues"
   },
   "homepage": "https://cocreate.app/docs/socket",
   "funding": {
