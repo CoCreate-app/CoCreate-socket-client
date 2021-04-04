@@ -111,7 +111,6 @@
 			}
 	
 			socket.onmessage = function(data) {
-				
 				try {
 					if (wnd.Blob) {
 						if (data.data instanceof Blob) {
@@ -120,6 +119,7 @@
 						}
 					}
 					let rev_data = JSON.parse(data.data);
+
 					if (rev_data.data.event) {
 						
 						if (wnd.CustomEvent) {
@@ -158,7 +158,7 @@
 			}
 			const key = this.getKeyByRoom(room);
 			const socket = this.getByRoom(room);
-			
+
 			if (socket) {
 				socket.send(JSON.stringify(obj));
 			} else {
