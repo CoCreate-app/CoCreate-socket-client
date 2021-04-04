@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.0...v1.0.1) (2021-04-04)
+
+
+### Bug Fixes
+
+* update socket to socket-lient and crud to crud client" ([365c36d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/365c36da010945564daca0185504b68f29caaf10))
+
 # 1.0.0 (2021-04-02)
 
 
