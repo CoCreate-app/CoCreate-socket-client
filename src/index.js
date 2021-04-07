@@ -1,4 +1,5 @@
 
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -6,16 +7,17 @@
         	return factory(window, WebSocket, Blob)
         });
     } else if (typeof module === 'object' && module.exports) {
-        // Node. Does not work with strict CommonJS, but
-        // only CommonJS-like environments that support module.exports,
-        // like Node.
         let wndObj = {
         	location: {
         		protocol: ""
         	}
         }
         const ws = require("ws")
-        module.exports = factory(wndObj, ws, null);
+        if (window && window.WebSocket && window.Blob) {
+	        module.exports = factory(window, WebSocket, Blob);
+        } else {
+	        module.exports = factory(wndObj, ws, null);
+        }
     } else {
         // Browser globals (root is window)
         root.returnExports = factory(window, WebSocket, Blob);
@@ -49,6 +51,9 @@
 			const {namespace, room} = config;
 			const key = this.getKey(namespace, room);
 			let _this = this;
+			if (namespace) {
+				this.setGlobalScope(namespace)
+			}
 			
 			let socket;
 			if (this.sockets.get(key)) {
@@ -105,7 +110,6 @@
 			}
 			
 			socket.onerror = function(err) {
-				console.log('Socket error');
 				_this.destroy(socket, key);
 				_this.reconnect(socket, config);
 			}
