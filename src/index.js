@@ -3,8 +3,8 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define([], function() {
-        	return factory(window, WebSocket, Blob)
+        define(['./common-fun.js'], function(commonFunc) {
+        	return factory(commonFunc, window, WebSocket, Blob)
         });
     } else if (typeof module === 'object' && module.exports) {
         let wndObj = {
@@ -13,16 +13,13 @@
         	}
         }
         const ws = require("ws")
-        if (window && window.WebSocket && window.Blob) {
-	        module.exports = factory(window, WebSocket, Blob);
-        } else {
-	        module.exports = factory(wndObj, ws, null);
-        }
+        const commonFunc = require("./common-fun.js")
+    	module.exports = factory(commonFunc, wndObj, ws, null);
     } else {
         // Browser globals (root is window)
-        root.returnExports = factory(window, WebSocket, Blob);
+        root.returnExports = factory(root["./common-fun.js"], window, WebSocket, Blob);
   }
-}(typeof self !== 'undefined' ? self : this, function (wnd, WebSocket, Blob) {
+}(typeof self !== 'undefined' ? self : this, function (commonFunc, wnd, WebSocket, Blob) {
 
     class CoCreateSocketClient
 	{
@@ -65,6 +62,9 @@
 			let w_protocol = wnd.location.protocol;		
 			if (wnd.location.protocol === "about:") {
 				w_protocol = wnd.parent.location.protocol;
+				if (!config.host) {
+					config.host = wnd.parent.location.host;
+				}
 			}
 			let protocol = w_protocol === 'http:' ? 'ws' : 'wss';
 			
@@ -87,6 +87,7 @@
 				socket = new WebSocket(socket_url);
 			} catch(error) {
 				console.log(error)
+				return;
 			}
 
 			socket.onopen = function(event) {
@@ -158,7 +159,7 @@
 		send (action, data, room) {
 			const obj = {
 				action: action,
-				data: data
+				data: {...data, uid: commonFunc.GenerateUUID()}
 			}
 			const key = this.getKeyByRoom(room);
 			const socket = this.getByRoom(room);
