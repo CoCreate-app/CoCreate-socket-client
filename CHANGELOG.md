@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.2...v1.0.3) (2021-04-09)
+
+
+### Bug Fixes
+
+* UMD clientside issue during compile ([1349466](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1349466f0aa74601ba99ee5d07678e991880d8b4))
+
 ## [1.0.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.1...v1.0.2) (2021-04-07)
 
 
