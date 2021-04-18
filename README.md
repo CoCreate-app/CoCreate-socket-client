@@ -9,7 +9,7 @@ A simple socket-client component in vanilla javascript. Easily configured using 
 
 ![CoCreate-socket-client](https://cdn.cocreate.app/docs/CoCreate-socket-client.gif)
 
-## [Docs & Demo](https://cocreate.app/docs/clone)
+## [Docs & Demo](https://cocreate.app/docs/socket-client)
 
 For a complete guide and working demo refer to the [doumentation](https://cocreate.app/docs/socket-client)
 
