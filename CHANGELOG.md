@@ -1,3 +1,11 @@
+## [1.0.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.3...v1.0.4) (2021-04-19)
+
+
+### Bug Fixes
+
+* ci and build process ([ec3e2cb](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ec3e2cb64f753d9d4d8390ebd78e3229671df0d2))
+* npm publish and cdn deployment ([ddd5e09](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ddd5e0974c44f80375af201852cc142acf6f22c5))
+
 ## [1.0.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.2...v1.0.3) (2021-04-09)
 
 
