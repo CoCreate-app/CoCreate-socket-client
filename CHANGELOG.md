@@ -1,3 +1,10 @@
+## [1.0.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.5...v1.0.6) (2021-04-23)
+
+
+### Bug Fixes
+
+* readme and documentation. Removed securitykeys ([66f2814](https://github.com/CoCreate-app/CoCreate-socket-client/commit/66f28142e922e817fb4df37a71cf6234319796da))
+
 ## [1.0.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.4...v1.0.5) (2021-04-23)
 
 
