@@ -23,7 +23,6 @@
     
     return {
       "apiKey":           config.apiKey,
-      "securityKey":      config.securityKey,
       "organization_id":  config.organization_Id,
     }
   }
@@ -35,7 +34,6 @@
     
     return {
       "apiKey":           info.apiKey || config.apiKey,
-      "securityKey":      info.securityKey || config.securityKey,
       "organization_id":  info.organization_id || config.organization_Id,
     }
   }
