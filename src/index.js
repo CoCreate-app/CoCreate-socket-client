@@ -124,6 +124,7 @@
 						}
 					}
 					let rev_data = JSON.parse(data.data);
+					console.log("data = ",rev_data)
 
 					if (rev_data.data.event) {
 						
