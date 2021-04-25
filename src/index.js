@@ -84,7 +84,11 @@
 				}
 			}
 			try {
-				socket = new WebSocket(socket_url);
+				let token = null;
+				if (wnd.localStorage) {
+					token = wnd.localStorage.getItem("token");
+				}
+				socket = new WebSocket(socket_url, token);
 			} catch(error) {
 				console.log(error)
 				return;
