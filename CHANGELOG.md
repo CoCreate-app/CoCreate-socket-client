@@ -1,3 +1,10 @@
+## [1.0.9](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.8...v1.0.9) (2021-04-27)
+
+
+### Bug Fixes
+
+* add host in docs ([a974ada](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a974ada1bb3b1b005fae8998d3091d2217d23924))
+
 ## [1.0.8](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.7...v1.0.8) (2021-04-27)
 
 
