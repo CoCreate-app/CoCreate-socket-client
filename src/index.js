@@ -129,7 +129,7 @@
 					}
 					let rev_data = JSON.parse(data.data);
 
-					if (rev_data.data.event) {
+					if (rev_data.data && rev_data.data.event) {
 						
 						if (wnd.CustomEvent) {
 							var event = new wnd.CustomEvent(rev_data.data.event, {
