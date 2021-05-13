@@ -1,3 +1,17 @@
+## [1.0.11](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.10...v1.0.11) (2021-05-08)
+
+
+### Bug Fixes
+
+* add css auto parse and save to docs. ([7d8273f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7d8273fd01821d0d61a6c9a29addd9be8cc5303e))
+
+## [1.0.10](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.9...v1.0.10) (2021-05-07)
+
+
+### Bug Fixes
+
+* small bugs ([66e201a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/66e201a480f951cb94905696026370f6099c701d))
+
 ## [1.0.9](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.8...v1.0.9) (2021-04-27)
 
 
