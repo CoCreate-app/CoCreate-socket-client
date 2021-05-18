@@ -1,3 +1,10 @@
+## [1.0.12](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.11...v1.0.12) (2021-05-18)
+
+
+### Bug Fixes
+
+* connection status error ([dc9945a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/dc9945a70b2a311eb257391c4812c8da5feddae9))
+
 ## [1.0.11](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.10...v1.0.11) (2021-05-08)
 
 
