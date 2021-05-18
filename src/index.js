@@ -89,16 +89,19 @@
 					token = wnd.localStorage.getItem("token");
 				}
 				socket = new WebSocket(socket_url, token);
+				socket.cocreate_connected = false;
+				this.sockets.set(key, socket);
 			} catch(error) {
 				console.log(error)
 				return;
 			}
 
 			socket.onopen = function(event) {
+				if (!socket.cocreate_connected) {
+					socket.cocreate_connected = true
+				}
 				const messages = _this.messageQueue.get(key) || [];
 				messages.forEach(msg => socket.send(JSON.stringify(msg)));
-				
-				_this.sockets.set(key, socket);
 				_this.messageQueue.set(key, []);
 			}
 			
@@ -168,7 +171,7 @@
 			const key = this.getKeyByRoom(room);
 			const socket = this.getByRoom(room);
 
-			if (socket) {
+			if (socket && socket.cocreate_connected) {
 				socket.send(JSON.stringify(obj));
 			} else {
 				if (this.messageQueue.get(key)) {
