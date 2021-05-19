@@ -3,7 +3,7 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['./common-fun.js'], "@cocreate/uuid", function(commonFunc, uuid) {
+        define(['./common-fun.js', "@cocreate/uuid"], function(commonFunc, uuid) {
         	return factory(commonFunc, window, WebSocket, Blob, uuid)
         });
     } else if (typeof module === 'object' && module.exports) {
