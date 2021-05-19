@@ -3,8 +3,8 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['./common-fun.js'], function(commonFunc) {
-        	return factory(commonFunc, window, WebSocket, Blob)
+        define(['./common-fun.js'], "@cocreate/uuid", function(commonFunc, uuid) {
+        	return factory(commonFunc, window, WebSocket, Blob, uuid)
         });
     } else if (typeof module === 'object' && module.exports) {
         let wndObj = {
@@ -14,12 +14,13 @@
         }
         const ws = require("ws")
         const commonFunc = require("./common-fun.js")
+        const uuid = require("@cocreate/uuid");
     	module.exports = factory(commonFunc, wndObj, ws, null);
     } else {
         // Browser globals (root is window)
-        root.returnExports = factory(root["./common-fun.js"], window, WebSocket, Blob);
+        root.returnExports = factory(root["./common-fun.js"], window, WebSocket, Blob, root["@cocreate/socket-client"]);
   }
-}(typeof self !== 'undefined' ? self : this, function (commonFunc, wnd, WebSocket, Blob) {
+}(typeof self !== 'undefined' ? self : this, function (commonFunc, wnd, WebSocket, Blob, uuid) {
 
     class CoCreateSocketClient
 	{
@@ -166,7 +167,7 @@
 		send (action, data, room) {
 			const obj = {
 				action: action,
-				data: {...data, uid: commonFunc.GenerateUUID()}
+				data: {...data, uid: uuid.generate()}
 			}
 			const key = this.getKeyByRoom(room);
 			const socket = this.getByRoom(room);
