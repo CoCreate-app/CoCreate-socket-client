@@ -15,7 +15,7 @@
         const ws = require("ws")
         const commonFunc = require("./common-fun.js")
         const uuid = require("@cocreate/uuid");
-    	module.exports = factory(commonFunc, wndObj, ws, null);
+    	module.exports = factory(commonFunc, wndObj, ws, null, uuid);
     } else {
         // Browser globals (root is window)
         root.returnExports = factory(root["./common-fun.js"], window, WebSocket, Blob, root["@cocreate/socket-client"]);
