@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.12...v1.1.0) (2021-05-25)
+
+
+### Features
+
+* async/await ([7a0c8b1](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7a0c8b1145d536957e2615023a9b3c218e556149))
+
 ## [1.0.12](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.11...v1.0.12) (2021-05-18)
 
 
