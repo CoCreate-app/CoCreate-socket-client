@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.0...v1.1.1) (2021-05-25)
+
+
+### Bug Fixes
+
+* Add missing dependancy uuid ([1e4e2e8](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1e4e2e8e5f74611d0301dd6638efdc47fcd635a7))
+
 # [1.1.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.0.12...v1.1.0) (2021-05-25)
 
 
