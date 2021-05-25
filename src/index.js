@@ -132,17 +132,16 @@
 						}
 					}
 					let rev_data = JSON.parse(data.data);
+					
+					//. uid's event
 
-					if (rev_data.data && rev_data.data.event) {
+					if (rev_data.data) {
 						
-						if (wnd.CustomEvent) {
-							var event = new wnd.CustomEvent(rev_data.data.event, {
-								detail: rev_data.data
-							})
-							wnd.document.dispatchEvent(event);
-							return;
-						} else {
-							process.emit(rev_data.data.event, rev_data.data)
+						if (rev_data.data.uid) {
+							_this.__fireEvent(rev_data.data.uid, rev_data.data);
+						}
+						if (rev_data.data.event) {
+							_this.__fireEvent(rev_data.data.event, rev_data.data);
 							return;
 						}
 						
@@ -161,13 +160,25 @@
 			}
 		}
 		
+		__fireEvent(event_id, data) {
+			if (wnd.CustomEvent) {
+				var event = new wnd.CustomEvent(event_id, {
+					detail: data
+				})
+				wnd.document.dispatchEvent(event);
+			} else {
+				process.emit(event_id, data)
+			}
+		}
+		
 		/**
 		 * 
 		 */
 		send (action, data, room) {
+			const request_id = uuid.generate();
 			const obj = {
 				action: action,
-				data: {...data, uid: uuid.generate()}
+				data: {...data, uid: request_id}
 			}
 			const key = this.getKeyByRoom(room);
 			const socket = this.getByRoom(room);
@@ -181,7 +192,27 @@
 					this.messageQueue.set(key, [obj]);
 				}
 			}
+			return request_id;
 		}
+		
+		// onMessageAsync(request_id) {
+		// 	return new Promise((resolve, reject) => {
+		// 		let wait  = setTimeout(() => {
+		// 			clearTimeout(wait);
+		// 			resolve(null);
+		// 		}, 5000)
+				
+		// 		if (wnd.document) { //. browser case
+		// 			wnd.document.addEventListener(request_id, function(event) {
+		// 			    resolve(event.detail);
+		// 			}, { once: true })
+		// 		} else { //. node case
+		// 			process.once(request_id, (data) => {
+		// 				resolve(data)
+		// 			})
+		// 		}
+		// 	})
+		// }
 		
 		sendFile (file, room) {
 			const socket = this.getByRoom(room);
@@ -272,6 +303,11 @@
 		
 		listenAsync(eventname) {
 			return new Promise((resolve, reject) => {
+				let wait  = setTimeout(() => {
+					clearTimeout(wait);
+					resolve(null);
+				}, 5000)
+				
 				if (wnd.document) { //. browser case
 					wnd.document.addEventListener(eventname, function(event) {
 					    resolve(event.detail);
