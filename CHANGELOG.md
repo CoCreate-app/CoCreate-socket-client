@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.1...v1.1.2) (2021-06-06)
+
+
+### Bug Fixes
+
+* update packages, add uuid, add data-parse to demos ([51d2608](https://github.com/CoCreate-app/CoCreate-socket-client/commit/51d2608a6ca6a4c7518ed8eb819d1a7ddabbfde8))
+
 ## [1.1.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.0...v1.1.1) (2021-05-25)
 
 
