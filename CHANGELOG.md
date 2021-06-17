@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.2...v1.1.3) (2021-06-16)
+
+
+### Bug Fixes
+
+* added header for seo ([a1976ea](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a1976eaf619d9612bd79baa3864c3b044574b440))
+
 ## [1.1.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.1...v1.1.2) (2021-06-06)
 
 
