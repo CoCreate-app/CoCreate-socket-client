@@ -232,6 +232,7 @@
 			}
 		}
 		
+		// ToDo: Apply a backoff 
 		reconnect(socket, config) {
 			let _this = this;
 			setTimeout(function() {
@@ -283,7 +284,7 @@
 			return key;		
 		}
 		
-		
+		// ToDo: move to crud
 		saveFile(blob) {
 			if (wnd.document) {
 				const file_name = this.saveFileName || 'downloadFile';
@@ -301,6 +302,7 @@
 			}
 		}
 		
+		// ToDo: Maybe can be depreciated because of await
 		listenAsync(eventname) {
 			return new Promise((resolve, reject) => {
 				let wait  = setTimeout(() => {
