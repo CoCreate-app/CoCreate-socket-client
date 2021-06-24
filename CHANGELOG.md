@@ -1,3 +1,11 @@
+## [1.1.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.3...v1.1.4) (2021-06-24)
+
+
+### Bug Fixes
+
+* add method to turn on and off console.log while in development ([f5e589d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/f5e589d175b92e2c362b0a6beee4f869d103ebf8))
+* update all [@cocreate](https://github.com/cocreate) to use latest versions ([828a328](https://github.com/CoCreate-app/CoCreate-socket-client/commit/828a3289aeebf01b0b1f8cc2c6aa27bfcb6b25cb))
+
 ## [1.1.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.2...v1.1.3) (2021-06-16)
 
 
