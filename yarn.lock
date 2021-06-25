@@ -876,7 +876,7 @@
     "@cocreate/docs" "^1.0.0"
     "@cocreate/socket-client" "^1.0.0"
 
-"@cocreate/docs@^1.0.0":
+"@cocreate/docs@^1.0.0", "@cocreate/docs@^1.1.14":
   version "1.1.14"
   resolved "https://registry.yarnpkg.com/@cocreate/docs/-/docs-1.1.14.tgz#992e6e2e2d9b848e3ba65ff4f4abff07dc3ec6ab"
   integrity sha512-MBSzKticJG8bzfqdN/A1jyLaz5k140S3O6pcN67C1muYfqUpZGxA8Fb4MGZ8QlKjx90De8GgHvZ6XP/x3I4FXw==
@@ -907,7 +907,7 @@
     "@cocreate/uuid" "^1.0.0"
     ws "^7.4.4"
 
-"@cocreate/uuid@^1.0.0":
+"@cocreate/uuid@^1.0.0", "@cocreate/uuid@^1.0.9":
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/@cocreate/uuid/-/uuid-1.0.9.tgz#c97ce6c0909925c5141828d145523d9dcd26be52"
   integrity sha512-e85VF2yiAJdA+T8jyjXX7VsPD/I6AsHov3BEpEnMDw5cMRUOfiiVWfThvLUXai+4YAA0tqmyzydqd3OLerxEsw==
