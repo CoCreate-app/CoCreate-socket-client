@@ -1,11 +1,13 @@
 # CoCreate-socket-client
 
-A simple socket-client component in vanilla javascript. Easily configured using HTML5 data-attributes and/or JavaScript API. Take it for a spin in our [playground!](https://cocreate.app/docs/socket-client)
+A simple socket component in vanilla javascript. Easily configured using HTML5 data-attributes and/or JavaScript API. Take it for a spin in our [playground!](https://cocreate.app/docs/socket-client)
 
-![GitHub file size in bytes](https://img.shields.io/github/size/CoCreate-app/CoCreate-socket-client/dist/CoCreate-socket-client.min.js?label=minified%20size&style=for-the-badge)
-![GitHub latest release](https://img.shields.io/github/v/release/CoCreate-app/CoCreate-socket-client?style=for-the-badge)
-![GitHub](https://img.shields.io/github/license/CoCreate-app/CoCreate-socket-client?style=for-the-badge)
-![GitHub labels](https://img.shields.io/github/labels/CoCreate-app/CoCreate-socket-client/help%20wanted?style=for-the-badge)
+![minified](https://img.badgesize.io/https://cdn.cocreate.app/socket-client/latest/CoCreate-socket-client.min.js?style=flat-square&label=minified&color=orange)
+![gzip](https://img.badgesize.io/https://cdn.cocreate.app/socket-client/latest/CoCreate-socket-client.min.js?compression=gzip&style=flat-square&label=gzip&color=yellow)
+![brotli](https://img.badgesize.io/https://cdn.cocreate.app/socket-client/latest/CoCreate-socket-client.min.js?compression=brotli&style=flat-square&label=brotli)
+![GitHub latest release](https://img.shields.io/github/v/release/CoCreate-app/CoCreate-socket-client?style=flat-square)
+![License](https://img.shields.io/github/license/CoCreate-app/CoCreate-socket-client?style=flat-square)
+![Hiring](https://img.shields.io/static/v1?style=flat-square&label=&message=Hiring&color=blueviolet)
 
 ![CoCreate-socket-client](https://cdn.cocreate.app/docs/CoCreate-socket-client.gif)
 
@@ -27,6 +29,12 @@ For a complete guide and working demo refer to the [doumentation](https://cocrea
 
 ```shell
 $ npm i @cocreate/socket-client
+```
+
+## yarn
+
+```shell
+$ yarn install @cocreate/socket-client
 ```
 
 # Table of Contents
