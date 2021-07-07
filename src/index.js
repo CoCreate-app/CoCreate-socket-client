@@ -69,9 +69,9 @@
 			}
 			let protocol = w_protocol === 'http:' ? 'ws' : 'wss';
 			
-			const port = config.port ? config.port : 8088;
+			const portPrefix = config.port ? `:${config.port}` : '';
 			
-			let socket_url = `${protocol}://${wnd.location.host}:${port}/${key}`;
+			let socket_url = `${protocol}://${wnd.location.host}${portPrefix}/${key}`;
 			
 			if (config.host) {
 				if (config.host.includes("://")) {
@@ -80,7 +80,7 @@
 					if (config.host.includes(":")) {
 						socket_url = `${protocol}://${config.host}/${key}`;
 					} else {
-						socket_url = `${protocol}://${config.host}:${port}/${key}`;	
+						socket_url = `${protocol}://${config.host}${portPrefix}/${key}`;	
 					}
 				}
 			}
@@ -119,6 +119,7 @@
 			}
 			
 			socket.onerror = function(err) {
+				console.log(err.message)
 				_this.destroy(socket, key);
 				_this.reconnect(socket, config);
 			}
