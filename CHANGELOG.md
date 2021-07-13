@@ -1,3 +1,11 @@
+## [1.1.11](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.10...v1.1.11) (2021-07-13)
+
+
+### Bug Fixes
+
+* add yarn lockfile to git ignore ([5e6a391](https://github.com/CoCreate-app/CoCreate-socket-client/commit/5e6a391a5ace1296a70f8067f3e89b0f98b64c60))
+* remove yarn.lock ([2385658](https://github.com/CoCreate-app/CoCreate-socket-client/commit/23856589c5c184dd5d6de73c0dee41595e56d408))
+
 ## [1.1.10](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.9...v1.1.10) (2021-07-10)
 
 
