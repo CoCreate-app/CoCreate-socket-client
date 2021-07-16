@@ -1,6 +1,6 @@
 {
   "name": "@cocreate/socket-client",
-  "version": "1.1.10",
+  "version": "1.1.12",
   "description": "A simple socket component in vanilla javascript. Easily configured using HTML5 data-attributes and/or JavaScript API.",
   "keywords": [
     "socket-client",
@@ -61,7 +61,7 @@
     "webpack-log": "^3.0.1"
   },
   "dependencies": {
-    "@cocreate/docs": "^1.1.29",
+    "@cocreate/docs": "^1.1.32",
     "@cocreate/uuid": "^1.0.12",
     "ws": "^7.4.4"
   }
