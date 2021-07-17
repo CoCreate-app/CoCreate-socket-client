@@ -1,3 +1,11 @@
+## [1.1.13](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.12...v1.1.13) (2021-07-17)
+
+
+### Bug Fixes
+
+* init and update demos scripts ([f9a226c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/f9a226c4657113f9e854a7c98de5bd59ffe1e4e6))
+* workflows ([725c8e5](https://github.com/CoCreate-app/CoCreate-socket-client/commit/725c8e5e6d8eb231bd2a6c479361288d4ec4246d))
+
 ## [1.1.12](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.11...v1.1.12) (2021-07-14)
 
 
