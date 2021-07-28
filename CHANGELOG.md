@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.13...v1.2.0) (2021-07-28)
+
+
+### Features
+
+* add new is{attribute} system and remove data- from attributtes ([40d4651](https://github.com/CoCreate-app/CoCreate-socket-client/commit/40d46510634412d3aa39c0bf031f744784833cfa))
+
 ## [1.1.13](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.12...v1.1.13) (2021-07-17)
 
 
