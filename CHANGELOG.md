@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.0...v1.2.1) (2021-07-28)
+
+
+### Bug Fixes
+
+* remove data- from fetch, pass and filter ([d53ee91](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d53ee91f7d48f61ab7ebce50aabe21954a656337))
+
 # [1.2.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.1.13...v1.2.0) (2021-07-28)
 
 
