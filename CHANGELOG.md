@@ -1,3 +1,11 @@
+## [1.2.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.1...v1.2.2) (2021-08-02)
+
+
+### Bug Fixes
+
+* remove data- from attributes ([bd98dce](https://github.com/CoCreate-app/CoCreate-socket-client/commit/bd98dce302f666f1c5d2c140d0e0405d8c639891))
+* update data-fullscreen to fullscreen ([70c2d69](https://github.com/CoCreate-app/CoCreate-socket-client/commit/70c2d69f6a8c3fce7a5916f0ba341e4f350fda09))
+
 ## [1.2.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.0...v1.2.1) (2021-07-28)
 
 
