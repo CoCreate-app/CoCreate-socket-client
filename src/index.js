@@ -286,19 +286,19 @@
 		}
 		
 		// ToDo: move to crud
-		saveFile(blob) {
+		saveFile(data) {
 			if (wnd.document) {
 				const file_name = this.saveFileName || 'downloadFile';
 				var a = wnd.document.createElement("a");
-		        wnd.document.body.appendChild(a);
 		        a.style = "display: none";
-		
+				let blob = new Blob([data], { type: "application/json" });	
 		        let url = window.URL.createObjectURL(blob);
 		        a.href = url;
 		        a.download = file_name;
+		        wnd.document.body.appendChild(a);
 		        a.click();
 		        wnd.URL.revokeObjectURL(url);
-		
+				a.remove()		
 		        this.saveFileName = ''
 			}
 		}
