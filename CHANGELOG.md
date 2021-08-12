@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.2...v1.2.3) (2021-08-12)
+
+
+### Bug Fixes
+
+* update data-module_id to document_id ([23f35bd](https://github.com/CoCreate-app/CoCreate-socket-client/commit/23f35bd17b80db534bfdd742df21a9e9e710e954))
+
 ## [1.2.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.1...v1.2.2) (2021-08-02)
 
 
