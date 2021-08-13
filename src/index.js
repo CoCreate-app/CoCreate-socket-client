@@ -196,25 +196,6 @@
 			return request_id;
 		}
 		
-		// onMessageAsync(request_id) {
-		// 	return new Promise((resolve, reject) => {
-		// 		let wait  = setTimeout(() => {
-		// 			clearTimeout(wait);
-		// 			resolve(null);
-		// 		}, 5000)
-				
-		// 		if (wnd.document) { //. browser case
-		// 			wnd.document.addEventListener(request_id, function(event) {
-		// 			    resolve(event.detail);
-		// 			}, { once: true })
-		// 		} else { //. node case
-		// 			process.once(request_id, (data) => {
-		// 				resolve(data)
-		// 			})
-		// 		}
-		// 	})
-		// }
-		
 		sendFile (file, room) {
 			const socket = this.getByRoom(room);
 			if (socket) {
@@ -285,25 +266,6 @@
 			return key;		
 		}
 		
-		// ToDo: move to crud
-		saveFile(data) {
-			if (wnd.document) {
-				const file_name = this.saveFileName || 'downloadFile';
-				var a = wnd.document.createElement("a");
-		        a.style = "display: none";
-				let blob = new Blob([data], { type: "application/json" });	
-		        let url = window.URL.createObjectURL(blob);
-		        a.href = url;
-		        a.download = file_name;
-		        wnd.document.body.appendChild(a);
-		        a.click();
-		        wnd.URL.revokeObjectURL(url);
-				a.remove()		
-		        this.saveFileName = ''
-			}
-		}
-		
-		// ToDo: Maybe can be depreciated because of await
 		listenAsync(eventname) {
 			return new Promise((resolve, reject) => {
 				let wait  = setTimeout(() => {
