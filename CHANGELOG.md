@@ -1,3 +1,11 @@
+## [1.2.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.3...v1.2.4) (2021-08-13)
+
+
+### Bug Fixes
+
+* remove saveFile function. related to export ([7c64283](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7c64283e74da4bc452a43897b1ebe309cecc1d62))
+* update to  docs ([ce73d09](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ce73d09667278940cd17c1310561a22a10cb4041))
+
 ## [1.2.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.2...v1.2.3) (2021-08-12)
 
 
