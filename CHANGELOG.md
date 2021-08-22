@@ -1,3 +1,10 @@
+## [1.2.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.6...v1.2.7) (2021-08-22)
+
+
+### Bug Fixes
+
+* removed data- from main-content, clone, filter-value_type ([74146c1](https://github.com/CoCreate-app/CoCreate-socket-client/commit/74146c1cb6d671915d9a02e555f5b0ad53578716))
+
 ## [1.2.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.5...v1.2.6) (2021-08-22)
 
 
