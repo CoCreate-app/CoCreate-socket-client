@@ -1,3 +1,10 @@
+## [1.2.13](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.12...v1.2.13) (2021-09-09)
+
+
+### Bug Fixes
+
+* CoCreate.config directory, path, name and  public ([38c4c99](https://github.com/CoCreate-app/CoCreate-socket-client/commit/38c4c99b1a15776ac710efdb6b4f7414ce99829d))
+
 ## [1.2.12](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.11...v1.2.12) (2021-09-08)
 
 
