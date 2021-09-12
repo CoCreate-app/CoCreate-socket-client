@@ -1,3 +1,10 @@
+## [1.2.17](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.16...v1.2.17) (2021-09-12)
+
+
+### Bug Fixes
+
+* update sidenav to use resize and toggle ([2306e38](https://github.com/CoCreate-app/CoCreate-socket-client/commit/2306e38b26f8400934a651c8f909b492456efb78))
+
 ## [1.2.16](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.15...v1.2.16) (2021-09-09)
 
 
