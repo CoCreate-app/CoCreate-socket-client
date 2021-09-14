@@ -1,3 +1,10 @@
+## [1.2.19](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.18...v1.2.19) (2021-09-14)
+
+
+### Bug Fixes
+
+* add cocreate.app to domains ([94b8c16](https://github.com/CoCreate-app/CoCreate-socket-client/commit/94b8c16e8fc265fa972ec5e19bd07ec8b14ef96f))
+
 ## [1.2.18](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.17...v1.2.18) (2021-09-13)
 
 
