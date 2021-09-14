@@ -56,7 +56,7 @@
 			let socket;
 			if (this.sockets.get(key)) {
 				socket = this.sockets.get(key);
-				console.log('SOcket already has been register');
+				// console.log('SOcket already has been register');
 				return;
 			}
 			
