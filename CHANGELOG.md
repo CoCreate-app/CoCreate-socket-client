@@ -1,3 +1,10 @@
+## [1.2.20](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.19...v1.2.20) (2021-09-14)
+
+
+### Bug Fixes
+
+* console.log ([10db582](https://github.com/CoCreate-app/CoCreate-socket-client/commit/10db582c1ffa84b00bc7f8130efb2f69eb24f1f5))
+
 ## [1.2.19](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.18...v1.2.19) (2021-09-14)
 
 
