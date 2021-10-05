@@ -1,3 +1,11 @@
+## [1.2.27](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.26...v1.2.27) (2021-10-05)
+
+
+### Bug Fixes
+
+* update dependencies ([d25319e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d25319e698c6c6c232674e532ac9b0761506f85a))
+* website_id in CoCreate.config ([0f699e0](https://github.com/CoCreate-app/CoCreate-socket-client/commit/0f699e0c9f2ae92a82f8fa1f168367a70b724e12))
+
 ## [1.2.26](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.25...v1.2.26) (2021-10-04)
 
 
