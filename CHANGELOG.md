@@ -1,3 +1,11 @@
+## [1.2.31](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.30...v1.2.31) (2021-10-14)
+
+
+### Bug Fixes
+
+* moved common functions to index.js to make more accessible to other components ([b715a15](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b715a152074e7082e88bfd04f010ab0a5ea6d4cc))
+* updated dependencies ([0de0363](https://github.com/CoCreate-app/CoCreate-socket-client/commit/0de0363217c69d817ec39cffb2116b3f459b35e3))
+
 ## [1.2.30](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.29...v1.2.30) (2021-10-13)
 
 
