@@ -61,8 +61,8 @@
     "webpack-log": "^3.0.1"
   },
   "dependencies": {
-    "@cocreate/docs": "^1.2.30",
-    "@cocreate/uuid": "^1.1.26",
+    "@cocreate/docs": "^1.2.32",
+    "@cocreate/uuid": "^1.1.28",
     "ws": "^7.4.4"
   }
 }
