@@ -1,3 +1,10 @@
+## [1.2.33](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.32...v1.2.33) (2021-10-15)
+
+
+### Bug Fixes
+
+* re added common-fun.js ([1d66b3a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1d66b3a0f404c63f1eef3f0ea749977c0f7c8f65))
+
 ## [1.2.32](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.31...v1.2.32) (2021-10-15)
 
 
