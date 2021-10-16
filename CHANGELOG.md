@@ -1,3 +1,10 @@
+## [1.3.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.2...v1.3.3) (2021-10-16)
+
+
+### Bug Fixes
+
+* wnd was throwing an  error when used on server ([ae4db35](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ae4db35e0f8e9ef14d1244f34d27c020f1101ab3))
+
 ## [1.3.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.1...v1.3.2) (2021-10-16)
 
 
