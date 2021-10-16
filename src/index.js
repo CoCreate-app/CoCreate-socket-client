@@ -92,7 +92,7 @@
 				socket.cocreate_connected = false;
 				this.sockets.set(key, socket);
 			} catch(error) {
-				console.log(error)
+				console.log(error);
 				return;
 			}
 
@@ -101,7 +101,7 @@
 					socket.cocreate_connected = true;
 				}
 				_this.checkMessageQueue();
-			}
+			};
 			
 			socket.onclose = function(event) {
 				switch(event.code) {
@@ -113,17 +113,16 @@
 						_this.reconnect(socket, config);
 						break;
 				}
-			}
+			};
 			
 			socket.onerror = function(err) {
-				console.log(err.message)
+				console.log(err.message);
 				_this.destroy(socket, key);
 				_this.reconnect(socket, config);
-			}
+			};
 	
 			socket.onmessage = function(data) {
 				try {
-					// _this.checkMessageQueue();
 					if (wnd.Blob) {
 						if (data.data instanceof Blob) {
 							_this.saveFile(data.data);
@@ -132,8 +131,6 @@
 					}
 					let rev_data = JSON.parse(data.data);
 					
-					//. uid's event
-
 					if (rev_data.data) {
 						
 						if (rev_data.data.uid) {
@@ -145,28 +142,27 @@
 						}
 						
 					}
-					let action = rev_data.action;
 					const listeners = _this.listeners.get(rev_data.action);
 					if (!listeners) {
 						return;
 					}
 					listeners.forEach(listener => {
 						listener(rev_data.data, key);
-					})
+					});
 				} catch (e) {
 					console.log(e);
 				}
-			}
+			};
 		}
 		
 		__fireEvent(event_id, data) {
 			if (wnd.CustomEvent) {
 				var event = new wnd.CustomEvent(event_id, {
 					detail: data
-				})
+				});
 				wnd.dispatchEvent(event);
 			} else {
-				process.emit(event_id, data)
+				process.emit(event_id, data);
 			}
 		}
 		
@@ -182,29 +178,10 @@
 			}
 		}
 		
-		/**
-		 * 
-		 */
-		sendOld (action, data, room) {
-			const request_id = uuid.generate();
-			const socket = this.getByRoom(room);
-			const obj = {
-				action: action,
-				data: {...data, uid: request_id}
-			};
-
-			if (socket && socket.cocreate_connected) {
-				socket.send(JSON.stringify(obj));
-			} else {
-				this.messageQueue.set(request_id, {room, obj});
-			}
-			return request_id;
-		}
-		
 		send (action, data, room) {
 			return new Promise((resolve, reject) => {
 				const request_id = uuid.generate();
-				const channel = this.getChannel(data)
+				const channel = this.getChannel(data);
 				const socket = this.getSocket(channel);
 				
 	            if(data['broadcast_sender'] === undefined) {
@@ -224,13 +201,13 @@
 				if (wnd) { //. browser case
 						wnd.addEventListener(request_id, function(event) {
 						    resolve(event.detail);
-						}, { once: true })
+						}, { once: true });
 				} else { //. node case
 					process.once(request_id, (data) => {
-						resolve(data)
-					})
+						resolve(data);
+					});
 				}
-			})
+			});
 		}
 		
 
@@ -273,7 +250,7 @@
 		}
 		
 		destroyByKey(key) {
-			let socket = this.sockets.get(key) 
+			let socket = this.sockets.get(key); 
 			if (socket) {
 				this.destroy(socket, key);
 			}
@@ -299,29 +276,6 @@
 			return this.sockets.get(key);	
 		}
 		
-		// getKeyByRoom(room) {
-		// 	let key = this.globalScope;
-		// 	if (room) {
-		// 		key = `${this.prefix}/${room}`;
-		// 	}
-		// 	return key;		
-		// }
-		
-		listenAsync(eventname) {
-			return new Promise((resolve, reject) => {
-				
-				if (wnd) { //. browser case
-					wnd.addEventListener(eventname, function(event) {
-					    resolve(event.detail);
-					}, { once: true })
-				} else { //. node case
-					process.once(eventname, (data) => {
-						resolve(data)
-					})
-				}
-			})
-		}
-		
 		getCommonParams(info) {
 			let config = {};
 			if (wnd && wnd.config) config = wnd.config;
@@ -345,20 +299,6 @@
 				return ns;
 			}
 		}
-		
-		generateSocketClient(namespace, room) {
-			let config = {};
-			if (wnd && wnd.config) config = wnd.config;
-
-			let ns = namespace || config.organization_Id;
-			let rr = room || '';
-			if (rr) {
-				return `${ns}/${rr}`;
-			}
-			else {
-				return ns;
-			}
-		}
 	}
-    return CoCreateSocketClient
+    return CoCreateSocketClient;
 }));
