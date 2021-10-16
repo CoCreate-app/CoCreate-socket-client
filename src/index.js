@@ -1,8 +1,8 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(['./common-fun.js', "@cocreate/uuid"], function(commonFunc, uuid) {
-        	return factory(commonFunc, window, WebSocket, Blob, uuid)
+        define(["@cocreate/uuid"], function(uuid) {
+        	return factory(window, WebSocket, Blob, uuid)
         });
     } else if (typeof module === 'object' && module.exports) {
         let wndObj = {
@@ -11,14 +11,13 @@
         	}
         }
         const ws = require("ws")
-        const commonFunc = require("./common-fun.js")
         const uuid = require("@cocreate/uuid");
-    	module.exports = factory(commonFunc, wndObj, ws, null, uuid);
+    	module.exports = factory(wndObj, ws, null, uuid);
     } else {
         // Browser globals (root is window)
-        root.returnExports = factory(root["./common-fun.js"], window, WebSocket, Blob, root["@cocreate/socket-client"]);
+        root.returnExports = factory(window, WebSocket, Blob, root["@cocreate/socket-client"]);
   }
-}(typeof self !== 'undefined' ? self : this, function (commonFunc, wnd, WebSocket, Blob, uuid) {
+}(typeof self !== 'undefined' ? self : this, function (wnd, WebSocket, Blob, uuid) {
 
     class CoCreateSocketClient
 	{
@@ -97,11 +96,9 @@
 
 			socket.onopen = function(event) {
 				if (!socket.cocreate_connected) {
-					socket.cocreate_connected = true
+					socket.cocreate_connected = true;
 				}
-				const messages = _this.messageQueue.get(key) || [];
-				messages.forEach(msg => socket.send(JSON.stringify(msg)));
-				_this.messageQueue.set(key, []);
+				_this.checkMessageQueue();
 			}
 			
 			socket.onclose = function(event) {
@@ -124,6 +121,7 @@
 	
 			socket.onmessage = function(data) {
 				try {
+					// _this.checkMessageQueue();
 					if (wnd.Blob) {
 						if (data.data instanceof Blob) {
 							_this.saveFile(data.data);
@@ -164,9 +162,23 @@
 				var event = new wnd.CustomEvent(event_id, {
 					detail: data
 				})
-				wnd.document.dispatchEvent(event);
+				wnd.dispatchEvent(event);
 			} else {
 				process.emit(event_id, data)
+			}
+		}
+		
+		checkMessageQueue(){
+			if (this.messageQueue.size > 0){
+				for (let [request_id, {room, obj}] of this.messageQueue) {
+					if (!room)
+						room = window.config.organization_Id;
+					const socket = this.getByRoom(room);
+					if (socket && socket.cocreate_connected) {
+						socket.send(JSON.stringify(obj));
+						this.messageQueue.delete(request_id);
+					}
+				}
 			}
 		}
 		
@@ -175,25 +187,22 @@
 		 */
 		send (action, data, room) {
 			const request_id = uuid.generate();
+			const key = this.getKeyByRoom(room);
+			const socket = this.getByRoom(room);
 			const obj = {
 				action: action,
 				data: {...data, uid: request_id}
-			}
-			const key = this.getKeyByRoom(room);
-			const socket = this.getByRoom(room);
+			};
 
 			if (socket && socket.cocreate_connected) {
 				socket.send(JSON.stringify(obj));
 			} else {
-				if (this.messageQueue.get(key)) {
-					this.messageQueue.get(key).push(obj);
-				} else {
-					this.messageQueue.set(key, [obj]);
-				}
+				this.messageQueue.set(request_id, {room, obj});
 			}
 			return request_id;
 		}
 		
+
 		sendFile (file, room) {
 			const socket = this.getByRoom(room);
 			if (socket) {
@@ -266,13 +275,9 @@
 		
 		listenAsync(eventname) {
 			return new Promise((resolve, reject) => {
-				let wait  = setTimeout(() => {
-					clearTimeout(wait);
-					resolve(null);
-				}, 5000)
 				
-				if (wnd.document) { //. browser case
-					wnd.document.addEventListener(eventname, function(event) {
+				if (wnd) { //. browser case
+					wnd.addEventListener(eventname, function(event) {
 					    resolve(event.detail);
 					}, { once: true })
 				} else { //. node case
@@ -280,6 +285,11 @@
 						resolve(data)
 					})
 				}
+				// let wait  = setTimeout(() => {
+				// 	clearTimeout(wait);
+				// 	resolve(null);
+				// }, 5000)
+
 			})
 		}
 		
