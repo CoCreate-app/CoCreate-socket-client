@@ -1,3 +1,11 @@
+## [1.3.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.3...v1.3.4) (2021-10-16)
+
+
+### Bug Fixes
+
+* merged send and listenAsync.. new use example is... ex. response = await socket.send ([24c152d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/24c152d76ecf5d955dfaf3d894bbe6dc1e8220e6))
+* socket.send has better namespace and room support ([1beafde](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1beafde6dfd432df8a8755f280e633313d187456))
+
 ## [1.3.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.2...v1.3.3) (2021-10-16)
 
 
