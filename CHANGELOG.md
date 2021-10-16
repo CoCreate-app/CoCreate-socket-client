@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.0...v1.3.1) (2021-10-16)
+
+
+### Bug Fixes
+
+* wnd if romm does not exist ([5830ec3](https://github.com/CoCreate-app/CoCreate-socket-client/commit/5830ec359406e9fcb37e3cfed1384fb0841f680b))
+
 # [1.3.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.35...v1.3.0) (2021-10-16)
 
 
