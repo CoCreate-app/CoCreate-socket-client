@@ -183,7 +183,7 @@
 		/**
 		 * 
 		 */
-		send (action, data, room) {
+		sendOld (action, data, room) {
 			const request_id = uuid.generate();
 			const key = this.getKeyByRoom(room);
 			const socket = this.getByRoom(room);
@@ -198,6 +198,33 @@
 				this.messageQueue.set(request_id, {room, obj});
 			}
 			return request_id;
+		}
+		
+		send (action, data, room) {
+			return new Promise((resolve, reject) => {
+				const request_id = uuid.generate();
+				const key = this.getKeyByRoom(room);
+				const socket = this.getByRoom(room);
+				const obj = {
+					action: action,
+					data: {...data, uid: request_id}
+				};
+
+				if (socket && socket.cocreate_connected) {
+					socket.send(JSON.stringify(obj));
+				} else {
+					this.messageQueue.set(request_id, {room, obj});
+				}
+				if (wnd) { //. browser case
+						wnd.addEventListener(request_id, function(event) {
+						    resolve(event.detail);
+						}, { once: true })
+				} else { //. node case
+					process.once(request_id, (data) => {
+						resolve(data)
+					})
+				}
+			})
 		}
 		
 
@@ -283,11 +310,6 @@
 						resolve(data)
 					})
 				}
-				// let wait  = setTimeout(() => {
-				// 	clearTimeout(wait);
-				// 	resolve(null);
-				// }, 5000)
-
 			})
 		}
 		
