@@ -1,3 +1,10 @@
+## [1.3.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.5...v1.3.6) (2021-10-16)
+
+
+### Bug Fixes
+
+* fixed bug event name cant be found when socket-client used on server side ([0c1df40](https://github.com/CoCreate-app/CoCreate-socket-client/commit/0c1df40368d764bb3c2a0f3231aae48ae6be26a8))
+
 ## [1.3.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.4...v1.3.5) (2021-10-16)
 
 
