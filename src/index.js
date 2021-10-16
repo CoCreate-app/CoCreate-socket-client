@@ -171,8 +171,6 @@
 		checkMessageQueue(){
 			if (this.messageQueue.size > 0){
 				for (let [request_id, {room, obj}] of this.messageQueue) {
-					if (!room && wnd)
-						room = wnd.config.organization_Id;
 					const socket = this.getByRoom(room);
 					if (socket && socket.cocreate_connected) {
 						socket.send(JSON.stringify(obj));
