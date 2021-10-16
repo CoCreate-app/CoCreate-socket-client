@@ -43,7 +43,9 @@
 		 */
 		create (config) {
 			
-			const {namespace, room} = config;
+			let {namespace, room} = config;
+			if (!namespace)
+				namespace = config.organization_Id
 			const key = this.getKey(namespace, room);
 			let _this = this;
 			if (namespace) {
@@ -170,8 +172,8 @@
 		
 		checkMessageQueue(){
 			if (this.messageQueue.size > 0){
-				for (let [request_id, {room, obj}] of this.messageQueue) {
-					const socket = this.getByRoom(room);
+				for (let [request_id, {channel, obj}] of this.messageQueue) {
+					const socket = this.getSocket(channel);
 					if (socket && socket.cocreate_connected) {
 						socket.send(JSON.stringify(obj));
 						this.messageQueue.delete(request_id);
@@ -185,7 +187,6 @@
 		 */
 		sendOld (action, data, room) {
 			const request_id = uuid.generate();
-			const key = this.getKeyByRoom(room);
 			const socket = this.getByRoom(room);
 			const obj = {
 				action: action,
@@ -203,8 +204,13 @@
 		send (action, data, room) {
 			return new Promise((resolve, reject) => {
 				const request_id = uuid.generate();
-				const key = this.getKeyByRoom(room);
-				const socket = this.getByRoom(room);
+				const channel = this.getChannel(data)
+				const socket = this.getSocket(channel);
+				
+	            if(data['broadcast_sender'] === undefined) {
+	                data['broadcast_sender'] = true;
+	            }
+	            
 				const obj = {
 					action: action,
 					data: {...data, uid: request_id}
@@ -213,7 +219,7 @@
 				if (socket && socket.cocreate_connected) {
 					socket.send(JSON.stringify(obj));
 				} else {
-					this.messageQueue.set(request_id, {room, obj});
+					this.messageQueue.set(request_id, {channel, obj});
 				}
 				if (wnd) { //. browser case
 						wnd.addEventListener(request_id, function(event) {
@@ -285,18 +291,21 @@
 			return key;
 		}
 		
-		getByRoom(room) {
-			let key = this.getKeyByRoom(room)
+		getSocket(channel) {
+			let key = this.globalScope;
+			if (channel) {
+				key = `${this.prefix}/${channel}`;
+			}			
 			return this.sockets.get(key);	
 		}
 		
-		getKeyByRoom(room) {
-			let key = this.globalScope;
-			if (room) {
-				key = `${this.prefix}/${room}`;
-			}
-			return key;		
-		}
+		// getKeyByRoom(room) {
+		// 	let key = this.globalScope;
+		// 	if (room) {
+		// 		key = `${this.prefix}/${room}`;
+		// 	}
+		// 	return key;		
+		// }
 		
 		listenAsync(eventname) {
 			return new Promise((resolve, reject) => {
@@ -313,19 +322,7 @@
 			})
 		}
 		
-		getCommonParams() {
-			let config = {};
-			if (wnd && wnd.config) {
-				config = wnd.config;
-			}
-
-			return {
-				"apiKey": config.apiKey,
-				"organization_id": config.organization_Id,
-			};
-		}
-
-		getCommonParamsExtend(info) {
+		getCommonParams(info) {
 			let config = {};
 			if (wnd && wnd.config) config = wnd.config;
 
@@ -335,6 +332,20 @@
 			};
 		}
 
+		getChannel(data) {
+			let config = {};
+			if (wnd && wnd.config) config = wnd.config;
+
+			let ns = data.namespace || config.organization_Id;
+			let rm = data.room || '';
+			if (rm) {
+				return `${ns}/${rm}`;
+			}
+			else {
+				return ns;
+			}
+		}
+		
 		generateSocketClient(namespace, room) {
 			let config = {};
 			if (wnd && wnd.config) config = wnd.config;
