@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.35...v1.3.0) (2021-10-16)
+
+
+### Features
+
+* messageQueue if socket disconnects and reconnects messages will send ([4be899a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4be899a93aefe196268f671e8c9cd14962224f57))
+
 ## [1.2.35](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.2.34...v1.2.35) (2021-10-15)
 
 
