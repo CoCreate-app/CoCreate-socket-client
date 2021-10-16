@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.1...v1.3.2) (2021-10-16)
+
+
+### Bug Fixes
+
+* update socket package to fix bug in docs ([60d811e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/60d811e2c4f53bcdc67846502d145bdf0df34043))
+
 ## [1.3.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.0...v1.3.1) (2021-10-16)
 
 
