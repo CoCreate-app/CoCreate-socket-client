@@ -192,13 +192,15 @@
 					action: action,
 					data: {...data, uid: request_id}
 				};
+				if (!wnd.document)
+				    obj.data['event'] = request_id;
 
 				if (socket && socket.cocreate_connected) {
 					socket.send(JSON.stringify(obj));
 				} else {
 					this.messageQueue.set(request_id, {channel, obj});
 				}
-				if (wnd) { //. browser case
+				if (wnd.document) { //. browser case
 						wnd.addEventListener(request_id, function(event) {
 						    resolve(event.detail);
 						}, { once: true });
