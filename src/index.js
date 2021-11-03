@@ -28,6 +28,7 @@
 			this.messageQueue =  new Map();
 			this.saveFileName =  '';
 			this.globalScope =  "";
+			this.clientId = uuid.generate(8);
 		}
 	
 		setGlobalScope(scope) {
@@ -55,7 +56,7 @@
 			let socket;
 			if (this.sockets.get(key)) {
 				socket = this.sockets.get(key);
-				// console.log('SOcket already has been register');
+				// console.log('socket', socket);
 				return;
 			}
 			
@@ -90,6 +91,9 @@
 				}
 				socket = new WebSocket(socket_url, token);
 				socket.cocreate_connected = false;
+				// if (config.clientId)
+				// 	this.clientId = config.clientId
+				socket.clientId = this.clientId;
 				this.sockets.set(key, socket);
 			} catch(error) {
 				console.log(error);
@@ -130,7 +134,7 @@
 						}
 					}
 					let rev_data = JSON.parse(data.data);
-					
+
 					if (rev_data.data) {
 						
 						if (rev_data.data.uid) {
@@ -183,6 +187,7 @@
 				const request_id = uuid.generate();
 				const channel = this.getChannel(data);
 				const socket = this.getSocket(channel);
+				const clientId = this.clientId;
 				
 	            if(data['broadcast_sender'] === undefined) {
 	                data['broadcast_sender'] = true;
@@ -190,7 +195,7 @@
 	            
 				const obj = {
 					action: action,
-					data: {...data, uid: request_id}
+					data: {...data, uid: request_id, clientId}
 				};
 				if (!wnd.document)
 				    obj.data['event'] = request_id;
@@ -300,6 +305,10 @@
 			else {
 				return ns;
 			}
+		}
+		
+		getClientId() {
+			return this.clientId;	
 		}
 	}
     return CoCreateSocketClient;
