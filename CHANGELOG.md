@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.9...v1.4.0) (2021-11-03)
+
+
+### Features
+
+*  generate a clientId and attach it to the socket messages ([0241adf](https://github.com/CoCreate-app/CoCreate-socket-client/commit/0241adf3a570ba547a0fcadf1868d4b615769e3d))
+
 ## [1.3.9](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.3.8...v1.3.9) (2021-11-01)
 
 
