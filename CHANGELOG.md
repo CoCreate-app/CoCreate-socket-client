@@ -1,3 +1,10 @@
+## [1.4.9](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.8...v1.4.9) (2021-11-20)
+
+
+### Bug Fixes
+
+* update dependencies ([c1829ee](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c1829ee0362ff4b247888e381625184fc6457f38))
+
 ## [1.4.8](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.7...v1.4.8) (2021-11-19)
 
 
