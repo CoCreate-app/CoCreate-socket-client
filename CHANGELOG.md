@@ -1,3 +1,10 @@
+## [1.4.12](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.11...v1.4.12) (2021-11-26)
+
+
+### Bug Fixes
+
+* docs sidenav width ([e0c926f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/e0c926f68b80851eed21bfa5b20109c95bc7e954))
+
 ## [1.4.11](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.10...v1.4.11) (2021-11-26)
 
 
