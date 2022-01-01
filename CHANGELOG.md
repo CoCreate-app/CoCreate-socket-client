@@ -1,3 +1,10 @@
+## [1.4.18](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.17...v1.4.18) (2022-01-01)
+
+
+### Bug Fixes
+
+* get-value attribute value now supports a selector added # to all values currently in get-value attributes ([ffddd9a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ffddd9ab33ec49d97ed07de9b22a9e0d61474640))
+
 ## [1.4.17](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.16...v1.4.17) (2021-12-15)
 
 
