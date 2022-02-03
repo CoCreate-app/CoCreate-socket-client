@@ -1,3 +1,10 @@
+## [1.4.20](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.19...v1.4.20) (2022-02-03)
+
+
+### Bug Fixes
+
+* replaced show and hide class hidden with attribute hidden ([eae42bc](https://github.com/CoCreate-app/CoCreate-socket-client/commit/eae42bc0c5c4a171285112058af83f6c2275610c))
+
 ## [1.4.19](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.18...v1.4.19) (2022-02-01)
 
 
