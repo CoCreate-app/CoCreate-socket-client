@@ -146,7 +146,7 @@
 						}
 						
 					}
-					const listeners = _this.listeners.get(rev_data.action);
+					const listeners = _this.listeners.get(rev_data.module);
 					if (!listeners) {
 						return;
 					}
@@ -182,7 +182,7 @@
 			}
 		}
 		
-		send (action, data, room) {
+		send (module, data, room) {
 			return new Promise((resolve, reject) => {
 				const request_id = uuid.generate();
 				const channel = this.getChannel(data);
@@ -194,7 +194,7 @@
 	            }
 	            
 				const obj = {
-					action: action,
+					module,
 					data: {...data, uid: request_id, clientId}
 				};
 				if (!wnd.document)
