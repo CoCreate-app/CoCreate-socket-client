@@ -1,3 +1,11 @@
+## [1.4.24](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.23...v1.4.24) (2022-02-24)
+
+
+### Bug Fixes
+
+* CoCreate.config replace CoCreate.app with * ([30f856b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/30f856b42ce152a18babbf0ed8768d08a13afed7))
+* update param action to module ([3b73c84](https://github.com/CoCreate-app/CoCreate-socket-client/commit/3b73c84084b0a1fbec0345a33da8cf7b49d5e096))
+
 ## [1.4.23](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.22...v1.4.23) (2022-02-16)
 
 
