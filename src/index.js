@@ -90,6 +90,7 @@
 					token = wnd.localStorage.getItem("token");
 				}
 				socket = new WebSocket(socket_url, token);
+				console.log('socket_url', socket_url)
 				socket.cocreate_connected = false;
 				// if (config.clientId)
 				// 	this.clientId = config.clientId
