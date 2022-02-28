@@ -1,3 +1,10 @@
+## [1.4.26](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.25...v1.4.26) (2022-02-28)
+
+
+### Bug Fixes
+
+* remove dead code ([23cf401](https://github.com/CoCreate-app/CoCreate-socket-client/commit/23cf401edb97eef25cb30888116e623727997faf))
+
 ## [1.4.25](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.24...v1.4.25) (2022-02-28)
 
 
