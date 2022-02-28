@@ -1,3 +1,10 @@
+## [1.4.25](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.24...v1.4.25) (2022-02-28)
+
+
+### Bug Fixes
+
+* bump cdn version ([9e1a96b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/9e1a96bf93132e52836f793d48c58c4d48a7257d))
+
 ## [1.4.24](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.23...v1.4.24) (2022-02-24)
 
 
