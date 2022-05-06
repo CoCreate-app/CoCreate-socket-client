@@ -1,3 +1,10 @@
+## [1.4.27](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.26...v1.4.27) (2022-05-06)
+
+
+### Bug Fixes
+
+* update config organization_Id to organization_id ([d3bc37a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d3bc37a5e1806cca9520259d7c25a8fede2dc4de))
+
 ## [1.4.26](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.25...v1.4.26) (2022-02-28)
 
 
