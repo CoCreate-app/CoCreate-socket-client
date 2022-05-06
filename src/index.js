@@ -46,7 +46,7 @@
 			
 			let {namespace, room} = config;
 			if (!namespace)
-				namespace = config.organization_Id
+				namespace = config.organization_id
 			const key = this.getKey(namespace, room);
 			let _this = this;
 			if (namespace) {
@@ -288,7 +288,7 @@
 
 			return {
 				"apiKey": info.apiKey || config.apiKey,
-				"organization_id": info.organization_id || config.organization_Id,
+				"organization_id": info.organization_id || config.organization_id,
 			};
 		}
 
@@ -296,7 +296,7 @@
 			let config = {};
 			if (wnd && wnd.config) config = wnd.config;
 
-			let ns = data.namespace || config.organization_Id;
+			let ns = data.namespace || config.organization_id;
 			let rm = data.room || '';
 			if (rm) {
 				return `${ns}/${rm}`;
