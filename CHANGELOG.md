@@ -1,3 +1,10 @@
+## [1.5.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.0...v1.5.1) (2022-05-17)
+
+
+### Bug Fixes
+
+* update document_id on link index.css ([1b6a2eb](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1b6a2eb8af7c63a88adeeb4d7582e6800b88ee86))
+
 # [1.5.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.4.27...v1.5.0) (2022-05-14)
 
 
