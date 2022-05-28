@@ -181,13 +181,19 @@
 			}
 		}
 		
-		send (module, data, room) {
+		send (module, data) {
 			return new Promise((resolve, reject) => {
 				const request_id = uuid.generate();
 				const channel = this.getChannel(data);
 				const socket = this.getSocket(channel);
 				const clientId = this.clientId;
 				
+	            if(!data['organization_id']) {
+	                data['organization_id'] = config.organization_id;
+	            }
+	            if(!data['apiKey']) {
+	                data['apiKey'] = config.apiKey;
+	            }
 	            if(data['broadcast_sender'] === undefined) {
 	                data['broadcast_sender'] = true;
 	            }
