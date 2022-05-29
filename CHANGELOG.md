@@ -1,3 +1,10 @@
+## [1.5.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.2...v1.5.3) (2022-05-29)
+
+
+### Bug Fixes
+
+* send - if organization or apikey missing using global config ([7c4d744](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7c4d74470749d79659dcce94416c5c1d8de33978))
+
 ## [1.5.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.1...v1.5.2) (2022-05-23)
 
 
