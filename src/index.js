@@ -194,8 +194,8 @@
 	            if(!data['apiKey']) {
 	                data['apiKey'] = config.apiKey;
 	            }
-	            if(data['broadcast_sender'] === undefined) {
-	                data['broadcast_sender'] = true;
+	            if(data['broadcastSender'] === undefined) {
+	                data['broadcastSender'] = true;
 	            }
 	            
 				const obj = {
