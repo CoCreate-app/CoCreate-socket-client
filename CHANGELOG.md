@@ -1,3 +1,10 @@
+## [1.5.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.5...v1.5.6) (2022-08-31)
+
+
+### Bug Fixes
+
+* rename variables isBroadcast and isBroadcastSender to broadcast and broadcastSender ([7d8fff5](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7d8fff597577fbaa9c387433c2316c49c2035da3))
+
 ## [1.5.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.4...v1.5.5) (2022-06-18)
 
 
