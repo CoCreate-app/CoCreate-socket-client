@@ -1,3 +1,10 @@
+## [1.5.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.6...v1.5.7) (2022-09-01)
+
+
+### Bug Fixes
+
+* bump all of [@cocreate](https://github.com/cocreate) dependencies ([aec1317](https://github.com/CoCreate-app/CoCreate-socket-client/commit/aec13177755a5c1ccffa3c46912fcbe41a94dafd))
+
 ## [1.5.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.5...v1.5.6) (2022-08-31)
 
 
