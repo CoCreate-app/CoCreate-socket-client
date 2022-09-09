@@ -63,6 +63,6 @@
   "dependencies": {
     "@cocreate/docs": "^1.3.5",
     "@cocreate/uuid": "^1.2.5",
-    "ws": "^7.4.4"
+    "ws": "7.5.9"
   }
 }
