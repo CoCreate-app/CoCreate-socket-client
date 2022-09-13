@@ -1,8 +1,8 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(["@cocreate/uuid"], function(uuid) {
-        	return factory(window, WebSocket, Blob, uuid)
+        define(["@cocreate/uuid", "@cocreate/indexeddb"], function(uuid, indexeddb) {
+        	return factory(window, WebSocket, Blob, uuid, indexeddb)
         });
     } else if (typeof module === 'object' && module.exports) {
         let wndObj = {
@@ -15,9 +15,9 @@
     	module.exports = factory(wndObj, ws, null, uuid);
     } else {
         // Browser globals (root is window)
-        root.returnExports = factory(window, WebSocket, Blob, root["@cocreate/socket-client"]);
+        root.returnExports = factory(window, WebSocket, Blob, root["@cocreate/uuid"], root["@cocreate/indexeddb"]);
   }
-}(typeof self !== 'undefined' ? self : this, function (wnd, WebSocket, Blob, uuid) {
+}(typeof self !== 'undefined' ? self : this, function (wnd, WebSocket, Blob, uuid, indexeddb) {
 
     class CoCreateSocketClient
 	{
@@ -170,14 +170,34 @@
 		}
 		
 		checkMessageQueue(){
-			if (this.messageQueue.size > 0){
-				for (let [request_id, {channel, obj}] of this.messageQueue) {
-					const socket = this.getSocket(channel);
-					if (socket && socket.cocreate_connected) {
-						socket.send(JSON.stringify(obj));
+			if (!wnd.document) {
+				if (this.messageQueue.size > 0){
+					// for (let [request_id, {channel, obj}] of this.messageQueue) {
+					for (let [request_id, {module, data}] of this.messageQueue) {
+						this.send(module, data)
 						this.messageQueue.delete(request_id);
+
+						// const socket = this.getSocket(channel);
+						// if (socket && socket.cocreate_connected) {
+						// 	socket.send(JSON.stringify(obj));
+						// 	this.messageQueue.delete(request_id);
+						// }
 					}
 				}
+			}
+			else {
+				indexeddb.readDocuments({
+					database: 'socketMessageQueue',
+					collection: 'socketMessageQueue',
+				}).then((data) =>{
+					for (let Data of data.data) {
+						this.send(Data.module, Data.data)
+						Data.database = 'socketMessageQueue'
+						Data.collection = 'socketMessageQueue'
+						Data.data = {_id: Data._id}
+						indexeddb.deleteDocument(Data)
+					}
+				})
 			}
 		}
 		
@@ -205,20 +225,41 @@
 				if (!wnd.document)
 				    obj.data['event'] = request_id;
 
-				if (socket && socket.cocreate_connected) {
+				let online = true;
+				if (wnd.document && !wnd.navigator.onLine)
+					online = false
+				if (socket && socket.cocreate_connected && online) {
 					socket.send(JSON.stringify(obj));
-				} else {
-					this.messageQueue.set(request_id, {channel, obj});
-				}
-				if (wnd.document) { //. browser case
+					if (wnd.document) { //. browser case
 						wnd.addEventListener(request_id, function(event) {
-						    resolve(event.detail);
+							resolve(event.detail);
 						}, { once: true });
-				} else { //. node case
-					process.once(request_id, (data) => {
-						resolve(data);
-					});
+					} else { //. node case
+						process.once(request_id, (data) => {
+							resolve(data);
+						});
+					}
+				} else {
+					if (!wnd.document)
+						this.messageQueue.set(request_id, {module, data});
+					else
+						indexeddb.createDocument({
+							database: 'socketMessageQueue',
+							collection: 'socketMessageQueue',
+							data: {_id: request_id, module: module, data: data}
+						})
+					// data['status'] = 'queued'
+					resolve(data)
 				}
+				// if (wnd.document) { //. browser case
+				// 	wnd.addEventListener(request_id, function(event) {
+				// 		resolve(event.detail);
+				// 	}, { once: true });
+				// } else { //. node case
+				// 	process.once(request_id, (data) => {
+				// 		resolve(data);
+				// 	});
+				// }
 			});
 		}
 		
