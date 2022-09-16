@@ -190,13 +190,14 @@
 					database: 'socketMessageQueue',
 					collection: 'socketMessageQueue',
 				}).then((data) =>{
-					for (let Data of data.data) {
-						this.send(Data.module, Data.data)
-						Data.database = 'socketMessageQueue'
-						Data.collection = 'socketMessageQueue'
-						Data.data = {_id: Data._id}
-						indexeddb.deleteDocument(Data)
-					}
+					if (data.data)
+						for (let Data of data.data) {
+							this.send(Data.module, Data.data)
+							Data.database = 'socketMessageQueue'
+							Data.collection = 'socketMessageQueue'
+							Data.data = {_id: Data._id}
+							indexeddb.deleteDocument(Data)
+						}
 				})
 			}
 		}
@@ -242,13 +243,13 @@
 				} else {
 					if (!wnd.document)
 						this.messageQueue.set(request_id, {module, data});
-					else
+					else {
 						indexeddb.createDocument({
 							database: 'socketMessageQueue',
 							collection: 'socketMessageQueue',
 							data: {_id: request_id, module: module, data: data}
 						})
-					// data['status'] = 'queued'
+					}
 					resolve(data)
 				}
 				// if (wnd.document) { //. browser case
