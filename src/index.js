@@ -29,6 +29,10 @@
 			this.saveFileName =  '';
 			this.globalScope =  "";
 			this.clientId = uuid.generate(8);
+			this.initialReconnectDelay = 1000 + Math.floor(Math.random() * 3000);
+			this.currentReconnectDelay = this.initialReconnectDelay;
+			this.maxReconnectDelay = 600000;
+
 		}
 	
 		setGlobalScope(scope) {
@@ -42,8 +46,13 @@
 		/**
 		 * config: {namespace, room, host}
 		 */
+
 		create (config) {
-			
+			if ( window && !window.navigator.onLine){
+				window.addEventListener("online", this.online);
+				return
+			}
+
 			let {namespace, room} = config;
 			if (!namespace)
 				namespace = config.organization_id
@@ -103,6 +112,7 @@
 				if (!socket.cocreate_connected) {
 					socket.cocreate_connected = true;
 				}
+				this.currentReconnectDelay = this.initialReconnectDelay
 				_this.checkMessageQueue();
 			};
 			
@@ -282,13 +292,25 @@
 				this.listeners.get(type).push(callback);
 			}
 		}
-		
+
+		online (config) {
+			window.removeEventListener("online", this.online)
+			this.create(config)
+		}
+
 		// ToDo: Apply a backoff 
 		reconnect(socket, config) {
 			let _this = this;
-			setTimeout(function() {
-				_this.create(config);
-			}, 1000)
+			// setTimeout(function() {
+			// 	_this.create(config);
+			// }, 1000)
+			setTimeout(() => {
+				if(!_this.maxReconnectDelay || _this.currentReconnectDelay < _this.maxReconnectDelay) {
+					_this.currentReconnectDelay*=2;
+					_this.create(config);
+				}
+			}, _this.currentReconnectDelay);
+			
 		}
 		
 		destroy(socket, key) {
