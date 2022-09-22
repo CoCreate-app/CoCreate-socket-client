@@ -48,6 +48,7 @@
 		 */
 
 		create (config) {
+			const self = this;
 			if ( window && !window.navigator.onLine){
 				window.addEventListener("online", this.online);
 				return
@@ -57,16 +58,13 @@
 			if (!namespace)
 				namespace = config.organization_id
 			const key = this.getKey(namespace, room);
-			let _this = this;
 			if (namespace) {
 				this.setGlobalScope(namespace)
 			}
 			
-			let socket;
-			if (this.sockets.get(key)) {
-				socket = this.sockets.get(key);
+			let socket = this.sockets.get(key);
+			if (socket) 
 				return;
-			}
 			
 			let w_protocol = wnd.location.protocol;		
 			if (wnd.location.protocol === "about:") {
@@ -98,7 +96,7 @@
 					token = wnd.localStorage.getItem("token");
 				}
 				socket = new WebSocket(socket_url, token);
-				socket.cocreate_connected = false;
+				// socket.connected = false;
 				// if (config.clientId)
 				// 	this.clientId = config.clientId
 				socket.clientId = this.clientId;
@@ -109,36 +107,36 @@
 			}
 
 			socket.onopen = function(event) {
-				if (!socket.cocreate_connected) {
-					socket.cocreate_connected = true;
-				}
-				this.currentReconnectDelay = this.initialReconnectDelay
-				_this.checkMessageQueue();
+				socket.connected = true;
+				self.currentReconnectDelay = self.initialReconnectDelay
+				self.checkMessageQueue();
 			};
 			
 			socket.onclose = function(event) {
+				socket.connected = false;
+
 				switch(event.code) {
 					case 1000: // close normal
 						console.log("websocket: closed");
 						break;
 					default: 
-						_this.destroy(socket, key);
-						_this.reconnect(socket, config);
+						self.destroy(socket, key);
+						self.reconnect(socket, config);
 						break;
 				}
 			};
 			
 			socket.onerror = function(err) {
 				console.log(err.message);
-				_this.destroy(socket, key);
-				_this.reconnect(socket, config);
+				self.destroy(socket, key);
+				self.reconnect(socket, config);
 			};
 	
 			socket.onmessage = function(data) {
 				try {
 					if (wnd.Blob) {
 						if (data.data instanceof Blob) {
-							_this.saveFile(data.data);
+							self.saveFile(data.data);
 							return;
 						}
 					}
@@ -147,15 +145,15 @@
 					if (rev_data.data) {
 						
 						if (rev_data.data.uid) {
-							_this.__fireEvent(rev_data.data.uid, rev_data.data);
+							self.__fireEvent(rev_data.data.uid, rev_data.data);
 						}
 						if (rev_data.data.event) {
-							_this.__fireEvent(rev_data.data.event, rev_data.data);
+							self.__fireEvent(rev_data.data.event, rev_data.data);
 							return;
 						}
 						
 					}
-					const listeners = _this.listeners.get(rev_data.module);
+					const listeners = self.listeners.get(rev_data.module);
 					if (!listeners) {
 						return;
 					}
@@ -186,12 +184,6 @@
 					for (let [request_id, {module, data}] of this.messageQueue) {
 						this.send(module, data)
 						this.messageQueue.delete(request_id);
-
-						// const socket = this.getSocket(channel);
-						// if (socket && socket.cocreate_connected) {
-						// 	socket.send(JSON.stringify(obj));
-						// 	this.messageQueue.delete(request_id);
-						// }
 					}
 				}
 			}
@@ -215,8 +207,7 @@
 		send (module, data) {
 			return new Promise((resolve, reject) => {
 				const request_id = uuid.generate();
-				const channel = this.getChannel(data);
-				const socket = this.getSocket(channel);
+				const socket = this.getSocket(data);
 				const clientId = this.clientId;
 				
 	            if(!data['organization_id']) {
@@ -239,7 +230,7 @@
 				let online = true;
 				if (wnd.document && !wnd.navigator.onLine)
 					online = false
-				if (socket && socket.cocreate_connected && online) {
+				if (socket && socket.connected && online) {
 					socket.send(JSON.stringify(obj));
 					if (wnd.document) { //. browser case
 						wnd.addEventListener(request_id, function(event) {
@@ -300,16 +291,16 @@
 
 		// ToDo: Apply a backoff 
 		reconnect(socket, config) {
-			let _this = this;
+			let self = this;
 			// setTimeout(function() {
-			// 	_this.create(config);
+			// 	self.create(config);
 			// }, 1000)
 			setTimeout(() => {
-				if(!_this.maxReconnectDelay || _this.currentReconnectDelay < _this.maxReconnectDelay) {
-					_this.currentReconnectDelay*=2;
-					_this.create(config);
+				if(!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
+					self.currentReconnectDelay*=2;
+					self.create(config);
 				}
-			}, _this.currentReconnectDelay);
+			}, self.currentReconnectDelay);
 			
 		}
 		
@@ -344,11 +335,15 @@
 			return key;
 		}
 		
-		getSocket(channel) {
+		getSocket(data) {
 			let key = this.globalScope;
-			if (channel) {
-				key = `${this.prefix}/${channel}`;
-			}			
+			let ns = data.namespace || config.organization_id;
+			let rm = data.room || '';
+			if (rm)
+				key = `${this.prefix}/${ns}/${rm}`
+			else
+				key = `${this.prefix}/${ns}`
+
 			return this.sockets.get(key);	
 		}
 		
@@ -360,20 +355,6 @@
 				"apiKey": info.apiKey || config.apiKey,
 				"organization_id": info.organization_id || config.organization_id,
 			};
-		}
-
-		getChannel(data) {
-			let config = {};
-			if (wnd && wnd.config) config = wnd.config;
-
-			let ns = data.namespace || config.organization_id;
-			let rm = data.room || '';
-			if (rm) {
-				return `${ns}/${rm}`;
-			}
-			else {
-				return ns;
-			}
 		}
 		
 		getClientId() {
