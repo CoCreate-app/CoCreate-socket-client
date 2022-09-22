@@ -1,3 +1,19 @@
+# [1.6.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.7...v1.6.0) (2022-09-22)
+
+
+### Bug Fixes
+
+* add d@cocreate/indexeddb ([3b0a22e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/3b0a22e42480b01975266e3f108459876c7910d9))
+* bumped ws dependency to v7.4.9 ([2055d77](https://github.com/CoCreate-app/CoCreate-socket-client/commit/2055d7731aed3692409a194c0d5f0c803449d936))
+* if data.data clear socket message queue ([499f21e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/499f21e0d199f4974fe78b9fc5407fa7e6724a27))
+* merged getSocket and getChannel ([047652a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/047652aed5b7083828da1de2042b6910f34454ee))
+
+
+### Features
+
+* If socket connection closes unsent messages are stored in indexeddb. Once the socket reconnects the messages are resent ([3cce80b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/3cce80b6eb224587c6eb9b235af1adcd5a6b3a9c))
+* reconnect exponential  backoff ([17a966a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/17a966a954b093781f7af4a971a9ea6751262cde))
+
 ## [1.5.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.6...v1.5.7) (2022-09-01)
 
 
