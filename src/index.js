@@ -27,41 +27,45 @@
 			this.listeners = new Map();
 			this.messageQueue =  new Map();
 			this.saveFileName =  '';
-			this.globalScope =  "";
 			this.clientId = uuid.generate(8);
+			this.config = {}
 			this.initialReconnectDelay = 1000 + Math.floor(Math.random() * 3000);
 			this.currentReconnectDelay = this.initialReconnectDelay;
 			this.maxReconnectDelay = 600000;
 
 		}
-	
-		setGlobalScope(scope) {
-			this.globalScope = `${this.prefix}/${scope}`;
-		}
-		
-		getGlobalScope() {
-			return this.globalScope;
-		}
-		
+			
 		/**
 		 * config: {namespace, room, host}
 		 */
-
 		create (config) {
 			const self = this;
 			if ( window && !window.navigator.onLine){
 				window.addEventListener("online", this.online);
-				return
 			}
 
-			let {namespace, room} = config;
-			if (!namespace)
-				namespace = config.organization_id
-			const key = this.getKey(namespace, room);
-			if (namespace) {
-				this.setGlobalScope(namespace)
-			}
+			if (window) {
+				if (!config)
+					config = {};
+				if (!window.config)
+					window.config = {};
+				if (!config.organization_id) {
+					config.organization_id = window.config.organization_id || window.localStorage.getItem('organization_id') || this.ObjectId()		
+					window.localStorage.setItem('organization_id', config.organization_id) 
+				}
+				if (!config.apiKey) {
+					config.apiKey = window.config.apiKey || window.localStorage.getItem('apiKey') || uuid.generate(32)
+					window.localStorage.setItem('apiKey', config.apiKey) 				
+				}
+				if (!config.host) {
+					config.host = window.config.host || window.localStorage.getItem('host') || window.location.hostname
+					window.localStorage.setItem('host', config.host) 				
+				}
+				this.config = config
+				window.config = config;
+			}			
 			
+			const key = this.getKey(config);
 			let socket = this.sockets.get(key);
 			if (socket) 
 				return;
@@ -96,10 +100,8 @@
 					token = wnd.localStorage.getItem("token");
 				}
 				socket = new WebSocket(socket_url, token);
-				// socket.connected = false;
-				// if (config.clientId)
-				// 	this.clientId = config.clientId
 				socket.clientId = this.clientId;
+				socket.key = key;
 				this.sockets.set(key, socket);
 			} catch(error) {
 				console.log(error);
@@ -121,7 +123,7 @@
 						break;
 					default: 
 						self.destroy(socket, key);
-						self.reconnect(socket, config);
+						self.reconnect(config);
 						break;
 				}
 			};
@@ -129,7 +131,7 @@
 			socket.onerror = function(err) {
 				console.log(err.message);
 				self.destroy(socket, key);
-				self.reconnect(socket, config);
+				self.reconnect(config);
 			};
 	
 			socket.onmessage = function(data) {
@@ -180,7 +182,6 @@
 		checkMessageQueue(){
 			if (!wnd.document) {
 				if (this.messageQueue.size > 0){
-					// for (let [request_id, {channel, obj}] of this.messageQueue) {
 					for (let [request_id, {module, data}] of this.messageQueue) {
 						this.send(module, data)
 						this.messageQueue.delete(request_id);
@@ -189,13 +190,13 @@
 			}
 			else {
 				indexeddb.readDocuments({
-					database: 'socketMessageQueue',
+					database: 'internalStrorage',
 					collection: 'socketMessageQueue',
 				}).then((data) =>{
 					if (data.data)
 						for (let Data of data.data) {
 							this.send(Data.module, Data.data)
-							Data.database = 'socketMessageQueue'
+							Data.database = 'internalStrorage'
 							Data.collection = 'socketMessageQueue'
 							Data.data = {_id: Data._id}
 							indexeddb.deleteDocument(Data)
@@ -211,10 +212,10 @@
 				const clientId = this.clientId;
 				
 	            if(!data['organization_id']) {
-	                data['organization_id'] = config.organization_id;
+	                data['organization_id'] = this.config.organization_id;
 	            }
 	            if(!data['apiKey']) {
-	                data['apiKey'] = config.apiKey;
+	                data['apiKey'] = this.config.apiKey;
 	            }
 	            if(data['broadcastSender'] === undefined) {
 	                data['broadcastSender'] = true;
@@ -246,22 +247,13 @@
 						this.messageQueue.set(request_id, {module, data});
 					else {
 						indexeddb.createDocument({
-							database: 'socketMessageQueue',
+							database: 'internalStrorage',
 							collection: 'socketMessageQueue',
 							data: {_id: request_id, module: module, data: data}
 						})
 					}
 					resolve(data)
 				}
-				// if (wnd.document) { //. browser case
-				// 	wnd.addEventListener(request_id, function(event) {
-				// 		resolve(event.detail);
-				// 	}, { once: true });
-				// } else { //. node case
-				// 	process.once(request_id, (data) => {
-				// 		resolve(data);
-				// 	});
-				// }
 			});
 		}
 		
@@ -289,12 +281,8 @@
 			this.create(config)
 		}
 
-		// ToDo: Apply a backoff 
-		reconnect(socket, config) {
+		reconnect(config) {
 			let self = this;
-			// setTimeout(function() {
-			// 	self.create(config);
-			// }, 1000)
 			setTimeout(() => {
 				if(!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
 					self.currentReconnectDelay*=2;
@@ -311,55 +299,30 @@
 				socket = null;
 			}
 			
-			if (this.sockets.get(key)) {
-				this.sockets.delete(key);
-			}
+			this.sockets.delete(key);
 		}
 		
-		destroyByKey(key) {
-			let socket = this.sockets.get(key); 
-			if (socket) {
-				this.destroy(socket, key);
-			}
-		}
-		
-		getKey(namespace, room) {
-			let key = `${this.prefix}`;
-			if (namespace && namespace != '') {
-				if (room &&  room != '') {
-					key += `/${namespace}/${room}`;
-				} else {
-					key +=`/${namespace}`;
-				}
-			}
+		getKey(data) {
+			let key = this.prefix;
+			let namespace = data.namespace || this.config.organization_id;
+			let room = data.room || '';
+			if (room &&  room != '')
+				key += `/${namespace}/${room}`
+			else
+				key +=`/${namespace}`;
+
 			return key;
 		}
 		
 		getSocket(data) {
-			let key = this.globalScope;
-			let ns = data.namespace || config.organization_id;
-			let rm = data.room || '';
-			if (rm)
-				key = `${this.prefix}/${ns}/${rm}`
-			else
-				key = `${this.prefix}/${ns}`
-
+			let key = this.getKey(data)
 			return this.sockets.get(key);	
 		}
-		
-		getCommonParams(info) {
-			let config = {};
-			if (wnd && wnd.config) config = wnd.config;
+				
+		ObjectId = (rnd = r16 => Math.floor(r16).toString(16)) =>
+    		rnd(Date.now()/1000) + ' '.repeat(16).replace(/./g, () => rnd(Math.random()*16));
 
-			return {
-				"apiKey": info.apiKey || config.apiKey,
-				"organization_id": info.organization_id || config.organization_id,
-			};
-		}
-		
-		getClientId() {
-			return this.clientId;	
-		}
+
 	}
     return CoCreateSocketClient;
 }));
