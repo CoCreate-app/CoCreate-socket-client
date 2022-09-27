@@ -21,8 +21,8 @@
 
     class CoCreateSocketClient
 	{
-		constructor(prefix = "crud") {
-			this.prefix = prefix || "crud";
+		constructor(prefix) {
+			this.prefix = prefix || "ws"; // previously crud 
 			this.sockets = new Map();
 			this.listeners = new Map();
 			this.messageQueue =  new Map();
@@ -49,8 +49,13 @@
 					config = {};
 				if (!window.config)
 					window.config = {};
-				if (!config.organization_id) {
-					config.organization_id = window.config.organization_id || window.localStorage.getItem('organization_id') || this.ObjectId()		
+				if (!config.organization_id) {						
+					config.organization_id = window.config.organization_id || window.localStorage.getItem('organization_id')
+
+					if (!config.organization_id) {
+						console.log('orgAutoCreate')
+						config.organization_id = this.ObjectId()		
+					}
 					window.localStorage.setItem('organization_id', config.organization_id) 
 				}
 				if (!config.apiKey) {
@@ -61,48 +66,30 @@
 					config.host = window.config.host || window.localStorage.getItem('host') || window.location.hostname
 					window.localStorage.setItem('host', config.host) 				
 				}
+				// if (!config.port) {
+				// 	config.port = window.config.port || window.localStorage.getItem('port') || ''
+				// 	window.localStorage.setItem('port', config.port) 				
+				// }
+				
 				this.config = config
 				window.config = config;
+
 			}			
 			
-			const key = this.getKey(config);
-			let socket = this.sockets.get(key);
+			const url = this.getUrl(config);
+			let socket = this.sockets.get(url);
 			if (socket) 
 				return;
-			
-			let w_protocol = wnd.location.protocol;		
-			if (wnd.location.protocol === "about:") {
-				w_protocol = wnd.parent.location.protocol;
-				if (!config.host) {
-					config.host = wnd.parent.location.host;
-				}
-			}
-			let protocol = w_protocol === 'http:' ? 'ws' : 'wss';
-			
-			const portPrefix = config.port ? `:${config.port}` : '';
-			
-			let socket_url = `${protocol}://${wnd.location.host}${portPrefix}/${key}`;
-			
-			if (config.host) {
-				if (config.host.includes("://")) {
-					socket_url = `${config.host}/${key}`;
-				} else {
-					if (config.host.includes(":")) {
-						socket_url = `${protocol}://${config.host}/${key}`;
-					} else {
-						socket_url = `${protocol}://${config.host}${portPrefix}/${key}`;	
-					}
-				}
-			}
+
 			try {
 				let token = null;
 				if (wnd.localStorage) {
 					token = wnd.localStorage.getItem("token");
 				}
-				socket = new WebSocket(socket_url, token);
+				socket = new WebSocket(url, token);
 				socket.clientId = this.clientId;
-				socket.key = key;
-				this.sockets.set(key, socket);
+				socket.config = config;
+				this.sockets.set(url, socket);
 			} catch(error) {
 				console.log(error);
 				return;
@@ -122,7 +109,7 @@
 						console.log("websocket: closed");
 						break;
 					default: 
-						self.destroy(socket, key);
+						self.destroy(socket);
 						self.reconnect(config);
 						break;
 				}
@@ -130,7 +117,7 @@
 			
 			socket.onerror = function(err) {
 				console.log(err.message);
-				self.destroy(socket, key);
+				self.destroy(socket);
 				self.reconnect(config);
 			};
 	
@@ -160,7 +147,7 @@
 						return;
 					}
 					listeners.forEach(listener => {
-						listener(rev_data.data, key);
+						listener(rev_data.data, url);
 					});
 				} catch (e) {
 					console.log(e);
@@ -187,16 +174,15 @@
 						this.messageQueue.delete(request_id);
 					}
 				}
-			}
-			else {
+			} else {
 				indexeddb.readDocuments({
-					database: 'internalStrorage',
+					database: 'internalStorage',
 					collection: 'socketMessageQueue',
 				}).then((data) =>{
 					if (data.data)
 						for (let Data of data.data) {
 							this.send(Data.module, Data.data)
-							Data.database = 'internalStrorage'
+							Data.database = 'internalStorage'
 							Data.collection = 'socketMessageQueue'
 							Data.data = {_id: Data._id}
 							indexeddb.deleteDocument(Data)
@@ -208,7 +194,6 @@
 		send (module, data) {
 			return new Promise((resolve, reject) => {
 				const request_id = uuid.generate();
-				const socket = this.getSocket(data);
 				const clientId = this.clientId;
 				
 	            if(!data['organization_id']) {
@@ -220,7 +205,9 @@
 	            if(data['broadcastSender'] === undefined) {
 	                data['broadcastSender'] = true;
 	            }
-	            
+
+				const socket = this.getSocket(data);
+
 				const obj = {
 					module,
 					data: {...data, uid: request_id, clientId}
@@ -247,7 +234,7 @@
 						this.messageQueue.set(request_id, {module, data});
 					else {
 						indexeddb.createDocument({
-							database: 'internalStrorage',
+							database: 'internalStorage',
 							collection: 'socketMessageQueue',
 							data: {_id: request_id, module: module, data: data}
 						})
@@ -283,6 +270,7 @@
 
 		reconnect(config) {
 			let self = this;
+
 			setTimeout(() => {
 				if(!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
 					self.currentReconnectDelay*=2;
@@ -292,31 +280,55 @@
 			
 		}
 		
-		destroy(socket, key) {
+		destroy(socket) {
 			if (socket) {
+				this.sockets.delete(socket.url);
 				socket.onerror = socket.onopen = socket.onclose = null;
 				socket.close();
 				socket = null;
-			}
-			
-			this.sockets.delete(key);
+			}			
 		}
 		
-		getKey(data) {
-			let key = this.prefix;
-			let namespace = data.namespace || this.config.organization_id;
-			let room = data.room || '';
-			if (room &&  room != '')
-				key += `/${namespace}/${room}`
-			else
-				key +=`/${namespace}`;
+		getUrl(data = {}) {
+			let w_protocol = wnd.location.protocol;		
+			if (wnd.location.protocol === "about:")
+				w_protocol = wnd.parent.location.protocol;
+			
+			let protocol = w_protocol === 'http:' ? 'ws' : 'wss';
+			let port = data.port || this.config.port || '';
+			let url = `${protocol}://${wnd.location.host}${port}/`;
+			
+			let host = data.host || this.config.host
+			if (host) {
+				if (host.includes("://")) {
+					url = `${host}`;
+				} else {
+					if (host.includes(":")) {
+						url = `${protocol}://${host}`;
+					} else {
+						url = `${protocol}://${host}${port}`;	
+					}
+				}
+			}
 
-			return key;
+			let organization_id = data.organization_id || this.config.organization_id;
+			let namespace = data.namespace || '';
+			let room = data.room || '';
+			if (this.prefix &&  this.prefix != '')
+				url += `/${this.prefix}`
+			if (organization_id &&  organization_id != '')
+				url += `/${organization_id}`
+			if (namespace &&  namespace != '')
+				url += `/${namespace}`
+			if (room &&  room != '')
+				url += `/${room}`
+
+			return url;
 		}
 		
 		getSocket(data) {
-			let key = this.getKey(data)
-			return this.sockets.get(key);	
+			let url = this.getUrl(data)
+			return this.sockets.get(url);	
 		}
 				
 		ObjectId = (rnd = r16 => Math.floor(r16).toString(16)) =>
