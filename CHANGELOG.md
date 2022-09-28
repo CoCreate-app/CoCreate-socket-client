@@ -1,3 +1,15 @@
+# [1.8.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.7.0...v1.8.0) (2022-09-28)
+
+
+### Bug Fixes
+
+* bump indexeddb dependency ([dd9eaa0](https://github.com/CoCreate-app/CoCreate-socket-client/commit/dd9eaa02801c20c4ea01a21ab2f514035e6b53fa))
+
+
+### Features
+
+* If no org generate org and db ([98abf2c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/98abf2c86a00db58b77ce943f3ea5e5702408210))
+
 # [1.7.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.6.0...v1.7.0) (2022-09-28)
 
 
