@@ -31,7 +31,6 @@
 		 */
 		create (config) {
 			const self = this;
-
 			if (isBrowser) {
 				if (!window.navigator.onLine)
 					window.addEventListener("online", this.online);
@@ -45,7 +44,9 @@
 
 					if (!config.organization_id) {
 						console.log('orgAutoCreate')
-						config.organization_id = this.ObjectId()		
+						config.organization_id = this.ObjectId()
+						config.apiKey = uuid.generate(32)
+						indexeddb.generateDB(config)
 					}
 					window.localStorage.setItem('organization_id', config.organization_id) 
 				}
@@ -67,10 +68,10 @@
 				
 				// this.config = config
 				window.config = config;
-
-			}			
+			}
+						
 			this.config = config
-
+			
 			const url = this.getUrl(config);
 			let socket = this.sockets.get(url);
 			if (socket) 
