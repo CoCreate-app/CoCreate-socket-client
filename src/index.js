@@ -22,7 +22,7 @@
     class CoCreateSocketClient
 	{
 		constructor(prefix) {
-			this.prefix = prefix || "ws"; // previously crud 
+			this.prefix = prefix || "ws"; // previously 'crud'
 			this.sockets = new Map();
 			this.listeners = new Map();
 			this.messageQueue =  new Map();
@@ -201,6 +201,9 @@
 	            }
 	            if(!data['apiKey']) {
 	                data['apiKey'] = this.config.apiKey;
+	            }
+				if(!data['user_id']) {
+	                data['user_id'] = this.config.user_id;
 	            }
 	            if(data['broadcastSender'] === undefined) {
 	                data['broadcastSender'] = true;
