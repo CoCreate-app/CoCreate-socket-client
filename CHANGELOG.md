@@ -1,3 +1,10 @@
+## [1.8.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.8.0...v1.8.1) (2022-09-28)
+
+
+### Bug Fixes
+
+* ObjectId called from indexeddb ([e982d39](https://github.com/CoCreate-app/CoCreate-socket-client/commit/e982d393fd9548dbe91e722d876becb5a6c7c330))
+
 # [1.8.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.7.0...v1.8.0) (2022-09-28)
 
 
