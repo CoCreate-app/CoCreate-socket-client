@@ -43,8 +43,7 @@
 					config.organization_id = window.config.organization_id || window.localStorage.getItem('organization_id')
 
 					if (!config.organization_id) {
-						console.log('orgAutoCreate')
-						config.organization_id = this.ObjectId()
+						config.organization_id = indexeddb.ObjectId()
 						config.apiKey = uuid.generate(32)
 						indexeddb.generateDB(config)
 					}
@@ -177,13 +176,13 @@
 				}
 			} else {
 				indexeddb.readDocuments({
-					database: 'internalStorage',
+					database: this.config.organization_id,
 					collection: 'socketMessageQueue',
 				}).then((data) =>{
 					if (data.data)
 						for (let Data of data.data) {
 							this.send(Data.module, Data.data)
-							Data.database = 'internalStorage'
+							Data.database = this.config.organization_id;
 							Data.collection = 'socketMessageQueue'
 							Data.data = {_id: Data._id}
 							indexeddb.deleteDocument(Data)
@@ -224,11 +223,11 @@
 					online = false
 				if (socket && socket.connected && online) {
 					socket.send(JSON.stringify(obj));
-					if (isBrowser) { //. browser case
+					if (isBrowser) {
 						window.addEventListener(request_id, function(event) {
 							resolve(event.detail);
 						}, { once: true });
-					} else { //. node case
+					} else {
 						process.once(request_id, (data) => {
 							resolve(data);
 						});
@@ -238,7 +237,7 @@
 						this.messageQueue.set(request_id, {module, data});
 					else {
 						indexeddb.createDocument({
-							database: 'internalStorage',
+							database: this.config.organization_id,
 							collection: 'socketMessageQueue',
 							data: {_id: request_id, module: module, data: data}
 						})
@@ -256,9 +255,6 @@
 			}
 		},
 	
-		/**
-		 * scope: ns/room
-		 */
 		listen(type, callback) {
 			if (!this.listeners.get(type)) {
 				this.listeners.set(type, [callback]);
@@ -341,12 +337,6 @@
 			return this.sockets.get(url);	
 		},
 			
-		ObjectId() {
-			const ObjectId = (rnd = r16 => Math.floor(r16).toString(16)) =>
-    		rnd(Date.now()/1000) + ' '.repeat(16).replace(/./g, () => rnd(Math.random()*16));
-			return ObjectId
-		}
-
 	}
     return CoCreateSocketClient;
 })
