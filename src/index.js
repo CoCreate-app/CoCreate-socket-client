@@ -32,11 +32,10 @@
 			this.initialReconnectDelay = 1000 + Math.floor(Math.random() * 3000);
 			this.currentReconnectDelay = this.initialReconnectDelay;
 			this.maxReconnectDelay = 600000;
-
 		}
 			
 		/**
-		 * config: {namespace, room, host}
+		 * config: {organization_id, namespace, room, host, port}
 		 */
 		create (config) {
 			const self = this;
