@@ -1,3 +1,17 @@
+# [1.7.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.6.0...v1.7.0) (2022-09-28)
+
+
+### Bug Fixes
+
+* improved config management ([19a6afe](https://github.com/CoCreate-app/CoCreate-socket-client/commit/19a6afea3a8b003d92cff60cddf322bd01db483b))
+
+
+### Features
+
+* assign user_id to messages if available ([92f7a34](https://github.com/CoCreate-app/CoCreate-socket-client/commit/92f7a349100d7e1a9cda4a58c2b03566320e8e18))
+* generated url used as key ([26eab36](https://github.com/CoCreate-app/CoCreate-socket-client/commit/26eab362d4a981b39486ded9ad1e095cb6e0fe12))
+* refactored socket instance, applied isBrowser boolean ([7786e54](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7786e54dc38329ffbabec2778a19008dff8cc569))
+
 # [1.6.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.5.7...v1.6.0) (2022-09-22)
 
 
