@@ -1,3 +1,15 @@
+# [1.9.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.8.1...v1.9.0) (2022-09-29)
+
+
+### Bug Fixes
+
+* config renameed to CoCreateConfig ([9f734ff](https://github.com/CoCreate-app/CoCreate-socket-client/commit/9f734ff5a1d87c50651112689312c8f09b6a5b71))
+
+
+### Features
+
+* if getSocket returns undefined createSocket and put message in queque pending succesful connection ([9d6201a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/9d6201ab9093b4eea67b2eb30ec7463c05d0d1c5))
+
 ## [1.8.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.8.0...v1.8.1) (2022-09-28)
 
 
