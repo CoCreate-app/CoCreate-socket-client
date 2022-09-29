@@ -37,10 +37,10 @@
 
 				if (!config)
 					config = {};
-				if (!window.config)
-					window.config = {};
+				if (!window.CoCreateConfig)
+					window.CoCreateConfig = {};
 				if (!config.organization_id) {						
-					config.organization_id = window.config.organization_id || window.localStorage.getItem('organization_id')
+					config.organization_id = window.CoCreateConfig.organization_id || window.localStorage.getItem('organization_id')
 
 					if (!config.organization_id) {
 						config.organization_id = indexeddb.ObjectId()
@@ -50,15 +50,15 @@
 					window.localStorage.setItem('organization_id', config.organization_id) 
 				}
 				if (!config.apiKey) {
-					config.apiKey = window.config.apiKey || window.localStorage.getItem('apiKey') || uuid.generate(32)
+					config.apiKey = window.CoCreateConfig.apiKey || window.localStorage.getItem('apiKey') || uuid.generate(32)
 					window.localStorage.setItem('apiKey', config.apiKey) 				
 				}
 				if (!config.host) {
-					config.host = window.config.host || window.localStorage.getItem('host') || window.location.hostname
+					config.host = window.CoCreateConfig.host || window.localStorage.getItem('host') || window.location.hostname
 					window.localStorage.setItem('host', config.host) 				
 				}
 				// if (!config.port) {
-				// 	config.port = window.config.port || window.localStorage.getItem('port') || ''
+				// 	config.port = window.CoCreateConfig.port || window.localStorage.getItem('port') || ''
 				// 	window.localStorage.setItem('port', config.port) 				
 				// }
 				// if (!config.prefix) {
@@ -66,7 +66,7 @@
 				// }
 				
 				// this.config = config
-				window.config = config;
+				window.CoCreateConfig = config;
 			}
 						
 			this.config = config
@@ -81,7 +81,8 @@
 				if (window.localStorage) {
 					token = window.localStorage.getItem("token");
 				}
-				socket = new WebSocket(url, token);
+				let test = 'new'
+				socket = new WebSocket(url, token, test);
 				socket.clientId = this.clientId;
 				socket.organization_id = config.organization_id;
 				socket.user_id = config.user_id;
@@ -98,7 +99,7 @@
 			socket.onopen = function(event) {
 				socket.connected = true;
 				self.currentReconnectDelay = self.initialReconnectDelay
-				self.checkMessageQueue();
+				self.checkMessageQueue(socket);
 			};
 			
 			socket.onclose = function(event) {
@@ -170,7 +171,7 @@
 			}
 		},
 		
-		checkMessageQueue(){
+		checkMessageQueue(socket){
 			if (!isBrowser) {
 				if (this.messageQueue.size > 0){
 					for (let [request_id, {module, data}] of this.messageQueue) {
@@ -180,14 +181,14 @@
 				}
 			} else {
 				indexeddb.readDocuments({
-					database: this.config.organization_id,
-					collection: 'socketMessageQueue',
+					database: 'socketMessageQueue',
+					collection: socket.url,
 				}).then((data) =>{
 					if (data.data)
 						for (let Data of data.data) {
 							this.send(Data.module, Data.data)
-							Data.database = this.config.organization_id;
-							Data.collection = 'socketMessageQueue'
+							Data.database = 'socketMessageQueue';
+							Data.collection = socket.url
 							Data.data = {_id: Data._id}
 							indexeddb.deleteDocument(Data)
 						}
@@ -241,8 +242,8 @@
 						this.messageQueue.set(request_id, {module, data});
 					else {
 						indexeddb.createDocument({
-							database: this.config.organization_id,
-							collection: 'socketMessageQueue',
+							database: 'socketMessageQueue',
+							collection: socket.url,
 							data: {_id: request_id, module: module, data: data}
 						})
 					}
