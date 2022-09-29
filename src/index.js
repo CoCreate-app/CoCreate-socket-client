@@ -115,8 +115,12 @@
 				}
 			};
 			
-			socket.onerror = function(err) {
-				console.log(err.message);
+			socket.onerror = function(event) {
+				if (isBrowser && !window.navigator.onLine)
+					console.log("offline");
+				else
+					console.log("connection failed");
+				
 				self.destroy(socket);
 				self.reconnect(config);
 			};
@@ -334,7 +338,10 @@
 		
 		getSocket(data) {
 			let url = this.getUrl(data)
-			return this.sockets.get(url);	
+			let socket = this.sockets.get(url)
+			if (!socket)
+				this.create(data)
+			return socket;	
 		},
 			
 	}
