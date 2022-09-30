@@ -340,8 +340,12 @@
 		getSocket(data) {
 			let url = this.getUrl(data)
 			let socket = this.sockets.get(url)
-			if (!socket)
+			console.log('hey socket', socket)
+			if (!socket) {
 				this.create(data)
+				socket = {url: url}
+				console.log('hey url', url)
+			}
 			return socket;	
 		},
 			
