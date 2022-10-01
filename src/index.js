@@ -126,7 +126,7 @@
 	
 			socket.onmessage = function(data) {
 				try {
-					if (window.Blob) {
+					if (isBrowser && window.Blob) {
 						if (data.data instanceof Blob) {
 							self.saveFile(data.data);
 							return;
