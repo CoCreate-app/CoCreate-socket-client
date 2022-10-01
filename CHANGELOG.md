@@ -1,3 +1,12 @@
+## [1.9.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.9.4...v1.9.5) (2022-10-01)
+
+
+### Bug Fixes
+
+* bump @coceate/indexeddb ([d1e02f6](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d1e02f6a2c9c5361facfb316579e79eb87b788a7))
+* define status of socket message. sent received, queued. ([912f86b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/912f86b43aea7f56a3fc05cc4da7957049184c53))
+* root factory returns default. if default return default keys and values ([72797ef](https://github.com/CoCreate-app/CoCreate-socket-client/commit/72797ef1155f299a126f92bd878f0bd96737ea53))
+
 ## [1.9.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.9.3...v1.9.4) (2022-09-30)
 
 
