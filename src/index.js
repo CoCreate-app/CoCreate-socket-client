@@ -80,12 +80,7 @@
 				return;
 
 			try {
-				let token = null;
-				if (window.localStorage) {
-					token = window.localStorage.getItem("token");
-				}
-				let test = 'new'
-				socket = new WebSocket(url, token, test);
+				socket = new WebSocket(url);
 				socket.clientId = this.clientId;
 				socket.organization_id = config.organization_id;
 				socket.user_id = config.user_id;
@@ -138,9 +133,10 @@
 						}
 					}
 					let rev_data = JSON.parse(data.data);
+					if (rev_data.module != 'connect')
+						rev_data.data.status = "received"
 
 					if (rev_data.data) {
-						
 						if (rev_data.data.uid) {
 							self.__fireEvent(rev_data.data.uid, rev_data.data);
 						}
@@ -231,6 +227,7 @@
 					online = false
 				if (socket && socket.connected && online) {
 					socket.send(JSON.stringify(obj));
+					data.status = "sent"
 					if (isBrowser) {
 						window.addEventListener(request_id, function(event) {
 							resolve(event.detail);
@@ -241,6 +238,7 @@
 						});
 					}
 				} else {
+					data.status = "queued"
 					if (!isBrowser)
 						this.messageQueue.set(request_id, {module, data});
 					else {
