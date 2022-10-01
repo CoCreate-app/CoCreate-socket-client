@@ -13,6 +13,9 @@
         root.returnExports = factory(true, WebSocket, Blob, root["@cocreate/uuid"], root["@cocreate/indexeddb"]);
   }
 }(typeof self !== 'undefined' ? self : this, function (isBrowser, WebSocket, Blob, uuid, indexeddb) {
+	if(indexeddb && indexeddb.default)
+		indexeddb = indexeddb.default
+
 	const delay = 1000 + Math.floor(Math.random() * 3000)
     const CoCreateSocketClient = {
 		sockets: new Map(),
