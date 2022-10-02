@@ -1,3 +1,10 @@
+## [1.9.10](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.9.9...v1.9.10) (2022-10-02)
+
+
+### Bug Fixes
+
+* check if object prior to appling status ([3ef433d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/3ef433dfe21a4edb6b3cb24cabbd66404f2aa78a))
+
 ## [1.9.9](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.9.8...v1.9.9) (2022-10-01)
 
 
