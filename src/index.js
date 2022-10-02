@@ -133,7 +133,7 @@
 						}
 					}
 					let rev_data = JSON.parse(data.data);
-					if (rev_data.module != 'connect')
+					if (rev_data.module != 'connect' && typeof rev_data.data == 'object')
 						rev_data.data.status = "received"
 
 					if (rev_data.data) {
