@@ -1,3 +1,10 @@
+## [1.9.12](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.9.11...v1.9.12) (2022-10-02)
+
+
+### Bug Fixes
+
+* minor bug fixes ([9da12a4](https://github.com/CoCreate-app/CoCreate-socket-client/commit/9da12a4db2aaf8fa6f8099e4b9189e7f973fa56b))
+
 ## [1.9.11](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.9.10...v1.9.11) (2022-10-02)
 
 
