@@ -2,7 +2,7 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define(["@cocreate/uuid", "@cocreate/indexeddb"], function(uuid, indexeddb) {
-        	return factory(true, WebSocket, Blob, uuid, indexeddb)
+        	return {default: factory(true, WebSocket, Blob, uuid, indexeddb)}
         });
     } else if (typeof module === 'object' && module.exports) {
         const ws = require("ws")
@@ -74,89 +74,92 @@
 						
 			this.config = config
 			
-			const url = this.getUrl(config);
-			let socket = this.sockets.get(url);
-			if (socket) 
-				return;
-
-			try {
-				socket = new WebSocket(url);
-				socket.clientId = this.clientId;
-				socket.organization_id = config.organization_id;
-				socket.user_id = config.user_id;
-				socket.host = config.host;
-				socket.prefix = config.prefix || 'ws';
-				socket.config = {...config, prefix: config.prefix || 'ws'};
-
-				this.sockets.set(url, socket);
-			} catch(error) {
-				console.log(error);
-				return;
-			}
-
-			socket.onopen = function(event) {
-				socket.connected = true;
-				self.currentReconnectDelay = self.initialReconnectDelay
-				self.checkMessageQueue(socket);
-			};
-			
-			socket.onclose = function(event) {
-				socket.connected = false;
-
-				switch(event.code) {
-					case 1000: // close normal
-						console.log("websocket: closed");
-						break;
-					default: 
-						self.destroy(socket);
-						self.reconnect(config);
-						break;
-				}
-			};
-			
-			socket.onerror = function(event) {
-				if (isBrowser && !window.navigator.onLine)
-					console.log("offline");
-				else
-					console.log("connection failed");
-				
-				self.destroy(socket);
-				self.reconnect(config);
-			};
+			const urls = this.getUrls(config);
+			for (let url of urls){
+				let socket = this.sockets.get(url);
+				if (socket) 
+					return;
 	
-			socket.onmessage = function(data) {
 				try {
-					if (isBrowser && window.Blob) {
-						if (data.data instanceof Blob) {
-							self.saveFile(data.data);
-							return;
-						}
-					}
-					let rev_data = JSON.parse(data.data);
-					if (rev_data.module != 'connect' && typeof rev_data.data == 'object')
-						rev_data.data.status = "received"
-
-					if (rev_data.data) {
-						if (rev_data.data.uid) {
-							self.__fireEvent(rev_data.data.uid, rev_data.data);
-						}
-						if (rev_data.data.event) {
-							self.__fireEvent(rev_data.data.event, rev_data.data);
-							return;
-						}
-						
-					}
-					const listeners = self.listeners.get(rev_data.module);
-					if (!listeners) {
-						return;
-					}
-					listeners.forEach(listener => {
-						listener(rev_data.data, url);
-					});
-				} catch (e) {
-					console.log(e);
+					socket = new WebSocket(url);
+					socket.clientId = this.clientId;
+					socket.organization_id = config.organization_id;
+					socket.user_id = config.user_id;
+					socket.host = config.host;
+					socket.prefix = config.prefix || 'ws';
+					socket.config = {...config, prefix: config.prefix || 'ws'};
+	
+					this.sockets.set(url, socket);
+				} catch(error) {
+					console.log(error);
+					return;
 				}
-			};
+
+				socket.onopen = function(event) {
+					socket.connected = true;
+					self.currentReconnectDelay = self.initialReconnectDelay
+					self.checkMessageQueue(socket);
+				};
+				
+				socket.onclose = function(event) {
+					socket.connected = false;
+	
+					switch(event.code) {
+						case 1000: // close normal
+							console.log("websocket: closed");
+							break;
+						default: 
+							self.destroy(socket);
+							self.reconnect(config);
+							break;
+					}
+				};
+				
+				socket.onerror = function(event) {
+					if (isBrowser && !window.navigator.onLine)
+						console.log("offline");
+					else
+						console.log("connection failed");
+					
+					self.destroy(socket);
+					self.reconnect(config);
+				};
+		
+				socket.onmessage = function(data) {
+					try {
+						if (isBrowser && window.Blob) {
+							if (data.data instanceof Blob) {
+								self.saveFile(data.data);
+								return;
+							}
+						}
+						let rev_data = JSON.parse(data.data);
+						if (rev_data.module != 'connect' && typeof rev_data.data == 'object')
+							rev_data.data.status = "received"
+	
+						if (rev_data.data) {
+							if (rev_data.data.uid) {
+								self.__fireEvent(rev_data.data.uid, rev_data.data);
+							}
+							if (rev_data.data.event) {
+								self.__fireEvent(rev_data.data.event, rev_data.data);
+								return;
+							}
+							
+						}
+						const listeners = self.listeners.get(rev_data.module);
+						if (!listeners) {
+							return;
+						}
+						listeners.forEach(listener => {
+							listener(rev_data.data, url);
+						});
+					} catch (e) {
+						console.log(e);
+					}
+				};
+	
+			}
 		},
 		
 		__fireEvent(event_id, data) {
@@ -179,9 +182,10 @@
 					}
 				}
 			} else {
-				indexeddb.readDocuments({
+				indexeddb.readDocument({
 					database: 'socketMessageQueue',
 					collection: socket.url,
+					filter: {}
 				}).then((data) =>{
 					if (data.data)
 						for (let Data of data.data) {
@@ -213,7 +217,7 @@
 	                data['broadcastSender'] = true;
 	            }
 
-				const socket = this.getSocket(data);
+				const sockets = this.getSockets(data);
 
 				const obj = {
 					module,
@@ -225,31 +229,35 @@
 				let online = true;
 				if (isBrowser && !window.navigator.onLine)
 					online = false
-				if (socket && socket.connected && online) {
-					socket.send(JSON.stringify(obj));
-					data.status = "sent"
-					if (isBrowser) {
-						window.addEventListener(request_id, function(event) {
-							resolve(event.detail);
-						}, { once: true });
+
+				for (let socket of sockets) {
+					if (socket && socket.connected && online) {
+						socket.send(JSON.stringify(obj));
+						data.status = "sent"
+						if (isBrowser) {
+							window.addEventListener(request_id, function(event) {
+								resolve(event.detail);
+							}, { once: true });
+						} else {
+							process.once(request_id, (data) => {
+								resolve(data);
+							});
+						}
 					} else {
-						process.once(request_id, (data) => {
-							resolve(data);
-						});
+						data.status = "queued"
+						if (!isBrowser)
+							this.messageQueue.set(request_id, {module, data});
+						else {
+							indexeddb.createDocument({
+								database: 'socketMessageQueue',
+								collection: socket.url,
+								data: {_id: request_id, module: module, data: data}
+							})
+						}
 					}
-				} else {
-					data.status = "queued"
-					if (!isBrowser)
-						this.messageQueue.set(request_id, {module, data});
-					else {
-						indexeddb.createDocument({
-							database: 'socketMessageQueue',
-							collection: socket.url,
-							data: {_id: request_id, module: module, data: data}
-						})
-					}
-					resolve(data)
 				}
+				resolve(data)
+
 			});
 		},
 		
@@ -295,7 +303,7 @@
 			}			
 		},
 		
-		getUrl(data = {}) {
+		getUrls(data = {}) {
 			let w_protocol = ''
 			if (isBrowser) {
 				w_protocol = window.location.protocol;		
@@ -304,48 +312,72 @@
 			}
 			let protocol = w_protocol === 'http:' ? 'ws' : 'wss';
 			let port = data.port || this.config.port || '';
-			let url;
-			let host = data.host || this.config.host
-			if (host) {
-				if (host.includes("://")) {
-					url = `${host}`;
-				} else {
-					if (host.includes(":")) {
-						url = `${protocol}://${host}`;
-					} else {
-						url = `${protocol}://${host}${port}`;	
+			let url, urls = [];
+			let hosts = data.host || this.config.host		
+			let balancer = data.balancer || this.config.balancer	
+			if (hosts) {
+				// ToDo: loadbalancer type eg. mesh, closest
+				if (Array.isArray(hosts)) {
+					if (balancer != "mesh") {
+						hosts = [hosts[0]]
 					}
+				} else {
+					hosts = [hosts]
+				}
+
+				for (let host of hosts) {
+					if (host.includes("://")) {
+						url = `${host}`;
+					} else {
+						if (host.includes(":")) {
+							url = `${protocol}://${host}`;
+						} else {
+							url = `${protocol}://${host}${port}`;	
+						}
+					}
+					url = this.addSocketPath(data, url)
+					urls.push(url)
 				}
 			} else if (isBrowser) {
-				url = `${protocol}://${window.location.host}${port}/`;
+				url = [`${protocol}://${window.location.host}${port}/`];
+				url = this.addSocketPath(data, url)
+				urls.push(url)
 			} else {
 				return console.log('missing host')
 			}
 
+			return urls;
+		},
+		
+		addSocketPath(data, url) {
 			let prefix = data.prefix || 'ws';
 			let organization_id = data.organization_id || this.config.organization_id;
 			let namespace = data.namespace || '';
 			let room = data.room || '';
 			if (prefix && prefix != '')
 				url += `/${prefix}`
-			if (organization_id &&  organization_id != '')
+			if (organization_id && organization_id != '')
 				url += `/${organization_id}`
-			if (namespace &&  namespace != '')
+			if (namespace && namespace != '')
 				url += `/${namespace}`
-			if (room &&  room != '')
+			if (room && room != '')
 				url += `/${room}`
-
-			return url;
+			return url
 		},
-		
-		getSocket(data) {
-			let url = this.getUrl(data)
-			let socket = this.sockets.get(url)
-			if (!socket) {
-				this.create(data)
-				socket = {url: url}
+
+		getSockets(data) {
+			let sockets = [];
+			let urls = this.getUrls(data)
+			for (let url of urls) {
+				let socket = this.sockets.get(url)
+				if (!socket) {
+					this.create(data)
+					socket = {url: url}
+				} else {
+					sockets.push(socket)
+				}
 			}
-			return socket;	
+			return sockets;		
 		},
 			
 	}
