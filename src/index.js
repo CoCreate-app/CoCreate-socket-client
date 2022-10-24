@@ -141,10 +141,10 @@
 							if (rev_data.data.uid) {
 								self.__fireEvent(rev_data.data.uid, rev_data.data);
 							}
-							if (rev_data.data.event) {
-								self.__fireEvent(rev_data.data.event, rev_data.data);
-								return;
-							}
+							// if (rev_data.data.event) {
+							// 	self.__fireEvent(rev_data.data.event, rev_data.data);
+							// 	return;
+							// }
 							
 						}
 						const listeners = self.listeners.get(rev_data.module);
@@ -162,23 +162,23 @@
 			}
 		},
 		
-		__fireEvent(event_id, data) {
+		__fireEvent(uid, data) {
 			if (isBrowser) {
-				var event = new window.CustomEvent(event_id, {
+				var event = new window.CustomEvent(uid, {
 					detail: data
 				});
 				window.dispatchEvent(event);
 			} else {
-				process.emit(event_id, data);
+				process.emit(uid, data);
 			}
 		},
 		
 		checkMessageQueue(socket){
 			if (!isBrowser) {
 				if (this.messageQueue.size > 0){
-					for (let [request_id, {module, data}] of this.messageQueue) {
+					for (let [uid, {module, data}] of this.messageQueue) {
 						this.send(module, data)
-						this.messageQueue.delete(request_id);
+						this.messageQueue.delete(uid);
 					}
 				}
 			} else {
@@ -201,8 +201,6 @@
 		
 		send (module, data) {
 			return new Promise((resolve, reject) => {
-				const request_id = uuid.generate();
-				const clientId = this.clientId;
 				
 	            if(!data['organization_id']) {
 	                data['organization_id'] = this.config.organization_id;
@@ -216,15 +214,15 @@
 	            if(data['broadcastSender'] === undefined) {
 	                data['broadcastSender'] = true;
 	            }
+	            if(!data['uid']) {
+	                data['uid'] = uuid.generate();
+	            }
+	            if(!data['clientId']) {
+	                data['clientId'] = this.clientId;;
+	            }
 
+				const uid = data['uid'];
 				const sockets = this.getSockets(data);
-
-				const obj = {
-					module,
-					data: {...data, uid: request_id, clientId}
-				};
-				if (!isBrowser)
-				    obj.data['event'] = request_id;
 
 				let online = true;
 				if (isBrowser && !window.navigator.onLine)
@@ -232,32 +230,30 @@
 
 				for (let socket of sockets) {
 					if (socket && socket.connected && online) {
-						socket.send(JSON.stringify(obj));
+						socket.send(JSON.stringify({ module, data }));
 						data.status = "sent"
 						if (isBrowser) {
-							window.addEventListener(request_id, function(event) {
+							window.addEventListener(uid, function(event) {
 								resolve(event.detail);
 							}, { once: true });
 						} else {
-							process.once(request_id, (data) => {
+							process.once(uid, (data) => {
 								resolve(data);
 							});
 						}
 					} else {
 						data.status = "queued"
 						if (!isBrowser)
-							this.messageQueue.set(request_id, {module, data});
+							this.messageQueue.set(uid, {module, data});
 						else {
 							indexeddb.createDocument({
 								database: 'socketMessageQueue',
 								collection: socket.url,
-								data: {_id: request_id, module: module, data: data}
+								data: { _id: uid, module: module, data: data }
 							})
 						}
 					}
 				}
-				resolve(data)
-
 			});
 		},
 		
