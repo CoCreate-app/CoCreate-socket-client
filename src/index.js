@@ -135,17 +135,15 @@
 						}
 						let rev_data = JSON.parse(data.data);
 						if (rev_data.module != 'connect' && typeof rev_data.data == 'object')
+						if (rev_data.data.status == "received locally")
+							rev_data.data.status = "sync"
+						else
 							rev_data.data.status = "received"
 	
 						if (rev_data.data) {
 							if (rev_data.data.uid) {
 								self.__fireEvent(rev_data.data.uid, rev_data.data);
 							}
-							// if (rev_data.data.event) {
-							// 	self.__fireEvent(rev_data.data.event, rev_data.data);
-							// 	return;
-							// }
-							
 						}
 						const listeners = self.listeners.get(rev_data.module);
 						if (!listeners) {
@@ -227,11 +225,12 @@
 				let online = true;
 				if (isBrowser && !window.navigator.onLine)
 					online = false
-
+				
 				for (let socket of sockets) {
 					if (socket && socket.connected && online) {
 						socket.send(JSON.stringify({ module, data }));
-						data.status = "sent"
+						if (data.status != "received locally")
+							data.status = "sent"
 						if (isBrowser) {
 							window.addEventListener(uid, function(event) {
 								resolve(event.detail);
@@ -242,7 +241,8 @@
 							});
 						}
 					} else {
-						data.status = "queued"
+						if (data.status != "received locally")
+							data.status = "queued"
 						if (!isBrowser)
 							this.messageQueue.set(uid, {module, data});
 						else {
