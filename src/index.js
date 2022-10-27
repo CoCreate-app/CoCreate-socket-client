@@ -81,7 +81,11 @@
 					return;
 	
 				try {
-					socket = new WebSocket(url);
+					let token = null;
+					if (isBrowser && window.localStorage) {
+						token = window.localStorage.getItem("token");
+					}
+					socket = new WebSocket(url, token)					
 					socket.clientId = this.clientId;
 					socket.organization_id = config.organization_id;
 					socket.user_id = config.user_id;
