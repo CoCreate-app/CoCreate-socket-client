@@ -203,25 +203,27 @@
 		
 		send (module, data) {
 			return new Promise((resolve, reject) => {
-				
-	            if(!data['organization_id']) {
+				if (!data['timeStamp'])
+					data['timeStamp'] = new Date().toISOString()
+
+	            if(!data['organization_id'])
 	                data['organization_id'] = this.config.organization_id;
-	            }
-	            if(!data['apiKey']) {
+	            
+	            if(!data['apiKey'])
 	                data['apiKey'] = this.config.apiKey;
-	            }
-				if(!data['user_id']) {
+	        
+				if(!data['user_id'])
 	                data['user_id'] = this.config.user_id;
-	            }
-	            if(data['broadcastSender'] === undefined) {
+	        
+	            if(data['broadcastSender'] === undefined)
 	                data['broadcastSender'] = true;
-	            }
-	            if(!data['uid']) {
+	            
+	            if(!data['uid'])
 	                data['uid'] = uuid.generate();
-	            }
-	            if(!data['clientId']) {
+	            
+	            if(!data['clientId'])
 	                data['clientId'] = this.clientId;;
-	            }
+	            
 
 				const uid = data['uid'];
 				const sockets = this.getSockets(data);
