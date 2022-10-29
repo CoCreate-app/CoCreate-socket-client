@@ -189,12 +189,12 @@
 					collection: socket.url,
 					filter: {}
 				}).then((data) =>{
-					if (data.data)
-						for (let Data of data.data) {
-							this.send(Data.module, Data.data)
+					if (data.document)
+						for (let Data of data.document) {
+							this.send(Data.module, Data.document)
 							Data.database = 'socketMessageQueue';
 							Data.collection = socket.url
-							Data.data = {_id: Data._id}
+							Data.document = {_id: Data._id}
 							indexeddb.deleteDocument(Data)
 						}
 				})
@@ -255,7 +255,7 @@
 							indexeddb.createDocument({
 								database: 'socketMessageQueue',
 								collection: socket.url,
-								data: { _id: uid, module: module, data: data }
+								document: { _id: uid, module: module, document: data }
 							})
 						}
 					}
