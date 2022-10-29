@@ -18,6 +18,7 @@
 
 	const delay = 1000 + Math.floor(Math.random() * 3000)
     const CoCreateSocketClient = {
+		connected: false,
 		sockets: new Map(),
 		listeners: new Map(),
 		messageQueue:  new Map(),
@@ -85,7 +86,8 @@
 					if (isBrowser && window.localStorage) {
 						token = window.localStorage.getItem("token");
 					}
-					socket = new WebSocket(url, token)					
+					socket = new WebSocket(url, token)
+					socket.connected = false;					
 					socket.clientId = this.clientId;
 					socket.organization_id = config.organization_id;
 					socket.user_id = config.user_id;
@@ -100,6 +102,7 @@
 				}
 
 				socket.onopen = function(event) {
+					this.connected = true
 					socket.connected = true;
 					self.currentReconnectDelay = self.initialReconnectDelay
 					self.checkMessageQueue(socket);
