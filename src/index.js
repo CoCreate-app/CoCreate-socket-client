@@ -52,14 +52,17 @@
 						indexeddb.generateDB(config)
 					}
 					window.localStorage.setItem('organization_id', config.organization_id) 
+					window.CoCreateConfig.organization_id = config.organization_id						
 				}
 				if (!config.apiKey) {
 					config.apiKey = window.CoCreateConfig.apiKey || window.localStorage.getItem('apiKey') || uuid.generate(32)
-					window.localStorage.setItem('apiKey', config.apiKey) 				
+					window.localStorage.setItem('apiKey', config.apiKey) 
+					window.CoCreateConfig.apiKey = config.apiKey						
 				}
 				if (!config.host) {
 					config.host = window.CoCreateConfig.host || window.localStorage.getItem('host') || window.location.hostname
-					window.localStorage.setItem('host', config.host) 				
+					window.localStorage.setItem('host', config.host)
+					window.CoCreateConfig.host = config.host		
 				}
 				// if (!config.port) {
 				// 	config.port = window.CoCreateConfig.port || window.localStorage.getItem('port') || ''
@@ -69,8 +72,6 @@
 				// 	config.prefix = "ws"; // previously 'crud'
 				// }
 				
-				// this.config = config
-				window.CoCreateConfig = config;
 			}
 						
 			this.config = config
