@@ -64,6 +64,10 @@
 					window.localStorage.setItem('host', config.host)
 					window.CoCreateConfig.host = config.host		
 				}
+				if (!config.user_id) {
+					config.user_id = window.CoCreateConfig.user_id || window.localStorage.getItem('user_id') || ''
+					window.localStorage.setItem('user_id', config.user_id) 				
+				}
 				// if (!config.port) {
 				// 	config.port = window.CoCreateConfig.port || window.localStorage.getItem('port') || ''
 				// 	window.localStorage.setItem('port', config.port) 				
