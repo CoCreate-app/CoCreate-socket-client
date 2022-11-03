@@ -107,7 +107,7 @@
 				}
 
 				socket.onopen = function(event) {
-					this.connected = true
+					self.connected = true
 					socket.connected = true;
 					self.currentReconnectDelay = self.initialReconnectDelay
 					self.checkMessageQueue(socket);
