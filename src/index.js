@@ -146,24 +146,22 @@
 							}
 						}
 						let rev_data = JSON.parse(data.data);
-						if (rev_data.module != 'connect' && typeof rev_data.data == 'object')
-						if (rev_data.data.status == "received locally")
-							rev_data.data.status = "sync"
-						else
+						if (rev_data.module != 'connect' && typeof rev_data.data == 'object') {
 							rev_data.data.status = "received"
-	
-						if (rev_data.data) {
-							if (rev_data.data.uid) {
-								self.__fireEvent(rev_data.data.uid, rev_data.data);
+		
+							if (rev_data.data) {
+								if (rev_data.data.uid) {
+									self.__fireEvent(rev_data.data.uid, rev_data.data);
+								}
 							}
+							const listeners = self.listeners.get(rev_data.module);
+							if (!listeners) {
+								return;
+							}
+							listeners.forEach(listener => {
+								listener(rev_data.data, url);
+							});
 						}
-						const listeners = self.listeners.get(rev_data.module);
-						if (!listeners) {
-							return;
-						}
-						listeners.forEach(listener => {
-							listener(rev_data.data, url);
-						});
 					} catch (e) {
 						console.log(e);
 					}
@@ -243,8 +241,7 @@
 				for (let socket of sockets) {
 					if (socket && socket.connected && online) {
 						socket.send(JSON.stringify({ module, data }));
-						if (data.status != "received locally")
-							data.status = "sent"
+						data.status = "sent"
 						if (isBrowser) {
 							window.addEventListener(uid, function(event) {
 								resolve(event.detail);
@@ -255,8 +252,7 @@
 							});
 						}
 					} else {
-						if (data.status != "received locally")
-							data.status = "queued"
+						data.status = "queued"
 						if (!isBrowser)
 							this.messageQueue.set(uid, {module, data});
 						else {
