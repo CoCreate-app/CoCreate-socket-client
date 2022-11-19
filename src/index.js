@@ -256,11 +256,22 @@
 						if (!isBrowser)
 							this.messageQueue.set(uid, {module, data});
 						else {
+							let message = { 
+								module, 
+								data: {
+									database: 'socketMessageQueue',
+									collection: socket.url,
+									document: { _id: uid },
+									clientId: this.clientId
+								}
+							}
+							window.localStorage.setItem('crud', JSON.stringify(message))
+
 							indexeddb.createDocument({
 								database: 'socketMessageQueue',
 								collection: socket.url,
 								document: { _id: uid, module: module, document: data }
-							})
+							})			
 						}
 					}
 				}
@@ -384,9 +395,33 @@
 				}
 			}
 			return sockets;		
-		},
+		}
 			
 	}
+
+	if (isBrowser) {
+		window.onstorage = (e) => {
+			if (e.key == 'crud') {
+				let Data = JSON.parse(e.newValue)
+				if (Data.module !== 'readDocument' && CoCreateSocketClient.clientId !== Data.clientId) {
+					indexeddb.readDocument(Data.data).then((data) => {
+						if (data.document[0]) {
+							console.log('offline crud event', data.document[0].document)
+							const listeners = CoCreateSocketClient.listeners.get(Data.module);
+							if (listeners) {
+							    listeners.forEach(listener => {
+							        listener(data.document[0].document, Data.module);
+							    });
+							}
+							
+						}
+					})		
+				}
+			}
+		};  
+	}          
+
+
     return CoCreateSocketClient;
 })
 );
