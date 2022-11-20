@@ -406,7 +406,6 @@
 				if (Data.module !== 'readDocument' && CoCreateSocketClient.clientId !== Data.clientId) {
 					indexeddb.readDocument(Data.data).then((data) => {
 						if (data.document[0]) {
-							console.log('offline crud event', data.document[0].document)
 							const listeners = CoCreateSocketClient.listeners.get(Data.module);
 							if (listeners) {
 							    listeners.forEach(listener => {
