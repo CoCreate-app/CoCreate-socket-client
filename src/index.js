@@ -22,6 +22,7 @@
 		sockets: new Map(),
 		listeners: new Map(),
 		messageQueue:  new Map(),
+		configQueue:  new Map(),
 		saveFileName:  '',
 		clientId: uuid.generate(8),	
 		config: {},
@@ -36,9 +37,6 @@
 		create (config) {
 			const self = this;
 			if (isBrowser) {
-				if (!window.navigator.onLine)
-					window.addEventListener("online", this.online);
-
 				if (!config)
 					config = {};
 				if (!window.CoCreateConfig)
@@ -75,16 +73,27 @@
 				// if (!config.prefix) {
 				// 	config.prefix = "ws"; // previously 'crud'
 				// }
+
+				if (!window.navigator.onLine && !this.configQueue.has(config)) {
+					// ToDo: create a key string using host, org_id tp prevent duplicate events
+					// this.configQueue.set(config,'')
+					const online = () => {
+						window.removeEventListener("online", online)
+						// self.configQueue.delete(config)
+						self.create(config)
+					}
+					window.addEventListener("online", online);
+				}
 				
 			}
 						
 			this.config = config
-			
+
 			const urls = this.getUrls(config);
 			for (let url of urls){
 				let socket = this.sockets.get(url);
 				if (socket) 
-					return;
+					return;	
 	
 				try {
 					let token = null;
@@ -221,8 +230,10 @@
 				if(!data['user_id'])
 	                data['user_id'] = this.config.user_id;
 	        
-	            if(data['broadcastSender'] === undefined)
+	            if(data['broadcastSender'] === undefined || data['broadcastSender'] === 'true')
 	                data['broadcastSender'] = true;
+				else if (data['broadcastSender'] === 'false')
+					data['broadcastSender'] = true;
 	            
 	            if(!data['uid'])
 	                data['uid'] = uuid.generate();
@@ -265,13 +276,16 @@
 									clientId: this.clientId
 								}
 							}
-							window.localStorage.setItem('crud', JSON.stringify(message))
 
 							indexeddb.createDocument({
 								database: 'socketMessageQueue',
 								collection: socket.url,
 								document: { _id: uid, module: module, document: data }
-							})			
+							}).then(() => {
+								window.localStorage.setItem('localSocketMessage', JSON.stringify(message))
+							})
+							
+
 						}
 					}
 				}
@@ -294,11 +308,6 @@
 			}
 		},
 
-		online (config) {
-			window.removeEventListener("online", this.online)
-			this.create(config)
-		},
-
 		reconnect(config) {
 			let self = this;
 
@@ -313,7 +322,6 @@
 		
 		destroy(socket) {
 			if (socket) {
-				this.sockets.delete(socket.url);
 				socket.onerror = socket.onopen = socket.onclose = null;
 				socket.close();
 				socket = null;
@@ -389,7 +397,9 @@
 				let socket = this.sockets.get(url)
 				if (!socket) {
 					this.create(data)
-					socket = {url: url}
+					socket = this.sockets.get(url)
+					if (socket)
+						sockets.push(socket)
 				} else {
 					sockets.push(socket)
 				}
@@ -401,11 +411,13 @@
 
 	if (isBrowser) {
 		window.onstorage = (e) => {
-			if (e.key == 'crud') {
+			if (e.key == 'localSocketMessage') {
 				let Data = JSON.parse(e.newValue)
-				if (Data.module !== 'readDocument' && CoCreateSocketClient.clientId !== Data.clientId) {
+				if (Data.module !== 'readDocument' && CoCreateSocketClient.clientId !== Data.data.clientId && Data.data.broadcastSender !== false) {
 					indexeddb.readDocument(Data.data).then((data) => {
 						if (data.document[0]) {
+							if (Data.module == 'sendMessage')
+								Data.module = data.document[0].document.message
 							const listeners = CoCreateSocketClient.listeners.get(Data.module);
 							if (listeners) {
 							    listeners.forEach(listener => {
