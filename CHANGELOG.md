@@ -1,3 +1,10 @@
+## [1.10.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.10.3...v1.10.4) (2022-11-21)
+
+
+### Bug Fixes
+
+* if status = queued will not add eventListener ([53f5440](https://github.com/CoCreate-app/CoCreate-socket-client/commit/53f54401ed94c60e41107f90d5b3420c57c1522b))
+
 ## [1.10.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.10.2...v1.10.3) (2022-11-21)
 
 
