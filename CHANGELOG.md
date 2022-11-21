@@ -1,3 +1,27 @@
+# [1.10.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.9.13...v1.10.0) (2022-11-21)
+
+
+### Bug Fixes
+
+* add timeStamp to socket message ([a804e79](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a804e7975ff9e9f304c280fd76c24cf8157f91da))
+* attach token to websocket ([654c065](https://github.com/CoCreate-app/CoCreate-socket-client/commit/654c06517d7fa1ddd192989379471ba9230af98f))
+* depreciate receiveLocally and sync status ([296d07f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/296d07fd9fc825e1dd2fd66c74446f32e66ac185))
+* handling of message status ([d640416](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d640416338016bd699933229a44a76d98565e157))
+* improved offline support ([f6ad32a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/f6ad32ae33fce3be88f6a19d566fdd1e95d0ca97))
+* mutate CoCreateConfig instead of overwriting ([b212f34](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b212f347c2e9517932150cda711f0b04f19bd567))
+* removed console.logs ([f1c3ad7](https://github.com/CoCreate-app/CoCreate-socket-client/commit/f1c3ad7d0b5c54d0eaa089dc8bf695455d6db652))
+* renamed data.data to data.document ([b25a0fc](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b25a0fc52b403f71ff229c54f9ab9da7af0f5420))
+* root factory returns default object ([d9671ca](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d9671ca826f7273382ce4c0ed9cf1907982a1732))
+* set user_id in config ([c8d62fb](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c8d62fb5937be4928a88d26a60186b6a23bf099a))
+* this.connected ([af81adb](https://github.com/CoCreate-app/CoCreate-socket-client/commit/af81adb8ec4f2b7f76ceec7b2217dd8eb14994cb))
+* typo self.connected ([29f0afa](https://github.com/CoCreate-app/CoCreate-socket-client/commit/29f0afa8c6a6014a08df13f21e08e2368af7a808))
+* uid and clientId per message ([fad1f8d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/fad1f8db002428f0b1f6192aad6231cd963e4628))
+
+
+### Features
+
+* if offline send message to other tabs, windows and iframes ([556d4c0](https://github.com/CoCreate-app/CoCreate-socket-client/commit/556d4c0c60079e5e7f567e81f4cbd05bebb03987))
+
 ## [1.9.13](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.9.12...v1.9.13) (2022-10-02)
 
 
