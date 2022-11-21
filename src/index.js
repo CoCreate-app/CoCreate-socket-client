@@ -250,9 +250,9 @@
 					online = false
 				
 				for (let socket of sockets) {
-					if (socket && socket.connected && online) {
-						socket.send(JSON.stringify({ module, data }));
-						data.status = "sent"
+					// ToDo: uid per each socket?
+					let status = data.status
+					if (status != "queued") {
 						if (isBrowser) {
 							window.addEventListener(uid, function(event) {
 								resolve(event.detail);
@@ -262,6 +262,11 @@
 								resolve(data);
 							});
 						}
+					}
+
+					if (socket && socket.connected && online) {
+						socket.send(JSON.stringify({ module, data }));
+						data.status = "sent"
 					} else {
 						data.status = "queued"
 						if (!isBrowser)
@@ -285,7 +290,6 @@
 								window.localStorage.setItem('localSocketMessage', JSON.stringify(message))
 							})
 							
-
 						}
 					}
 				}
