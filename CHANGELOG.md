@@ -1,3 +1,10 @@
+## [1.10.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.10.5...v1.10.6) (2022-11-22)
+
+
+### Bug Fixes
+
+* apply src: {{source}} to CoCreate.config ([c70324b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c70324bbf52602a6a607d90d9a0bf182888ecedc))
+
 ## [1.10.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.10.4...v1.10.5) (2022-11-21)
 
 
