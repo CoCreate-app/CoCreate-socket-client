@@ -13,7 +13,7 @@
         root.returnExports = factory(true, WebSocket, Blob, root["@cocreate/uuid"], root["@cocreate/indexeddb"]);
   }
 }(typeof self !== 'undefined' ? self : this, function (isBrowser, WebSocket, Blob, uuid, indexeddb) {
-	if(indexeddb && indexeddb.default)
+	if (indexeddb && indexeddb.default)
 		indexeddb = indexeddb.default
 
 	const delay = 1000 + Math.floor(Math.random() * 3000)
@@ -236,10 +236,10 @@
 				else 
 					data['broadcastSender'] = true;
 	            
-	            if(!data['uid'])
+	            if (!data['uid'])
 	                data['uid'] = uuid.generate();
 	            
-	            if(!data['clientId'])
+	            if (!data['clientId'])
 	                data['clientId'] = this.clientId;;
 	            
 
@@ -333,7 +333,7 @@
 			let self = this;
 
 			setTimeout(() => {
-				if(!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
+				if (!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
 					self.currentReconnectDelay*=2;
 					self.create(config);
 				}
