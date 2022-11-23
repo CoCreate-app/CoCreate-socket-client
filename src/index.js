@@ -206,7 +206,8 @@
 				}).then((data) =>{
 					if (data.document)
 						for (let Data of data.document) {
-							this.send(Data.module, Data.document)
+							if (Data.document.status !== 'sent')
+								this.send(Data.module, Data.document)
 							Data.database = 'socketMessageQueue';
 							Data.collection = socket.url
 							Data.document = {_id: Data._id}
@@ -221,18 +222,18 @@
 				if (!data['timeStamp'])
 					data['timeStamp'] = new Date().toISOString()
 
-	            if(!data['organization_id'])
+	            if (!data['organization_id'])
 	                data['organization_id'] = this.config.organization_id;
 	            
-	            if(!data['apiKey'])
+	            if (!data['apiKey'])
 	                data['apiKey'] = this.config.apiKey;
 	        
-				if(!data['user_id'])
+				if (!data['user_id'])
 	                data['user_id'] = this.config.user_id;
 	        
-	            if(data['broadcastSender'] === undefined || data['broadcastSender'] === 'true')
-	                data['broadcastSender'] = true;
-				else if (data['broadcastSender'] === 'false')
+	            if (data['broadcastSender'] === false || data['broadcastSender'] === 'false')
+	                data['broadcastSender'] = false;
+				else 
 					data['broadcastSender'] = true;
 	            
 	            if(!data['uid'])
@@ -271,27 +272,43 @@
 						data.status = "queued"
 						if (!isBrowser)
 							this.messageQueue.set(uid, {module, data});
-						else {
-							let message = { 
-								module, 
-								data: {
-									database: 'socketMessageQueue',
-									collection: socket.url,
-									document: { _id: uid },
-									clientId: this.clientId
+					}
+
+					if (isBrowser && (data.status == "queued" || data.broadcastBrowser != false || data.broadcastBrowser != 'false')) {
+						const self = this
+						indexeddb.createDocument({
+							database: 'socketMessageQueue',
+							collection: socket.url,
+							document: { _id: uid, module: module, document: data }
+						}).then(() => {
+							if (module !== 'readDocument') {
+								if (data.broadcastSender !== false)
+									self.sendLocalMessage(module, data)
+								if (data.broadcastBrowser != false || data.broadcastBrowser != 'false') {
+									let browserMessage = { 
+										module, 
+										data: {
+											database: 'socketMessageQueue',
+											collection: socket.url,
+											document: { _id: uid },
+											clientId: this.clientId
+										}
+									}
+									window.localStorage.setItem('localSocketMessage', JSON.stringify(browserMessage))
 								}
 							}
-
-							indexeddb.createDocument({
+							indexeddb.readDocument({
 								database: 'socketMessageQueue',
 								collection: socket.url,
-								document: { _id: uid, module: module, document: data }
+								document: {_id: uid}
 							}).then(() => {
-								window.localStorage.setItem('localSocketMessage', JSON.stringify(message))
-							})
-							
-						}
+								if (data.document && data.document[0] && data.document[0].db == 'indexeddb') {
+									resolve(data);
+								}
+							})			
+						})
 					}
+
 				}
 			});
 		},
@@ -409,29 +426,31 @@
 				}
 			}
 			return sockets;		
-		}
-			
+		},
+		
+		sendLocalMessage(module, data) {
+			if (module == 'sendMessage')
+				module = data.message
+			const listeners = this.listeners.get(module);
+			if (listeners) {
+				listeners.forEach(listener => {
+					listener(data, module);
+				});
+			}	
+		}	
 	}
 
 	if (isBrowser) {
 		window.onstorage = (e) => {
 			if (e.key == 'localSocketMessage') {
 				let Data = JSON.parse(e.newValue)
-				if (Data.module !== 'readDocument' && CoCreateSocketClient.clientId !== Data.data.clientId && Data.data.broadcastSender !== false) {
-					indexeddb.readDocument(Data.data).then((data) => {
-						if (data.document[0]) {
-							if (Data.module == 'sendMessage')
-								Data.module = data.document[0].document.message
-							const listeners = CoCreateSocketClient.listeners.get(Data.module);
-							if (listeners) {
-							    listeners.forEach(listener => {
-							        listener(data.document[0].document, Data.module);
-							    });
-							}
-							
-						}
-					})		
-				}
+				
+				indexeddb.readDocument(Data.data).then((data) => {
+					if (data.document[0]) {
+						CoCreateSocketClient.sendLocalMessage(data.document[0].module, data.document[0].document);	
+					}
+				})			
+	
 			}
 		};  
 	}          
