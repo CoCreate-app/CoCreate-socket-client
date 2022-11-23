@@ -1,3 +1,10 @@
+# [1.11.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.10.7...v1.11.0) (2022-11-23)
+
+
+### Features
+
+* broadcastBrowser true | false and sendLocalMessage. fires socket even in other Windows, tabs and iframes regardless of online status ([59b5927](https://github.com/CoCreate-app/CoCreate-socket-client/commit/59b592707ead67c42947544b6fc1e19d6a08cbf6))
+
 ## [1.10.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.10.6...v1.10.7) (2022-11-22)
 
 
