@@ -266,6 +266,7 @@
 					}
 
 					if (socket && socket.connected && online) {
+						delete data.status
 						socket.send(JSON.stringify({ module, data }));
 						data.status = "sent"
 					} else {
