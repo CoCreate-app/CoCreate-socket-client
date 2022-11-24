@@ -231,10 +231,11 @@
 				if (!data['user_id'])
 	                data['user_id'] = this.config.user_id;
 	        
-	            if (data['broadcastSender'] === false || data['broadcastSender'] === 'false')
+	            if (data['broadcast'] === 'false')
+	                data['broadcast'] = false;
+
+	            if (data['broadcastSender'] === 'false')
 	                data['broadcastSender'] = false;
-				else 
-					data['broadcastSender'] = true;
 	            
 	            if (!data['uid'])
 	                data['uid'] = uuid.generate();
