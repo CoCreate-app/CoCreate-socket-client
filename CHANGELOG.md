@@ -1,3 +1,13 @@
+## [1.11.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.11.2...v1.11.3) (2022-11-25)
+
+
+### Bug Fixes
+
+* bump dependencies ([22349b5](https://github.com/CoCreate-app/CoCreate-socket-client/commit/22349b51a8b01eda92c5ba7e07abfd3be74d22c5))
+* CoCreate.socket.default removed bug causing default object ([7dd0972](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7dd097224d9a018385c2509aaeae385657a65f26))
+* delete data.status prior to sending ([f0e15e0](https://github.com/CoCreate-app/CoCreate-socket-client/commit/f0e15e03681a57d53e94ae75eab2d03fc847d9cb))
+* if broadcast false is ting convert to false boolean ([ccd9030](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ccd9030ac1aadb92668642f0cd3cc52ffa69d08b))
+
 ## [1.11.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.11.1...v1.11.2) (2022-11-24)
 
 
