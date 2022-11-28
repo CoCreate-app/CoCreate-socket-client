@@ -1,3 +1,10 @@
+## [1.11.10](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.11.9...v1.11.10) (2022-11-28)
+
+
+### Bug Fixes
+
+* bump indexeddb ([48890b5](https://github.com/CoCreate-app/CoCreate-socket-client/commit/48890b5f15809bd17d2aec370d6b827824a30c7c))
+
 ## [1.11.9](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.11.8...v1.11.9) (2022-11-28)
 
 
