@@ -2,7 +2,7 @@
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
         define(["@cocreate/uuid", "@cocreate/indexeddb"], function(uuid, indexeddb) {
-        	return factory(true, WebSocket, Blob, uuid, indexeddb)
+        	return factory(true, WebSocket, Blob, uuid, indexeddb = indexeddb.default)
         });
     } else if (typeof module === 'object' && module.exports) {
         const ws = require("ws")
@@ -274,7 +274,7 @@
 							this.messageQueue.set(uid, {module, data});
 					}
 
-					if (isBrowser && (data.status == "queued" || data.broadcastBrowser != false || data.broadcastBrowser != 'false')) {
+					if (isBrowser && (data.status == "queued" || data.broadcastBrowser != false && data.broadcastBrowser != 'false')) {
 						const self = this
 						indexeddb.createDocument({
 							database: 'socketMessageQueue',
