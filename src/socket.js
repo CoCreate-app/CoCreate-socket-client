@@ -161,13 +161,26 @@
 									self.__fireEvent(rev_data.data.uid, rev_data.data);
 								}
 							}
-							const listeners = self.listeners.get(rev_data.module);
-							if (!listeners) {
-								return;
+							
+							if (isBrowser && rev_data.data.uid) {
+								indexeddb.readDocument({
+									database: 'socketMessageQueue',
+									collection: socket.url,
+									document: {_id: rev_data.data.uid}
+								}).then((message) => {
+									if (message.document && message.document[0]) {
+										indexeddb.deleteDocument(message)
+										if (rev_data.data.broadcastBrowser == 'once')
+											return
+									}
+									
+									self.__fireListeners(rev_data.module, rev_data.data)
+										
+								})
+							} else {
+								self.__fireListeners(rev_data.module, rev_data.data)
 							}
-							listeners.forEach(listener => {
-								listener(rev_data.data, url);
-							});
+						
 						}
 					} catch (e) {
 						console.log(e);
@@ -177,6 +190,16 @@
 			}
 		},
 		
+		__fireListeners(action, data) {
+			const listeners = this.listeners.get(action);
+			if (!listeners) {
+				return;
+			}
+			listeners.forEach(listener => {
+				listener(data, action);
+			});
+		},
+
 		__fireEvent(uid, data) {
 			if (isBrowser) {
 				var event = new window.CustomEvent(uid, {
@@ -279,7 +302,7 @@
 						indexeddb.createDocument({
 							database: 'socketMessageQueue',
 							collection: socket.url,
-							document: { _id: uid, module: module, document: data }
+							document: { _id: uid, module, document: data }
 						}).then(() => {
 							if (module !== 'readDocument') {
 								if (data.broadcastSender !== false)
@@ -428,15 +451,10 @@
 			return sockets;		
 		},
 		
-		sendLocalMessage(module, data) {
-			if (module == 'sendMessage')
-				module = data.message
-			const listeners = this.listeners.get(module);
-			if (listeners) {
-				listeners.forEach(listener => {
-					listener(data, module);
-				});
-			}	
+		sendLocalMessage(action, data) {
+			if (action == 'sendMessage')
+				action = data.message
+			this.__fireListeners(action, data)
 		}	
 	}
 
