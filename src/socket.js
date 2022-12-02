@@ -138,47 +138,48 @@
 					if (isBrowser && !window.navigator.onLine)
 						console.log("offline");
 					else
-						console.log("connection failed");
+						console.log("connection failed", event);
 					
 					self.destroy(socket);
 					self.reconnect(config);
 				};
 		
-				socket.onmessage = function(data) {
+				socket.onmessage = function(message) {
 					try {
 						if (isBrowser && window.Blob) {
-							if (data.data instanceof Blob) {
-								self.saveFile(data.data);
+							if (message.data instanceof Blob) {
+								self.saveFile(message.data);
 								return;
 							}
 						}
-						let rev_data = JSON.parse(data.data);
-						if (rev_data.module != 'connect' && typeof rev_data.data == 'object') {
-							rev_data.data.status = "received"
+						let {action, data} = JSON.parse(message.data);
+
+						if (action != 'connect' && typeof data == 'object') {
+							data.status = "received"
 		
-							if (rev_data.data) {
-								if (rev_data.data.uid) {
-									self.__fireEvent(rev_data.data.uid, rev_data.data);
+							if (data) {
+								if (data.uid) {
+									self.__fireEvent(data.uid, data);
 								}
 							}
-							
-							if (isBrowser && rev_data.data.uid) {
+
+							if (isBrowser && data.uid) {
 								indexeddb.readDocument({
 									database: 'socketMessageQueue',
 									collection: socket.url,
-									document: {_id: rev_data.data.uid}
+									document: {_id: data.uid}
 								}).then((message) => {
 									if (message.document && message.document[0]) {
 										indexeddb.deleteDocument(message)
-										if (rev_data.data.broadcastBrowser == 'once')
+										if (data.broadcastBrowser == 'once')
 											return
 									}
 									
-									self.__fireListeners(rev_data.module, rev_data.data)
+									self.__fireListeners(action, data)
 										
 								})
 							} else {
-								self.__fireListeners(rev_data.module, rev_data.data)
+								self.__fireListeners(action, data)
 							}
 						
 						}
@@ -196,7 +197,7 @@
 				return;
 			}
 			listeners.forEach(listener => {
-				listener(data, action);
+				listener(data);
 			});
 		},
 
@@ -214,8 +215,8 @@
 		checkMessageQueue(socket){
 			if (!isBrowser) {
 				if (this.messageQueue.size > 0){
-					for (let [uid, {module, data}] of this.messageQueue) {
-						this.send(module, data)
+					for (let [uid, {action, data}] of this.messageQueue) {
+						this.send(action, data)
 						this.messageQueue.delete(uid);
 					}
 				}
@@ -223,22 +224,22 @@
 				indexeddb.readDocument({
 					database: 'socketMessageQueue',
 					collection: socket.url,
-					filter: {}
 				}).then((data) =>{
 					if (data.document)
 						for (let Data of data.document) {
-							if (Data.document.status !== 'sent')
-								this.send(Data.module, Data.document)
-							Data.database = 'socketMessageQueue';
-							Data.collection = socket.url
-							Data.document = {_id: Data._id}
-							indexeddb.deleteDocument(Data)
+							if (Data.document.status == 'queued') {
+								this.send(Data.action, Data.document)
+								Data.database = 'socketMessageQueue';
+								Data.collection = socket.url
+								Data.document = {_id: Data._id}
+								indexeddb.deleteDocument(Data)
+							}
 						}
 				})
 			}
 		},
 		
-		send (module, data) {
+		send (action, data) {
 			return new Promise((resolve, reject) => {
 				if (!data['timeStamp'])
 					data['timeStamp'] = new Date().toISOString()
@@ -252,18 +253,27 @@
 				if (!data['user_id'])
 	                data['user_id'] = this.config.user_id;
 	        
-	            if (data['broadcast'] === 'false')
+	            if (data['broadcast'] === 'false' || data['broadcast'] === false)
 	                data['broadcast'] = false;
+				else
+					data['broadcast'] = true;
 
-	            if (data['broadcastSender'] === 'false')
+	            if (data['broadcastSender'] === 'false' || data['broadcastSender'] === false)
 	                data['broadcastSender'] = false;
-	            
+				else
+					data['broadcastSender'] = true;
+
 	            if (!data['uid'])
 	                data['uid'] = uuid.generate();
-	            
+	
 	            if (!data['clientId'])
 	                data['clientId'] = this.clientId;;
-	            
+
+	            if (!data['namespace'])
+	                delete data.namespace;
+
+	            if (!data['room'])
+	                delete data.room;
 
 				const uid = data['uid'];
 				const sockets = this.getSockets(data);
@@ -289,12 +299,12 @@
 
 					if (socket && socket.connected && online) {
 						delete data.status
-						socket.send(JSON.stringify({ module, data }));
+						socket.send(JSON.stringify({ action, data }));
 						data.status = "sent"
 					} else {
 						data.status = "queued"
 						if (!isBrowser)
-							this.messageQueue.set(uid, {module, data});
+							this.messageQueue.set(uid, {action, data});
 					}
 
 					if (isBrowser && (data.status == "queued" || data.broadcastBrowser != false && data.broadcastBrowser != 'false')) {
@@ -302,14 +312,14 @@
 						indexeddb.createDocument({
 							database: 'socketMessageQueue',
 							collection: socket.url,
-							document: { _id: uid, module, document: data }
+							document: { _id: uid, action, document: data }
 						}).then(() => {
-							if (module !== 'readDocument') {
+							if (action !== 'readDocument') {
 								if (data.broadcastSender !== false)
-									self.sendLocalMessage(module, data)
+									self.sendLocalMessage(action, data)
 								if (data.broadcastBrowser != false || data.broadcastBrowser != 'false') {
 									let browserMessage = { 
-										module, 
+										action, 
 										data: {
 											database: 'socketMessageQueue',
 											collection: socket.url,
@@ -344,11 +354,11 @@
 			}
 		},
 	
-		listen(type, callback) {
-			if (!this.listeners.get(type)) {
-				this.listeners.set(type, [callback]);
+		listen(action, callback) {
+			if (!this.listeners.get(action)) {
+				this.listeners.set(action, [callback]);
 			} else {
-				this.listeners.get(type).push(callback);
+				this.listeners.get(action).push(callback);
 			}
 		},
 
@@ -465,7 +475,7 @@
 				
 				indexeddb.readDocument(Data.data).then((data) => {
 					if (data.document[0]) {
-						CoCreateSocketClient.sendLocalMessage(data.document[0].module, data.document[0].document);	
+						CoCreateSocketClient.sendLocalMessage(data.document[0].action, data.document[0].document);	
 					}
 				})			
 	
