@@ -1,3 +1,17 @@
+# [1.12.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.11.11...v1.12.0) (2022-12-02)
+
+
+### Bug Fixes
+
+* bump @cocreate/indexeddb ([76a5665](https://github.com/CoCreate-app/CoCreate-socket-client/commit/76a5665d5ac180140670d1eb7793ece6e5b6fff3))
+* indexeddb = indexeddb.default ([390af17](https://github.com/CoCreate-app/CoCreate-socket-client/commit/390af1720ac5d21cbc2c294b40cd5353c369e6ad))
+* renamed module to action ([676526a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/676526afd5be4bf29bb83925a4db2496c4740254))
+
+
+### Features
+
+* broadcastBrowser once, prevents duplicate message and prioritizes the local messge event ([67426f6](https://github.com/CoCreate-app/CoCreate-socket-client/commit/67426f65a5c39c28f9af10ea4209f6cf42e33287))
+
 ## [1.11.11](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.11.10...v1.11.11) (2022-11-28)
 
 
