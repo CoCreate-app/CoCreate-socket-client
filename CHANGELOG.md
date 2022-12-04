@@ -1,3 +1,15 @@
+# [1.13.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.12.1...v1.13.0) (2022-12-04)
+
+
+### Bug Fixes
+
+* bump @cocreate/indexeddb ([69f1f0f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/69f1f0fcea5c02f739e01dacff67c84a86a80981))
+
+
+### Features
+
+* if new org created, create new user and add to config ([98e8db5](https://github.com/CoCreate-app/CoCreate-socket-client/commit/98e8db5f5e8b677aa6b53050ee8d26de01bd726f))
+
 ## [1.12.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.12.0...v1.12.1) (2022-12-02)
 
 
