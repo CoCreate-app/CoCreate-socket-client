@@ -45,6 +45,8 @@
 					if (!config.organization_id) {
 						config.organization_id = indexeddb.ObjectId()
 						config.apiKey = uuid.generate(32)
+						config.user_id = indexeddb.ObjectId()
+						window.localStorage.setItem('user_id', config.user_id)					
 						indexeddb.generateDB(config)
 					}
 					window.localStorage.setItem('organization_id', config.organization_id) 
@@ -137,8 +139,6 @@
 				socket.onerror = function(event) {
 					if (isBrowser && !window.navigator.onLine)
 						console.log("offline");
-					else
-						console.log("connection failed", event);
 					
 					self.destroy(socket);
 					self.reconnect(config);
@@ -335,7 +335,11 @@
 								collection: socket.url,
 								document: {_id: uid}
 							}).then(() => {
-								if (data.document && data.document[0] && data.document[0].db == 'indexeddb') {
+								if (socket && socket.connected && online) {
+									if (data.document && data.document[0] && data.document[0].db == 'indexeddb') {
+										resolve(data);
+									}
+								} else {
 									resolve(data);
 								}
 							})			
