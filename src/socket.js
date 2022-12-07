@@ -224,17 +224,24 @@
 				indexeddb.readDocument({
 					database: 'socketMessageQueue',
 					collection: socket.url,
-				}).then((data) =>{
-					if (data.document)
+				}).then((data) => {
+					if (data.document) {
 						for (let Data of data.document) {
 							if (Data.document.status == 'queued') {
 								this.send(Data.action, Data.document)
-								Data.database = 'socketMessageQueue';
-								Data.collection = socket.url
 								Data.document = {_id: Data._id}
 								indexeddb.deleteDocument(Data)
+							} else if (Data.document.status == 'sent') {
+								let messageTime = new Date(Data.document.timeStamp);
+								let currentTime = new Date();
+								let diff = (currentTime - messageTime) / 1000;
+								if (diff > 180) {
+									Data.document = {_id: Data._id}
+									indexeddb.deleteDocument(Data)
+								}
 							}
 						}
+					}
 				})
 			}
 		},
@@ -479,7 +486,7 @@
 				
 				indexeddb.readDocument(Data.data).then((data) => {
 					if (data.document[0]) {
-						CoCreateSocketClient.sendLocalMessage(data.document[0].action, data.document[0].document);	
+						CoCreateSocketClient.sendLocalMessage(data.document[0].action, data.document[0].document);
 					}
 				})			
 	
