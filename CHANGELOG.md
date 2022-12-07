@@ -1,3 +1,11 @@
+## [1.13.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.1...v1.13.2) (2022-12-07)
+
+
+### Bug Fixes
+
+* bump @cocreate/utils ([d06be46](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d06be4605506f3ddde57631b88125f556b354e98))
+* checkSocketMessageQueue deletes stale messages older then 3min ([5dbcbbb](https://github.com/CoCreate-app/CoCreate-socket-client/commit/5dbcbbb0eded362ae2c30b206f3f8e3b95ded516))
+
 ## [1.13.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.0...v1.13.1) (2022-12-04)
 
 
