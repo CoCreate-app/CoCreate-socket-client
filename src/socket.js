@@ -316,6 +316,14 @@
 
 					if (isBrowser && (data.status == "queued" || data.broadcastBrowser != false && data.broadcastBrowser != 'false')) {
 						const self = this
+
+						if (data.db && data.db.includes('indexeddb')) {
+							let type = action.match(/[A-Z][a-z]+/g);
+							type = type[0].toLowerCase()
+							if (type && data[type] && data[type][0])
+								resolve(data);
+						}
+
 						indexeddb.createDocument({
 							database: 'socketMessageQueue',
 							collection: socket.url,
@@ -337,19 +345,6 @@
 									window.localStorage.setItem('localSocketMessage', JSON.stringify(browserMessage))
 								}
 							}
-							indexeddb.readDocument({
-								database: 'socketMessageQueue',
-								collection: socket.url,
-								document: {_id: uid}
-							}).then(() => {
-								if (socket && socket.connected && online) {
-									if (data.document && data.document[0] && data.document[0].db == 'indexeddb') {
-										resolve(data);
-									}
-								} else {
-									resolve(data);
-								}
-							})			
 						})
 					}
 
