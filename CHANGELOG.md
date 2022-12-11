@@ -1,3 +1,11 @@
+## [1.13.8](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.7...v1.13.8) (2022-12-11)
+
+
+### Bug Fixes
+
+* bump dependencies ([6865bbc](https://github.com/CoCreate-app/CoCreate-socket-client/commit/6865bbc088b6ebf5a854abe353e9177905878c5d))
+* if data.db check action and related value if not empty resolve ([1372f2e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1372f2e068b4f072561847fa7cd77158a56d1b34))
+
 ## [1.13.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.6...v1.13.7) (2022-12-09)
 
 
