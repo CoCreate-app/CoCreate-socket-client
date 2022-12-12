@@ -165,7 +165,7 @@
 
 							if (isBrowser && data.uid) {
 								indexeddb.readDocument({
-									database: 'socketMessageQueue',
+									database: 'socketSync',
 									collection: socket.url,
 									document: {_id: data.uid}
 								}).then((message) => {
@@ -222,7 +222,7 @@
 				}
 			} else {
 				indexeddb.readDocument({
-					database: 'socketMessageQueue',
+					database: 'socketSync',
 					collection: socket.url,
 				}).then((data) => {
 					if (data.document) {
@@ -325,7 +325,7 @@
 						}
 
 						indexeddb.createDocument({
-							database: 'socketMessageQueue',
+							database: 'socketSync',
 							collection: socket.url,
 							document: { _id: uid, action, document: data }
 						}).then(() => {
@@ -336,7 +336,7 @@
 									let browserMessage = { 
 										action, 
 										data: {
-											database: 'socketMessageQueue',
+											database: 'socketSync',
 											collection: socket.url,
 											document: { _id: uid },
 											clientId: this.clientId
