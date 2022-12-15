@@ -1,3 +1,10 @@
+## [1.13.15](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.14...v1.13.15) (2022-12-15)
+
+
+### Bug Fixes
+
+* add missing dev dependency style-loader ([c300cdf](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c300cdf97be847d922f38d0c5d1357010880813a))
+
 ## [1.13.14](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.13...v1.13.14) (2022-12-13)
 
 
