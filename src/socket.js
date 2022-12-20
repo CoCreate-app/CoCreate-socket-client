@@ -170,7 +170,6 @@
 									document: {_id: data.uid}
 								}).then((message) => {
 									if (message.document && message.document[0]) {
-										indexeddb.deleteDocument(message)
 										if (data.broadcastBrowser == 'once')
 											return
 									}
