@@ -1,3 +1,10 @@
+## [1.13.17](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.16...v1.13.17) (2022-12-20)
+
+
+### Bug Fixes
+
+* removed onMessage dlete item from socketSync ([af3e2ea](https://github.com/CoCreate-app/CoCreate-socket-client/commit/af3e2ea6504b96db4c99e9a2bb9aefec3df7c1ef))
+
 ## [1.13.16](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.15...v1.13.16) (2022-12-20)
 
 
