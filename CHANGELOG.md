@@ -1,3 +1,11 @@
+## [1.13.18](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.17...v1.13.18) (2022-12-21)
+
+
+### Bug Fixes
+
+* bump dependencies ([c8b0445](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c8b0445e7b7e44a804b382811060ff1547276708))
+* onmessage will socketSync if if broadcastBrowser = once ([6c1d748](https://github.com/CoCreate-app/CoCreate-socket-client/commit/6c1d748fb9c55803b563f97edd511fcf85ccba91))
+
 ## [1.13.17](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.16...v1.13.17) (2022-12-20)
 
 
