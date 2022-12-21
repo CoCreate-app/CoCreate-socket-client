@@ -163,24 +163,19 @@
 								}
 							}
 
-							if (isBrowser && data.uid) {
+							if (isBrowser && data.uid && data.broadcastBrowser == 'once') {
 								indexeddb.readDocument({
 									database: 'socketSync',
 									collection: socket.url,
 									document: {_id: data.uid}
 								}).then((message) => {
-									if (message.document && message.document[0]) {
-										if (data.broadcastBrowser == 'once')
-											return
-									}
-									
-									self.__fireListeners(action, data)
-										
+									if (!message.document[0]) {
+										self.__fireListeners(action, data)
+									}	
 								})
 							} else {
 								self.__fireListeners(action, data)
 							}
-						
 						}
 					} catch (e) {
 						console.log(e);
