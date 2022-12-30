@@ -6,13 +6,12 @@ module.exports = {
     },
     "sources": [
         {
-            "entry": "./docs/index.html",
             "collection": "files",
             "document": {
                 "_id": "6143fc8e829b690010a5f338",
                 "name": "index.html",
                 "path": "/docs/socket-client/index.html",
-                "src": "{{source}}",
+                "src": "{{./docs/index.html}}",
                 "domains": [
                     "*",
                     "general.cocreate.app"
