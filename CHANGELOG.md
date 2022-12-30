@@ -1,3 +1,10 @@
+## [1.13.30](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.29...v1.13.30) (2022-12-30)
+
+
+### Bug Fixes
+
+* update config sources to use template  braces with entry on src ([83bd315](https://github.com/CoCreate-app/CoCreate-socket-client/commit/83bd315fe43a939b6580e18cf43f914d06b034ab))
+
 ## [1.13.29](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.28...v1.13.29) (2022-12-29)
 
 
