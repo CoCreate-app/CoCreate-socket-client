@@ -1,3 +1,11 @@
+## [1.13.40](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.39...v1.13.40) (2023-01-13)
+
+
+### Bug Fixes
+
+* bump dependencies ([8b57c04](https://github.com/CoCreate-app/CoCreate-socket-client/commit/8b57c0460ce687b89e5f74b39c49f38a8b0c94b7))
+* improved broadcastBrowser logic ([c2ba8ca](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c2ba8ca6e52d84c7d0b96640c9bb6de209cef243))
+
 ## [1.13.39](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.13.38...v1.13.39) (2023-01-10)
 
 
