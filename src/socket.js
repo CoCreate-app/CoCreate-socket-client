@@ -264,6 +264,11 @@
 				else
 					data['broadcastSender'] = true;
 
+	            if (data['broadcastBrowser'] === 'false' || data['broadcastBrowser'] === false)
+	                data['broadcastBrowser'] = false;
+				else if (data['broadcastBrowser'] !== 'once')
+					data['broadcastBrowser'] = true;
+
 	            if (!data['uid'])
 	                data['uid'] = uuid.generate();
 	
@@ -308,7 +313,7 @@
 							this.messageQueue.set(uid, {action, data});
 					}
 
-					if (isBrowser && (data.status == "queued" || data.broadcastBrowser != false && data.broadcastBrowser != 'false')) {
+					if (isBrowser && (data.status == "queued" || data.broadcastBrowser != false)) {
 						const self = this
 
 						if (data.db && data.db.includes('indexeddb')) {
@@ -326,7 +331,7 @@
 							if (action !== 'readDocument') {
 								if (data.broadcastSender !== false)
 									self.sendLocalMessage(action, data)
-								if (data.broadcastBrowser != false || data.broadcastBrowser != 'false') {
+								if (data.broadcastBrowser != false) {
 									let browserMessage = { 
 										action, 
 										data: {
