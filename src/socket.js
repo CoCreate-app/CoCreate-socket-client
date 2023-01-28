@@ -334,7 +334,7 @@
 						data.status = "sent"
 					} else {
 						data.status = "queued"
-						if (!isBrowser)
+						if (!isBrowser || !indexeddb.status)
 							this.messageQueue.set(uid, {action, data});
 					}
 
