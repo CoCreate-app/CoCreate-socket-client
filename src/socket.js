@@ -24,6 +24,7 @@
 		saveFileName:  '',
 		clientId: uuid.generate(8),	
 		config: {},
+		isLocalStorage: true,
 		initialReconnectDelay: delay,
 		currentReconnectDelay: delay,
 		maxReconnectDelay: 600000,
@@ -32,6 +33,31 @@
 		/**
 		 * config: {organization_id, namespace, room, host, port}
 		 */
+
+		getConfig(key) {
+			try {
+				let value = window.CoCreateConfig[key]
+				if (!value && this.isLocalStorage !== false)
+					value = window.localStorage.getItem(key)
+				return value
+			} catch (e) {
+				this.isLocalStorage = false
+				window.CoCreateConfig['localStorage'] = false			
+			}
+		},
+
+		setConfig(key, value) {
+			try {
+				window.CoCreateConfig[key] = value
+				if (this.isLocalStorage !== false)
+					window.localStorage.setItem(key, value)
+			} catch (e) {
+				this.isLocalStorage = false
+				window.CoCreateConfig['localStorage'] = false			
+			}
+
+		},
+
 		create(config) {
 			const self = this;
 			if (isBrowser) {
@@ -40,35 +66,34 @@
 				if (!window.CoCreateConfig)
 					window.CoCreateConfig = {};
 				if (!config.organization_id) {						
-					config.organization_id = window.CoCreateConfig.organization_id || window.localStorage.getItem('organization_id')
+					config.organization_id = this.getConfig('organization_id')
 
 					if (!config.organization_id) {
 						config.organization_id = indexeddb.ObjectId()
 						config.apiKey = uuid.generate(32)
 						config.user_id = indexeddb.ObjectId()
-						window.localStorage.setItem('user_id', config.user_id)					
-						indexeddb.generateDB(config)
+						this.setConfig('user_id', config.user_id)					
+						if (indexeddb.status) {
+							indexeddb.generateDB(config)
+						}
 					}
-					window.localStorage.setItem('organization_id', config.organization_id) 
-					window.CoCreateConfig.organization_id = config.organization_id						
+					this.setConfig('organization_id', config.organization_id) 
 				}
 				if (!config.apiKey) {
-					config.apiKey = window.CoCreateConfig.apiKey || window.localStorage.getItem('apiKey') || uuid.generate(32)
-					window.localStorage.setItem('apiKey', config.apiKey) 
-					window.CoCreateConfig.apiKey = config.apiKey						
+					config.apiKey = this.getConfig('apiKey') || uuid.generate(32)
+					this.setConfig('apiKey', config.apiKey) 
 				}
 				if (!config.host) {
-					config.host = window.CoCreateConfig.host || window.localStorage.getItem('host') || window.location.hostname
-					window.localStorage.setItem('host', config.host)
-					window.CoCreateConfig.host = config.host		
+					config.host = this.getConfig('host') || window.location.hostname
+					this.setConfig('host', config.host)
 				}
 				if (!config.user_id) {
-					config.user_id = window.CoCreateConfig.user_id || window.localStorage.getItem('user_id') || ''
-					window.localStorage.setItem('user_id', config.user_id) 				
+					config.user_id = this.getConfig('user_id') || ''
+					this.setConfig('user_id', config.user_id) 				
 				}
 				// if (!config.port) {
-				// 	config.port = window.CoCreateConfig.port || window.localStorage.getItem('port') || ''
-				// 	window.localStorage.setItem('port', config.port) 				
+				// 	config.port = this.getConfig('port') || ''
+				// 	this.setConfig('port', config.port) 				
 				// }
 				// if (!config.prefix) {
 				// 	config.prefix = "ws"; // previously 'crud'
@@ -97,8 +122,8 @@
 	
 				try {
 					let token = null;
-					if (isBrowser && window.localStorage) {
-						token = window.localStorage.getItem("token");
+					if (isBrowser) {
+						token = this.getConfig("token");
 					}
 					socket = new WebSocket(url, token)
 					socket.connected = false;					
@@ -163,7 +188,7 @@
 								}
 							}
 
-							if (isBrowser && data.uid && data.broadcastBrowser == 'once') {
+							if (isBrowser && indexeddb.status && data.uid && data.broadcastBrowser == 'once') {
 								indexeddb.readDocument({
 									database: 'socketSync',
 									collection: socket.url,
@@ -207,14 +232,7 @@
 		},
 		
 		checkMessageQueue(socket){
-			if (!isBrowser) {
-				if (this.messageQueue.size > 0){
-					for (let [uid, {action, data}] of this.messageQueue) {
-						this.send(action, data)
-						this.messageQueue.delete(uid);
-					}
-				}
-			} else {
+			if (isBrowser && indexeddb.status) {
 				indexeddb.readDocument({
 					database: 'socketSync',
 					collection: socket.url,
@@ -237,6 +255,13 @@
 						}
 					}
 				})
+			} else {
+				if (this.messageQueue.size > 0){
+					for (let [uid, {action, data}] of this.messageQueue) {
+						this.send(action, data)
+						this.messageQueue.delete(uid);
+					}
+				}
 			}
 		},
 		
@@ -313,7 +338,7 @@
 							this.messageQueue.set(uid, {action, data});
 					}
 
-					if (isBrowser && (data.status == "queued" || data.broadcastBrowser != false)) {
+					if (isBrowser && indexeddb.status && (data.status == "queued" || data.broadcastBrowser != false)) {
 						const self = this
 
 						if (data.db && data.db.includes('indexeddb')) {
@@ -341,7 +366,7 @@
 											clientId: this.clientId
 										}
 									}
-									window.localStorage.setItem('localSocketMessage', JSON.stringify(browserMessage))
+									self.setConfig('localSocketMessage', JSON.stringify(browserMessage))
 								}
 							}
 						})
@@ -475,7 +500,7 @@
 
 	if (isBrowser) {
 		window.onstorage = (e) => {
-			if (e.key == 'localSocketMessage') {
+			if (e.key == 'localSocketMessage' && indexeddb.status) {
 				let Data = JSON.parse(e.newValue)
 				
 				indexeddb.readDocument(Data.data).then((data) => {
