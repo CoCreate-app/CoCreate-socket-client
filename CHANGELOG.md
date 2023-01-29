@@ -1,3 +1,10 @@
+# [1.15.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.14.2...v1.15.0) (2023-01-29)
+
+
+### Features
+
+* import @cocreate/local-storage ([177f04c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/177f04c2f742c5e78f719297c3c9bc4d5cd192ce))
+
 ## [1.14.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.14.1...v1.14.2) (2023-01-28)
 
 
