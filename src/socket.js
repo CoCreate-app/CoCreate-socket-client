@@ -1,8 +1,8 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(["@cocreate/uuid", "@cocreate/indexeddb"], function(uuid, indexeddb) {
-        	return factory(true, WebSocket, Blob, uuid, indexeddb = indexeddb.default)
+        define(["@cocreate/uuid", "@cocreate/indexeddb", "@cocreate/local-storage"], function(uuid, indexeddb, localStorage) {
+        	return factory(true, WebSocket, Blob, uuid, indexeddb = indexeddb.default, localStorage = localStorage.default)
         });
     } else if (typeof module === 'object' && module.exports) {
         const ws = require("ws")
@@ -10,9 +10,9 @@
     	module.exports = factory(false, ws, null, uuid);
     } else {
         // Browser globals (root is window)
-        root.returnExports = factory(true, WebSocket, Blob, root["@cocreate/uuid"], root["@cocreate/indexeddb"]);
+        root.returnExports = factory(true, WebSocket, Blob, root["@cocreate/uuid"], root["@cocreate/indexeddb"], root["@cocreate/local-storage"]);
   }
-}(typeof self !== 'undefined' ? self : this, function (isBrowser, WebSocket, Blob, uuid, indexeddb) {
+}(typeof self !== 'undefined' ? self : this, function (isBrowser, WebSocket, Blob, uuid, indexeddb, localStorage) {
 
 	const delay = 1000 + Math.floor(Math.random() * 3000)
     const CoCreateSocketClient = {
@@ -24,7 +24,6 @@
 		saveFileName:  '',
 		clientId: uuid.generate(8),	
 		config: {},
-		isLocalStorage: true,
 		initialReconnectDelay: delay,
 		currentReconnectDelay: delay,
 		maxReconnectDelay: 600000,
@@ -35,27 +34,15 @@
 		 */
 
 		getConfig(key) {
-			try {
-				let value = window.CoCreateConfig[key]
-				if (!value && this.isLocalStorage !== false)
-					value = window.localStorage.getItem(key)
-				return value
-			} catch (e) {
-				this.isLocalStorage = false
-				window.CoCreateConfig['localStorage'] = false			
-			}
+			let value = window.CoCreateConfig[key]
+			if (!value)
+				value = localStorage.getItem(key)
+			return value
 		},
 
 		setConfig(key, value) {
-			try {
-				window.CoCreateConfig[key] = value
-				if (this.isLocalStorage !== false)
-					window.localStorage.setItem(key, value)
-			} catch (e) {
-				this.isLocalStorage = false
-				window.CoCreateConfig['localStorage'] = false			
-			}
-
+			window.CoCreateConfig[key] = value
+			localStorage.setItem(key, value)
 		},
 
 		create(config) {
