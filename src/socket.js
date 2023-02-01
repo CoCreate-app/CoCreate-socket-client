@@ -331,7 +331,7 @@
 						if (data.db && data.db.includes('indexeddb')) {
 							let type = action.match(/[A-Z][a-z]+/g);
 							type = type[0].toLowerCase()
-							if (type && data[type] && data[type][0])
+							if (type && data[type])
 								resolve(data);
 						}
 
