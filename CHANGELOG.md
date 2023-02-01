@@ -1,3 +1,11 @@
+## [1.15.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.15.5...v1.15.6) (2023-02-01)
+
+
+### Bug Fixes
+
+* bump utils ([848b53d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/848b53da13564d93bf8d8c5995861f2c18b04ff7))
+* resolve indexeddb data if array empty ([14f8c57](https://github.com/CoCreate-app/CoCreate-socket-client/commit/14f8c578221dd0b2bc41bedb0aedf5119e952fc4))
+
 ## [1.15.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.15.4...v1.15.5) (2023-01-31)
 
 
