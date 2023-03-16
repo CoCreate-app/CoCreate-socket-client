@@ -1,3 +1,10 @@
+# [1.16.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.15.7...v1.16.0) (2023-03-16)
+
+
+### Features
+
+* replaced get-value and set-value with a super charged version of CoCreate-events ([58002eb](https://github.com/CoCreate-app/CoCreate-socket-client/commit/58002eb4ab53e03a434c48d7251e0549a80730a8))
+
 ## [1.15.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.15.6...v1.15.7) (2023-02-01)
 
 
