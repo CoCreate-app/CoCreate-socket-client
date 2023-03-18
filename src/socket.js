@@ -27,7 +27,6 @@
 		initialReconnectDelay: delay,
 		currentReconnectDelay: delay,
 		maxReconnectDelay: 600000,
-
 			
 		/**
 		 * config: {organization_id, namespace, room, host, port}
@@ -78,6 +77,10 @@
 					config.user_id = this.getConfig('user_id') || ''
 					this.setConfig('user_id', config.user_id) 				
 				}
+				if (!config.balancer) {
+					config.balancer = this.getConfig('balancer') || ''
+					this.setConfig('balancer', config.balancer) 				
+				}
 				// if (!config.port) {
 				// 	config.port = this.getConfig('port') || ''
 				// 	this.setConfig('port', config.port) 				
@@ -119,7 +122,7 @@
 					socket.user_id = config.user_id;
 					socket.host = config.host;
 					socket.prefix = config.prefix || 'ws';
-					socket.config = {...config, prefix: config.prefix || 'ws'};
+					socket.config = {...config, prefix: socket.prefix};
 	
 					this.sockets.set(url, socket);
 				} catch(error) {
@@ -131,7 +134,11 @@
 					self.connected = true
 					socket.connected = true;
 					self.currentReconnectDelay = self.initialReconnectDelay
-					self.checkMessageQueue(socket);
+					if (config.balancer != "mesh" && config.previousUrl && config.previousUrl !== socket.url) {
+						// config.currentUrl = socket.url
+						self.checkMessageQueue(config);
+					} else
+						self.checkMessageQueue(config);
 				};
 				
 				socket.onclose = function(event) {
@@ -142,8 +149,7 @@
 							console.log("websocket: closed");
 							break;
 						default: 
-							self.destroy(socket);
-							self.reconnect(config);
+							self.reconnect(config, socket);
 							break;
 					}
 				};
@@ -152,8 +158,7 @@
 					if (isBrowser && !window.navigator.onLine)
 						console.log("offline");
 					
-					self.destroy(socket);
-					self.reconnect(config);
+					self.reconnect(config, socket);
 				};
 		
 				socket.onmessage = function(message) {
@@ -218,15 +223,18 @@
 			}
 		},
 		
-		checkMessageQueue(socket){
+		checkMessageQueue(config){
+			let socketUrl = config.previousUrl || config.url
 			if (isBrowser && indexeddb.status) {
 				indexeddb.readDocument({
 					database: 'socketSync',
-					collection: socket.url,
+					collection: socketUrl,
 				}).then((data) => {
 					if (data.document) {
 						for (let Data of data.document) {
 							if (Data.document.status == 'queued') {
+								if (config.previousUrl)
+									Data.document.previousUrl = config.previousUrl
 								this.send(Data.action, Data.document)
 								Data.document = {_id: Data._id}
 								indexeddb.deleteDocument(Data)
@@ -243,6 +251,7 @@
 					}
 				})
 			} else {
+				// ToDo: set and get messageQueue per socket.url
 				if (this.messageQueue.size > 0){
 					for (let [uid, {action, data}] of this.messageQueue) {
 						this.send(action, data)
@@ -321,6 +330,7 @@
 						data.status = "sent"
 					} else {
 						data.status = "queued"
+						// ToDo: set and get messageQueue per socket.url
 						if (!isBrowser || !indexeddb.status)
 							this.messageQueue.set(uid, {action, data});
 					}
@@ -379,11 +389,16 @@
 			}
 		},
 
-		reconnect(config) {
+		reconnect(config, socket) {
 			let self = this;
+			let url = socket.url
+			this.destroy(socket)
 
 			setTimeout(() => {
 				if (!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
+					if (config.balancer !== 'mesh') {
+						config.previousUrl = url
+						self.sockets.set(url, false)					}
 					self.currentReconnectDelay*=2;
 					self.create(config);
 				}
@@ -395,6 +410,7 @@
 			if (socket) {
 				socket.onerror = socket.onopen = socket.onclose = null;
 				socket.close();
+				this.sockets.set(socket.url, null);
 				socket = null;
 			}			
 		},
@@ -408,20 +424,13 @@
 			}
 			let protocol = w_protocol === 'http:' ? 'ws' : 'wss';
 			let port = data.port || this.config.port || '';
-			let url, urls = [];
+			let url, urls = [], hostUrls = [];
 			let hosts = data.host || this.config.host		
 			let balancer = data.balancer || this.config.balancer	
 			if (hosts) {
-				// ToDo: loadbalancer type eg. mesh, closest
-				if (Array.isArray(hosts)) {
-					if (balancer != "mesh") {
-						hosts = [hosts[0]]
-					}
-				} else {
-					hosts = [hosts]
-				}
-
+				hosts = hosts.split(",");
 				for (let host of hosts) {
+					host = host.trim()
 					if (host.includes("://")) {
 						url = `${host}`;
 					} else {
@@ -432,7 +441,22 @@
 						}
 					}
 					url = this.addSocketPath(data, url)
-					urls.push(url)
+					if (balancer == "mesh") 
+						urls.push(url)
+					else { 
+						let socket = this.sockets.get(url)
+						if (socket !== false) {
+							urls.push(url)
+							break;
+						} else
+						hostUrls.push(url)
+					} 
+				}
+				if (!urls && hostUrls.length) {
+					for (let i = 0; i < hostUrls.length; i++) {
+						this.sockets.set(hostUrls[i], null)
+					}
+					urls = [hostUrls[i]]
 				}
 			} else if (isBrowser) {
 				url = [`${protocol}://${window.location.host}${port}/`];
