@@ -1,3 +1,10 @@
+# [1.17.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.16.2...v1.17.0) (2023-03-19)
+
+
+### Features
+
+* clientside loadbalancing apply host as an array, the connection will round robin until a successful connection is made or max reconnect time is reached. Set balancer to mesh to send and receive data from multiple servers simultaneously ([fcb1432](https://github.com/CoCreate-app/CoCreate-socket-client/commit/fcb1432f03b80ead929859cfd112f73417bf70eb))
+
 ## [1.16.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.16.1...v1.16.2) (2023-03-16)
 
 
