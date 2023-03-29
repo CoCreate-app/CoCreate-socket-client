@@ -1,3 +1,10 @@
+# [1.18.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.17.0...v1.18.0) (2023-03-29)
+
+
+### Features
+
+* if organization_id an not be found will check indexeddb for org db. checkMessageQueue requires socket.url ([49eb1f0](https://github.com/CoCreate-app/CoCreate-socket-client/commit/49eb1f0150c6899003b19c96e563fecee399fd26))
+
 # [1.17.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.16.2...v1.17.0) (2023-03-19)
 
 
