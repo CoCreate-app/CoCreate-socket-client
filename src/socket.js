@@ -44,7 +44,7 @@
 			localStorage.setItem(key, value)
 		},
 
-		create(config) {
+		async create(config) {
 			const self = this;
 			if (isBrowser) {
 				if (!config)
@@ -55,19 +55,44 @@
 					config.organization_id = this.getConfig('organization_id')
 
 					if (!config.organization_id) {
-						config.organization_id = indexeddb.ObjectId()
-						config.apiKey = uuid.generate(32)
-						config.user_id = indexeddb.ObjectId()
-						this.setConfig('user_id', config.user_id)					
-						if (indexeddb.status) {
-							indexeddb.generateDB(config)
+						let data = await indexeddb.readDatabase()
+						for (let database of data.database) {
+							let name = database.database.name
+							if (name.match(/^[0-9a-fA-F]{24}$/)) {
+								config.organization_id = name
+								self.setConfig('organization_id', name)
+
+								break;
+							}
+						}	
+
+						if (!config.organization_id) {
+							// indexeddb.generateDB(config)
+							config.organization_id = indexeddb.ObjectId()
+							config.apiKey = uuid.generate(32)
+							config.user_id = indexeddb.ObjectId()
+							this.setConfig('organization_id', config.organization_id)					
+							this.setConfig('apiKey', config.apiKey)					
+							this.setConfig('user_id', config.user_id)					
+							if (indexeddb.status)
+								indexeddb.generateDB(config)
 						}
 					}
-					this.setConfig('organization_id', config.organization_id) 
+					 
 				}
 				if (!config.apiKey) {
-					config.apiKey = this.getConfig('apiKey') || uuid.generate(32)
-					this.setConfig('apiKey', config.apiKey) 
+					config.apiKey = this.getConfig('apiKey') 
+					if (!config.apiKey) {
+						let data = await indexeddb.readDocument({
+							database: config.organization_id,
+							collection: 'organizations'
+						})
+						if (data.document && data.document[0] && data.document[0].apiKey)
+							config.apiKey = data.document[0].apiKey
+
+					}
+					if (config.apiKey)
+						this.setConfig('apiKey', config.apiKey) 
 				}
 				if (!config.host) {
 					config.host = this.getConfig('host') || window.location.hostname
@@ -133,11 +158,11 @@
 				socket.onopen = function(event) {
 					self.connected = true
 					socket.connected = true;
+					config.url = socket.url
 					self.currentReconnectDelay = self.initialReconnectDelay
-					if (config.balancer != "mesh" && config.previousUrl && config.previousUrl !== socket.url) {
-						// config.currentUrl = socket.url
+					if (config.balancer != "mesh" && config.previousUrl && config.previousUrl !== socket.url) 
 						self.checkMessageQueue(config);
-					} else
+					else
 						self.checkMessageQueue(config);
 				};
 				
