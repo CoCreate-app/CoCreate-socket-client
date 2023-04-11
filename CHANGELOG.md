@@ -1,3 +1,10 @@
+## [1.18.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.2...v1.18.3) (2023-04-11)
+
+
+### Bug Fixes
+
+* query apikey from permissions ([2349b8c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/2349b8cdd9fd004298af0b0cb4718d087ecd515a))
+
 ## [1.18.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.1...v1.18.2) (2023-04-11)
 
 
