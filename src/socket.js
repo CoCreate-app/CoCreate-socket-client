@@ -67,7 +67,6 @@
 						}	
 
 						if (!config.organization_id) {
-							// indexeddb.generateDB(config)
 							config.organization_id = indexeddb.ObjectId()
 							config.apiKey = uuid.generate(32)
 							config.user_id = indexeddb.ObjectId()
@@ -85,9 +84,11 @@
 					if (!config.apiKey) {
 						let data = await indexeddb.readDocument({
 							database: config.organization_id,
-							collection: 'organizations'
+							collection: 'permissions',
+							type: 'apikey',
+							primary: true
 						})
-						if (data.document && data.document[0] && data.document[0].apiKey)
+						if (data.document && data.document[0])
 							config.apiKey = data.document[0].apiKey
 
 					}
