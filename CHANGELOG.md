@@ -1,3 +1,10 @@
+## [1.18.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.1...v1.18.2) (2023-04-11)
+
+
+### Bug Fixes
+
+* renamed domans to hosts ([ae89f3c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ae89f3cf803be9116b174b382ba5506acbb229e8))
+
 ## [1.18.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.0...v1.18.1) (2023-03-30)
 
 
