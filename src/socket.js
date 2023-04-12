@@ -475,14 +475,15 @@
 							urls.push(url)
 							break;
 						} else
-						hostUrls.push(url)
+							hostUrls.push(url)
 					} 
 				}
-				if (!urls && hostUrls.length) {
+				if (!urls.length && hostUrls.length) {
 					for (let i = 0; i < hostUrls.length; i++) {
 						this.sockets.set(hostUrls[i], null)
+						urls.push(hostUrls[i])
 					}
-					urls = [hostUrls[i]]
+					
 				}
 			} else if (isBrowser) {
 				url = [`${protocol}://${window.location.host}${port}/`];
