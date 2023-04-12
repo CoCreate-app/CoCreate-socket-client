@@ -1,3 +1,10 @@
+## [1.18.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.5...v1.18.6) (2023-04-12)
+
+
+### Bug Fixes
+
+* bug preventing indexeddb data from being returned ([004fc14](https://github.com/CoCreate-app/CoCreate-socket-client/commit/004fc147aefe787f712e9baaaeaf49ffdf2af89d))
+
 ## [1.18.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.4...v1.18.5) (2023-04-11)
 
 
