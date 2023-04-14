@@ -1,3 +1,10 @@
+## [1.18.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.6...v1.18.7) (2023-04-14)
+
+
+### Bug Fixes
+
+* if data[type].length resolve ([cdd3eac](https://github.com/CoCreate-app/CoCreate-socket-client/commit/cdd3eacf5ad2f633aa1835b2601ff9dd13405502))
+
 ## [1.18.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.5...v1.18.6) (2023-04-12)
 
 
