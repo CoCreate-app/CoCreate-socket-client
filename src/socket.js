@@ -367,7 +367,7 @@
 						if (data.db && data.db.includes('indexeddb')) {
 							let type = action.match(/[A-Z][a-z]+/g);
 							type = type[0].toLowerCase()
-							if (type && data[type])
+							if (type && data[type] && data[type].length)
 								resolve(data);
 						}
 
@@ -544,6 +544,7 @@
 				indexeddb.readDocument(Data.data).then((data) => {
 					if (data.document[0]) {
 						CoCreateSocketClient.sendLocalMessage(data.document[0].action, data.document[0].document);
+						// ToDo: stage document to be deleted
 					}
 				})			
 	
