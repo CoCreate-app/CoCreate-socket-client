@@ -1,3 +1,10 @@
+## [1.19.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.19.0...v1.19.1) (2023-04-24)
+
+
+### Bug Fixes
+
+* removed uglify.js from dev dependencies ([822aff6](https://github.com/CoCreate-app/CoCreate-socket-client/commit/822aff6716c2669dbd4ebc3b3334ed1cea0271d3))
+
 # [1.19.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.7...v1.19.0) (2023-04-24)
 
 
