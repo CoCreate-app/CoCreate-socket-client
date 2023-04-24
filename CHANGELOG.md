@@ -1,3 +1,10 @@
+# [1.19.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.7...v1.19.0) (2023-04-24)
+
+
+### Features
+
+* added pwa manifest ([10106d6](https://github.com/CoCreate-app/CoCreate-socket-client/commit/10106d64d924e30f3f74bea14ece63c5f588df21))
+
 ## [1.18.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.18.6...v1.18.7) (2023-04-14)
 
 
