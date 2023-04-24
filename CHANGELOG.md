@@ -1,3 +1,11 @@
+## [1.19.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.19.2...v1.19.3) (2023-04-24)
+
+
+### Bug Fixes
+
+* updated worrkflows to v3 and node version 16 ([8c71d95](https://github.com/CoCreate-app/CoCreate-socket-client/commit/8c71d9518704657f5bc2074961a113cb05ddfcc6))
+* workflow node version updated  16 ([76801d3](https://github.com/CoCreate-app/CoCreate-socket-client/commit/76801d3dc1ad6c7bc3fc9e63e83871f91e8e7edd))
+
 ## [1.19.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.19.1...v1.19.2) (2023-04-24)
 
 
