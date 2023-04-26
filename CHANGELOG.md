@@ -1,3 +1,10 @@
+# [1.20.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.19.3...v1.20.0) (2023-04-26)
+
+
+### Features
+
+* window.confirm() if organization_id not found, clicking ok will create new organization ([97b7cf0](https://github.com/CoCreate-app/CoCreate-socket-client/commit/97b7cf0d19a31b16ae27e30bef458162e863c87b))
+
 ## [1.19.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.19.2...v1.19.3) (2023-04-24)
 
 
