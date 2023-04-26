@@ -27,7 +27,7 @@
 		initialReconnectDelay: delay,
 		currentReconnectDelay: delay,
 		maxReconnectDelay: 600000,
-			
+		status: true,	
 		/**
 		 * config: {organization_id, namespace, room, host, port}
 		 */
@@ -53,28 +53,36 @@
 					window.CoCreateConfig = {};
 				if (!config.organization_id) {						
 					config.organization_id = this.getConfig('organization_id')
-
-					if (!config.organization_id) {
+					if (config.organization_id)						
+						this.setConfig('organization_id', config.organization_id)
+					else {
 						let data = await indexeddb.readDatabase()
 						for (let database of data.database) {
 							let name = database.database.name
 							if (name.match(/^[0-9a-fA-F]{24}$/)) {
 								config.organization_id = name
-								self.setConfig('organization_id', name)
+								this.setConfig('organization_id', name)
 
 								break;
 							}
 						}	
 
 						if (!config.organization_id) {
-							config.organization_id = indexeddb.ObjectId()
-							config.apiKey = uuid.generate(32)
-							config.user_id = indexeddb.ObjectId()
-							this.setConfig('organization_id', config.organization_id)					
-							this.setConfig('apiKey', config.apiKey)					
-							this.setConfig('user_id', config.user_id)					
-							if (indexeddb.status)
-								indexeddb.generateDB(config)
+							if (!this.status) return
+							if (confirm("An organization_id could not be found, if you already have an organization_id add it to the html.\n\nOr click 'OK' create a new organization") == true) {
+								this.status = false
+								config.organization_id = indexeddb.ObjectId()
+								config.apiKey = uuid.generate(32)
+								config.user_id = indexeddb.ObjectId()
+								this.setConfig('organization_id', config.organization_id)					
+								this.setConfig('apiKey', config.apiKey)					
+								this.setConfig('user_id', config.user_id)					
+								if (indexeddb.status)
+									indexeddb.generateDB(config)
+							} else {
+								this.status = false
+								return
+							}
 						}
 					}
 					 
@@ -89,11 +97,13 @@
 							primary: true
 						})
 						if (data.document && data.document[0])
-							config.apiKey = data.document[0].apiKey
+							config.apiKey = data.document[0].key
 
 					}
 					if (config.apiKey)
-						this.setConfig('apiKey', config.apiKey) 
+						this.setConfig('apiKey', config.apiKey)
+					else 
+						return 
 				}
 				if (!config.host) {
 					config.host = this.getConfig('host') || window.location.hostname
@@ -538,7 +548,7 @@
 
 	if (isBrowser) {
 		window.onstorage = (e) => {
-			if (e.key == 'localSocketMessage' && indexeddb.status) {
+			if (e.key == 'localSocketMessage' && indexeddb.status && e.newValue) {
 				let Data = JSON.parse(e.newValue)
 				
 				indexeddb.readDocument(Data.data).then((data) => {
