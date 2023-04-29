@@ -69,7 +69,7 @@
 
 						if (!config.organization_id) {
 							if (!this.status) return
-							if (confirm("An organization_id could not be found, if you already have an organization_id add it to the html.\n\nOr click 'OK' create a new organization") == true) {
+							if (confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
 								this.status = false
 								config.organization_id = indexeddb.ObjectId()
 								config.apiKey = uuid.generate(32)
