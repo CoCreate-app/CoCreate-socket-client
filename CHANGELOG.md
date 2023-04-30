@@ -1,3 +1,12 @@
+## [1.20.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.0...v1.20.1) (2023-04-30)
+
+
+### Bug Fixes
+
+* fullscreen target updated to fullscreen fullscreen-target ([9e8bba7](https://github.com/CoCreate-app/CoCreate-socket-client/commit/9e8bba76778d6857c9f0b23aa60a668e9ff7e2ec))
+* package-lock.json and pnpm-lock.yaml added to .gitignore ([e3a332e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/e3a332e91de3d11e550859a6aea98a0a69375dec))
+* removed toogle fullscreen icons. now using css content ([76eb2fd](https://github.com/CoCreate-app/CoCreate-socket-client/commit/76eb2fda1a265a746d43b4ad89286fcac1888477))
+
 # [1.20.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.19.3...v1.20.0) (2023-04-26)
 
 
