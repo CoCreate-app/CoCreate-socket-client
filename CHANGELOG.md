@@ -1,3 +1,10 @@
+## [1.20.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.2...v1.20.3) (2023-05-01)
+
+
+### Bug Fixes
+
+* update manifest.json to manifest.webmanifest ([d721793](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d721793ca0a8499faa6caa5787b14e2ada7d6374))
+
 ## [1.20.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.1...v1.20.2) (2023-05-01)
 
 
