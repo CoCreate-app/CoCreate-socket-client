@@ -1,3 +1,10 @@
+## [1.20.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.1...v1.20.2) (2023-05-01)
+
+
+### Bug Fixes
+
+* replace fontawesome with svg ([cbc425b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/cbc425be335a08e70a93567e5fcf8d7b29dd5690))
+
 ## [1.20.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.0...v1.20.1) (2023-04-30)
 
 
