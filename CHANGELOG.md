@@ -1,3 +1,26 @@
+## [1.20.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.2...v1.20.3) (2023-05-01)
+
+
+### Bug Fixes
+
+* update manifest.json to manifest.webmanifest ([d721793](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d721793ca0a8499faa6caa5787b14e2ada7d6374))
+
+## [1.20.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.1...v1.20.2) (2023-05-01)
+
+
+### Bug Fixes
+
+* replace fontawesome with svg ([cbc425b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/cbc425be335a08e70a93567e5fcf8d7b29dd5690))
+
+## [1.20.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.0...v1.20.1) (2023-04-30)
+
+
+### Bug Fixes
+
+* fullscreen target updated to fullscreen fullscreen-target ([9e8bba7](https://github.com/CoCreate-app/CoCreate-socket-client/commit/9e8bba76778d6857c9f0b23aa60a668e9ff7e2ec))
+* package-lock.json and pnpm-lock.yaml added to .gitignore ([e3a332e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/e3a332e91de3d11e550859a6aea98a0a69375dec))
+* removed toogle fullscreen icons. now using css content ([76eb2fd](https://github.com/CoCreate-app/CoCreate-socket-client/commit/76eb2fda1a265a746d43b4ad89286fcac1888477))
+
 # [1.20.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.19.3...v1.20.0) (2023-04-26)
 
 
