@@ -92,7 +92,7 @@
 					if (!config.apiKey) {
 						let data = await indexeddb.readDocument({
 							database: config.organization_id,
-							collection: 'permissions',
+							collection: 'keys',
 							type: 'apikey',
 							primary: true
 						})
