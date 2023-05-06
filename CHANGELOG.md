@@ -1,3 +1,10 @@
+## [1.20.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.3...v1.20.4) (2023-05-02)
+
+
+### Bug Fixes
+
+* permmision collection changed to keys ([fcbbcda](https://github.com/CoCreate-app/CoCreate-socket-client/commit/fcbbcdadbbb54e75ebef2f8539cd93a1883a4cf0))
+
 ## [1.20.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.2...v1.20.3) (2023-05-01)
 
 
