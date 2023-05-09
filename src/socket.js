@@ -69,16 +69,20 @@
 
 						if (!config.organization_id) {
 							if (!this.status) return
-							if (confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
-								this.status = false
-								config.organization_id = indexeddb.ObjectId()
-								config.apiKey = uuid.generate(32)
-								config.user_id = indexeddb.ObjectId()
-								this.setConfig('organization_id', config.organization_id)					
-								this.setConfig('apiKey', config.apiKey)					
-								this.setConfig('user_id', config.user_id)					
-								if (indexeddb.status)
-									indexeddb.generateDB(config)
+							let generatedb = document.querySelector('[generatedb]')
+							if (generatedb || confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
+								this.status = false					
+								if (indexeddb.status) {
+									config.organization_id = indexeddb.ObjectId()
+									config.apiKey = uuid.generate(32)
+									config.user_id = indexeddb.ObjectId()
+									let Data = indexeddb.generateDB(config)
+									if (Data) {
+										this.setConfig('organization_id', config.organization_id)					
+										this.setConfig('apiKey', config.apiKey)					
+										this.setConfig('user_id', config.user_id)
+									}					
+								}
 							} else {
 								this.status = false
 								return
