@@ -76,14 +76,14 @@
 								this.status = false					
 								if (indexeddb.status) {
 									config.organization_id = indexeddb.ObjectId()
-									config.apiKey = uuid.generate(32)
+									config.key = uuid.generate(32)
 									config.user_id = indexeddb.ObjectId()
-									let organization = {document: {_id: config.organization_id, key: config.apiKey}}
+									let organization = {document: {_id: config.organization_id, key: config.key}}
 									let user = {document: {_id: config.user_id}}
 									let Data = await indexeddb.generateDB(organization, user)
 									if (Data) {
 										this.setConfig('organization_id', config.organization_id)					
-										this.setConfig('apiKey', config.apiKey)					
+										this.setConfig('key', config.key)					
 										this.setConfig('user_id', config.user_id)
 									}					
 								}
@@ -95,21 +95,21 @@
 					}
 					 
 				}
-				if (!config.apiKey) {
-					config.apiKey = this.getConfig('apiKey') 
-					if (!config.apiKey) {
+				if (!config.key) {
+					config.key = this.getConfig('key') 
+					if (!config.key) {
 						let data = await indexeddb.readDocument({
 							database: config.organization_id,
 							collection: 'keys',
-							type: 'apikey',
+							type: 'key',
 							primary: true
 						})
 						if (data.document && data.document[0])
-							config.apiKey = data.document[0].key
+							config.key = data.document[0].key
 
 					}
-					if (config.apiKey)
-						this.setConfig('apiKey', config.apiKey)
+					if (config.key)
+						this.setConfig('key', config.key)
 					else 
 						return 
 				}
@@ -214,13 +214,14 @@
 							}
 						}
 						let {action, data} = JSON.parse(message.data);
-						if (action === 'Access Denied'){
+						if (action === 'Access Denied' && data.permission){
 							if (data.permission.dbUrl === false)
 								self.dbUrl = false
 							if (data.permission.organization === false)
 								self.organization = false
 							console.log(data.permission.error)
-						} else if (action != 'connect' && typeof data == 'object') {
+						}
+						if (action != 'connect' && typeof data == 'object') {
 							data.status = "received"
 		
 							if (data && data.uid) {
@@ -316,8 +317,8 @@
 	            if (!data['organization_id'])
 	                data['organization_id'] = this.config.organization_id;
 	            
-	            if (!data['apiKey'])
-	                data['apiKey'] = this.config.apiKey;
+	            if (!data['key'])
+	                data['key'] = this.config.key;
 	        
 				if (!data['user_id'])
 	                data['user_id'] = this.config.user_id;
