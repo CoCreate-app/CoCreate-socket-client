@@ -27,7 +27,9 @@
 		initialReconnectDelay: delay,
 		currentReconnectDelay: delay,
 		maxReconnectDelay: 600000,
-		status: true,	
+		status: true,
+		dbUrl: '',	
+		organization: '',	
 		/**
 		 * config: {organization_id, namespace, room, host, port}
 		 */
@@ -62,7 +64,6 @@
 							if (name.match(/^[0-9a-fA-F]{24}$/)) {
 								config.organization_id = name
 								this.setConfig('organization_id', name)
-
 								break;
 							}
 						}	
@@ -71,12 +72,15 @@
 							if (!this.status) return
 							let generatedb = document.querySelector('[generatedb]')
 							if (generatedb || confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
+								if (!this.status) return
 								this.status = false					
 								if (indexeddb.status) {
 									config.organization_id = indexeddb.ObjectId()
 									config.apiKey = uuid.generate(32)
 									config.user_id = indexeddb.ObjectId()
-									let Data = indexeddb.generateDB(config)
+									let organization = {document: {_id: config.organization_id, key: config.apiKey}}
+									let user = {document: {_id: config.user_id}}
+									let Data = await indexeddb.generateDB(organization, user)
 									if (Data) {
 										this.setConfig('organization_id', config.organization_id)					
 										this.setConfig('apiKey', config.apiKey)					
@@ -210,14 +214,17 @@
 							}
 						}
 						let {action, data} = JSON.parse(message.data);
-
-						if (action != 'connect' && typeof data == 'object') {
+						if (action === 'Access Denied'){
+							if (data.permission.dbUrl === false)
+								self.dbUrl = false
+							if (data.permission.organization === false)
+								self.organization = false
+							console.log(data.permission.error)
+						} else if (action != 'connect' && typeof data == 'object') {
 							data.status = "received"
 		
-							if (data) {
-								if (data.uid) {
-									self.__fireEvent(data.uid, data);
-								}
+							if (data && data.uid) {
+								self.__fireEvent(data.uid, data);
 							}
 
 							if (isBrowser && indexeddb.status && data.uid && data.broadcastBrowser == 'once') {
@@ -456,13 +463,7 @@
 		},
 		
 		getUrls(data = {}) {
-			let w_protocol = ''
-			if (isBrowser) {
-				w_protocol = window.location.protocol;		
-				if (window.location.protocol === "about:")
-					w_protocol = window.parent.location.protocol;
-			}
-			let protocol = w_protocol === 'http:' ? 'ws' : 'wss';
+			let protocol = 'wss';
 			let port = data.port || this.config.port || '';
 			let url, urls = [], hostUrls = [];
 			let hosts = data.host || this.config.host		
