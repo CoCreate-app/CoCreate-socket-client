@@ -1,3 +1,15 @@
+# [1.21.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.5...v1.21.0) (2023-05-10)
+
+
+### Bug Fixes
+
+* status to prevent duplicate dialogs, remove location protocol ([0e19423](https://github.com/CoCreate-app/CoCreate-socket-client/commit/0e19423f632596f414087860d8b5664bcd57b1b3))
+
+
+### Features
+
+* setConfig if generateDB successful, generateDB if generateDB true ([101c549](https://github.com/CoCreate-app/CoCreate-socket-client/commit/101c549f131d0578c45848ec8844865a55e5ec6f))
+
 ## [1.20.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.4...v1.20.5) (2023-05-06)
 
 
