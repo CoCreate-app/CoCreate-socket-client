@@ -1,3 +1,11 @@
+## [1.21.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.21.0...v1.21.1) (2023-05-10)
+
+
+### Bug Fixes
+
+* apikey renamed to key ([4178a97](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4178a975921fa363639763a17dbb566d6c476d3e))
+* apikey renamed to key ([a88451f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a88451f62c93b079f7bb35053376ea4b38cdb279))
+
 # [1.21.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.20.5...v1.21.0) (2023-05-10)
 
 
