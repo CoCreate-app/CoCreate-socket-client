@@ -27,12 +27,9 @@
 		initialReconnectDelay: delay,
 		currentReconnectDelay: delay,
 		maxReconnectDelay: 600000,
-		status: true,
-		dbUrl: '',	
-		organization: '',	
-		/**
-		 * config: {organization_id, namespace, room, host, port}
-		 */
+		organization: false,
+		serverDB: true,
+		serverOrganization: true,
 
 		getConfig(key) {
 			let value = window.CoCreateConfig[key]
@@ -46,6 +43,9 @@
 			localStorage.setItem(key, value)
 		},
 
+		/**
+		 * config: {organization_id, namespace, room, host, port}
+		 */
 		async create(config) {
 			const self = this;
 			if (isBrowser) {
@@ -69,11 +69,12 @@
 						}	
 
 						if (!config.organization_id) {
-							if (!this.status) return
-							let generatedb = document.querySelector('[generatedb]')
-							if (!generatedb && confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
-								if (!this.status) return
-								this.status = false					
+							let createOrg = document.querySelector('[actions*="createOrg"]')
+							
+							if (this.organization == 'canceled' || this.organization == 'pending') return
+
+							if (!createOrg && confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
+								this.organization = 'pending'					
 								if (indexeddb.status) {
 									config.organization_id = indexeddb.ObjectId()
 									config.key = uuid.generate(32)
@@ -85,10 +86,11 @@
 										this.setConfig('organization_id', config.organization_id)					
 										this.setConfig('key', config.key)					
 										this.setConfig('user_id', config.user_id)
+										this.organization = true
 									}					
 								}
 							} else {
-								this.status = false
+								this.organization = 'canceled'
 								return
 							}
 						}
@@ -220,9 +222,9 @@
 						let {action, data} = JSON.parse(message.data);
 						if (action === 'Access Denied' && data.permission){
 							if (data.permission.dbUrl === false)
-								self.dbUrl = false
+								self.serverDB = false
 							if (data.permission.organization === false)
-								self.organization = false
+								self.serverOrganization = false
 							console.log(data.permission.error)
 						}
 						if (action != 'connect' && typeof data == 'object') {
