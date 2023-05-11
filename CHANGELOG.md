@@ -1,3 +1,10 @@
+## [1.21.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.21.1...v1.21.2) (2023-05-11)
+
+
+### Bug Fixes
+
+* add filter to query for apikey ([111b37e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/111b37e86531d11f6d023e54e78fd7693a58b88f))
+
 ## [1.21.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.21.0...v1.21.1) (2023-05-10)
 
 
