@@ -71,7 +71,7 @@
 						if (!config.organization_id) {
 							if (!this.status) return
 							let generatedb = document.querySelector('[generatedb]')
-							if (generatedb || confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
+							if (!generatedb && confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
 								if (!this.status) return
 								this.status = false					
 								if (indexeddb.status) {
@@ -101,8 +101,12 @@
 						let data = await indexeddb.readDocument({
 							database: config.organization_id,
 							collection: 'keys',
-							type: 'key',
-							primary: true
+							filter: {
+								query: [
+									{name: 'type', value: 'key', operator: '$eq'},
+									{name: 'primary', value: true, operator: '$eq'}
+								]
+							}
 						})
 						if (data.document && data.document[0])
 							config.key = data.document[0].key
@@ -356,7 +360,6 @@
 				let online = true;
 				if (isBrowser && !window.navigator.onLine)
 					online = false
-				
 				for (let socket of sockets) {
 					// ToDo: uid per each socket?
 					let status = data.status
