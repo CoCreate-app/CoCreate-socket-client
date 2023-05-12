@@ -140,7 +140,7 @@
 				// }
 
 				if (!window.navigator.onLine && !this.configQueue.has(config)) {
-					// ToDo: create a key string using host, org_id tp prevent duplicate events
+					// TODO: create a key string using host, org_id tp prevent duplicate events
 					// this.configQueue.set(config,'')
 					const online = () => {
 						window.removeEventListener("online", online)
@@ -305,7 +305,7 @@
 					}
 				})
 			} else {
-				// ToDo: set and get messageQueue per socket.url
+				// TODO: set and get messageQueue per socket.url
 				if (this.messageQueue.size > 0){
 					for (let [uid, {action, data}] of this.messageQueue) {
 						this.send(action, data)
@@ -363,7 +363,7 @@
 				if (isBrowser && !window.navigator.onLine)
 					online = false
 				for (let socket of sockets) {
-					// ToDo: uid per each socket?
+					// TODO: uid per each socket?
 					let status = data.status
 					if (status != "queued") {
 						if (isBrowser) {
@@ -575,7 +575,7 @@
 				indexeddb.readDocument(Data.data).then((data) => {
 					if (data.document[0]) {
 						CoCreateSocketClient.sendLocalMessage(data.document[0].action, data.document[0].document);
-						// ToDo: stage document to be deleted
+						// TODO: stage document to be deleted
 					}
 				})			
 	
