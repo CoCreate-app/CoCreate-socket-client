@@ -1,3 +1,11 @@
+# [1.22.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.21.2...v1.22.0) (2023-05-12)
+
+
+### Features
+
+* handeling organization, serverOrganization and serverDB ([4a43c21](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4a43c2173a5f7f36ca92b970fd0fed16596ed906))
+* If serverDb is false session can be created to update platform org and user ([a5d1748](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a5d1748377dd83e61a78a557e9b58fa777bfd45d))
+
 ## [1.21.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.21.1...v1.21.2) (2023-05-11)
 
 
