@@ -377,16 +377,24 @@
 						}
 					}
 
-					if (socket && socket.connected && online) {
-						delete data.status
-						socket.send(JSON.stringify({ action, data }));
-						data.status = "sent"
-					} else {
+					let token
+					if (isBrowser)
+						token = this.getConfig("token");
+
+					if (this.serverOrganization && ( this.serverDB || 
+						token && action.includes('Document') && data.collection && (data.collection.includes('organizations') || data.collection.includes("users")) || 
+						['signIn'].includes(action))) {
+						if (socket && socket.connected && online) {
+							delete data.status
+							socket.send(JSON.stringify({ action, data }));
+							data.status = "sent"
+						} else {
+							data.status = "queued"
+							if (!isBrowser || !indexeddb.status)
+								this.messageQueue.set(uid, {action, data});
+						}
+					} else
 						data.status = "queued"
-						// ToDo: set and get messageQueue per socket.url
-						if (!isBrowser || !indexeddb.status)
-							this.messageQueue.set(uid, {action, data});
-					}
 
 					if (isBrowser && indexeddb.status && (data.status == "queued" || data.broadcastBrowser != false)) {
 						const self = this
@@ -394,8 +402,10 @@
 						if (data.db && data.db.includes('indexeddb')) {
 							let type = action.match(/[A-Z][a-z]+/g);
 							type = type[0].toLowerCase()
-							if (type && data[type] && data[type].length)
-								resolve(data);
+							if (type && data[type]) {
+								if (data[type].length || !this.serverOrganization || !this.serverDB)
+									resolve(data);
+							}
 						}
 
 						indexeddb.createDocument({
