@@ -1,3 +1,15 @@
+# [1.23.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.22.0...v1.23.0) (2023-05-18)
+
+
+### Bug Fixes
+
+* Refactor socket.js ([529204d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/529204ddbd3d0a9dc28e387d52824b90d9aa4d52))
+
+
+### Features
+
+* refactor(socket): Improve code structure and functionality ([b9bc762](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b9bc762a863c48044bc18dee046a9ffcf9eb1daa))
+
 # [1.22.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.21.2...v1.22.0) (2023-05-12)
 
 
