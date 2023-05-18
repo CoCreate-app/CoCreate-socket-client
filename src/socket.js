@@ -49,6 +49,7 @@
         async create(config) {
             const self = this;
             if (isBrowser) {
+
                 if (!config)
                     config = {};
                 if (!window.CoCreateConfig)
@@ -69,56 +70,54 @@
                         }
 
                         if (!config.organization_id) {
-                            let createOrganization = document.querySelector('[actions*="createOrganization"]')
+                            if (navigator.serviceWorker) {
+                                navigator.serviceWorker.addEventListener("message", (event) => {
+                                    config.organization_id = event.data
+                                    if (!config.organization_id)
+                                        this.createOrganization(config).then((config) => {
+                                            if (config)
+                                                self.create(config)
+                                        });
 
-                            if (this.organization == 'canceled' || this.organization == 'pending') return
+                                });
 
-                            if (!createOrganization && confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
-                                this.organization = 'pending'
-                                if (indexeddb.status) {
-                                    config.organization_id = indexeddb.ObjectId()
-                                    config.key = uuid.generate(32)
-                                    config.user_id = indexeddb.ObjectId()
-                                    let organization = { document: { _id: config.organization_id, key: config.key } }
-                                    let user = { document: { _id: config.user_id } }
-                                    let Data = await indexeddb.generateDB(organization, user)
-                                    if (Data) {
-                                        this.setConfig('organization_id', config.organization_id)
-                                        this.setConfig('key', config.key)
-                                        this.setConfig('user_id', config.user_id)
-                                        this.organization = true
-                                    }
-                                }
-                            } else {
-                                this.organization = 'canceled'
-                                return
-                            }
+                                // Send message to SW
+                                const msg = new MessageChannel();
+                                return navigator.serviceWorker.controller.postMessage("getOrganization", [msg.port1]);
+                            } else
+                                config = await this.createOrganization(config)
+
                         }
                     }
 
                 }
                 if (!config.key) {
                     config.key = this.getConfig('key')
-                    if (!config.key) {
-                        let data = await indexeddb.readDocument({
-                            database: config.organization_id,
-                            collection: 'keys',
-                            filter: {
-                                query: [
-                                    { name: 'type', value: 'key', operator: '$eq' },
-                                    { name: 'primary', value: true, operator: '$eq' }
-                                ]
-                            }
-                        })
-                        if (data.document && data.document[0])
-                            config.key = data.document[0].key
-
-                    }
-                    if (config.key)
-                        this.setConfig('key', config.key)
-                    else
-                        return
+                    this.setConfig('key', config.key)
                 }
+
+                // if (!config.key) {
+                //     config.key = this.getConfig('key')
+                // if (!config.key) {
+                //     let data = await indexeddb.readDocument({
+                //         database: config.organization_id,
+                //         collection: 'keys',
+                //         filter: {
+                //             query: [
+                //                 { name: 'type', value: 'key', operator: '$eq' },
+                //                 { name: 'primary', value: true, operator: '$eq' }
+                //             ]
+                //         }
+                //     })
+                //     if (data.document && data.document[0])
+                //         config.key = data.document[0].key
+
+                // }
+                // if (config.key)
+                //     this.setConfig('key', config.key)
+                // else
+                //     return
+                // }
                 if (!config.host) {
                     config.host = this.getConfig('host') || window.location.hostname
                     this.setConfig('host', config.host)
@@ -253,6 +252,33 @@
                     }
                 };
 
+            }
+        },
+
+        createOrganization: async function (config) {
+            let createOrganization = document.querySelector('[actions*="createOrganization"]')
+
+            if (this.organization == 'canceled' || this.organization == 'pending') return
+
+            if (!createOrganization && confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
+                this.organization = 'pending'
+                if (indexeddb.status) {
+                    config.organization_id = indexeddb.ObjectId()
+                    config.key = uuid.generate(32)
+                    config.user_id = indexeddb.ObjectId()
+                    let organization = { document: { _id: config.organization_id, key: config.key } }
+                    let user = { document: { _id: config.user_id } }
+                    let Data = await indexeddb.generateDB(organization, user)
+                    if (Data) {
+                        this.setConfig('organization_id', config.organization_id)
+                        this.setConfig('key', config.key)
+                        this.setConfig('user_id', config.user_id)
+                        this.organization = true
+                    }
+                }
+            } else {
+                this.organization = 'canceled'
+                return
             }
         },
 
