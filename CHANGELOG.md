@@ -1,3 +1,10 @@
+## [1.23.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.2...v1.23.3) (2023-05-19)
+
+
+### Bug Fixes
+
+* Refactor the message sending to service worker to await ready state. ([708d020](https://github.com/CoCreate-app/CoCreate-socket-client/commit/708d020f473a82c746954d9a8f8c80aed5276ecb))
+
 ## [1.23.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.1...v1.23.2) (2023-05-19)
 
 
