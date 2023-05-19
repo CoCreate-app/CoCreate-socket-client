@@ -1,3 +1,10 @@
+## [1.23.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.1...v1.23.2) (2023-05-19)
+
+
+### Bug Fixes
+
+* update packages to latest version. This commit updates various packages in the dependencies section of the package.json file to their latest published versions, thereby fixing multiple bugs and improving overall performance. ([6cad5fe](https://github.com/CoCreate-app/CoCreate-socket-client/commit/6cad5feee60cd7733f1f5d3516e051d4c88638a4))
+
 ## [1.23.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.0...v1.23.1) (2023-05-19)
 
 
