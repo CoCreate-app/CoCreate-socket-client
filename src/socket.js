@@ -78,6 +78,10 @@
                                             if (config)
                                                 self.create(config)
                                         });
+                                    else {
+                                        self.setConfig('organization_id', config.organization_id)
+                                        self.create(config)
+                                    }
 
                                 });
 
