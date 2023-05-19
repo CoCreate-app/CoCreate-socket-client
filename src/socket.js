@@ -87,7 +87,9 @@
 
                                 // Send message to SW
                                 const msg = new MessageChannel();
-                                return navigator.serviceWorker.controller.postMessage("getOrganization", [msg.port1]);
+                                return navigator.serviceWorker.ready.then(() => {
+                                    navigator.serviceWorker.controller.postMessage("getOrganization", [msg.port1]);
+                                })
                             } else
                                 config = await this.createOrganization(config)
 
@@ -267,7 +269,7 @@
             if (!createOrganization && confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
                 this.organization = 'pending'
                 if (indexeddb.status) {
-                    config.organization_id = indexeddb.ObjectId()
+                    config.organization_id = config.organization_id || indexeddb.ObjectId()
                     config.key = uuid.generate(32)
                     config.user_id = indexeddb.ObjectId()
                     let organization = { document: { _id: config.organization_id, key: config.key } }
@@ -278,8 +280,10 @@
                         this.setConfig('key', config.key)
                         this.setConfig('user_id', config.user_id)
                         this.organization = true
+                        return config
                     }
                 }
+                return
             } else {
                 this.organization = 'canceled'
                 return
