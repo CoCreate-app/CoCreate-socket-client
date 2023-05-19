@@ -1,3 +1,10 @@
+## [1.23.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.0...v1.23.1) (2023-05-19)
+
+
+### Bug Fixes
+
+* Refactor code to handle setCongig ([80c2d12](https://github.com/CoCreate-app/CoCreate-socket-client/commit/80c2d127de071c01a7b4a428994756394a78cdcf))
+
 # [1.23.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.22.0...v1.23.0) (2023-05-18)
 
 
