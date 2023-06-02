@@ -1,6 +1,6 @@
 {
   "name": "@cocreate/socket-client",
-  "version": "1.23.6",
+  "version": "1.23.7",
   "description": "A simple socket component in vanilla javascript. Easily configured using HTML5 attributes and/or JavaScript API.",
   "keywords": [
     "socket-client",
