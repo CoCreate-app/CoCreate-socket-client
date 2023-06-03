@@ -515,6 +515,9 @@
 
         getUrls(data = {}) {
             let protocol = 'wss';
+            if (location.protocol !== "https:")
+                protocol = "ws";
+
             let port = data.port || this.config.port || '';
             let url, urls = [], hostUrls = [];
             let hosts = data.host || this.config.host
@@ -523,6 +526,8 @@
                 hosts = hosts.split(",");
                 for (let host of hosts) {
                     host = host.trim()
+                    if (host[hosthost.length - 1] === '/')
+                        host.slice(0, -1)
                     if (host.includes("://")) {
                         url = `${host}`;
                     } else {
