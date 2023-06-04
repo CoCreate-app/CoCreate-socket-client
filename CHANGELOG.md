@@ -1,3 +1,14 @@
+## [1.23.8](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.7...v1.23.8) (2023-06-04)
+
+
+### Bug Fixes
+
+* Refactor create function to remove unnecessary code and improve handeling of port ([005d5cb](https://github.com/CoCreate-app/CoCreate-socket-client/commit/005d5cbecbe3f6399a3a1b9913d48aacb4bf67c6))
+* testing workflow ([b461267](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b4612677ef2e41d698fe68b8b05c854418a07e76))
+* testing workflow ([a61dc60](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a61dc608b785589db3633b091e08df77bd38f411))
+* testing workflow ([611c72b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/611c72bd2634587185fa4564078db14966086f87))
+* testing workflow ([30bcc8c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/30bcc8c4fcc76b07b52e16b4e208304e901a001d))
+
 ## [1.23.7](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.6...v1.23.7) (2023-06-02)
 
 
