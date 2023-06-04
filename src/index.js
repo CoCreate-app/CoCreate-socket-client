@@ -44,7 +44,7 @@
         },
 
         /**
-         * config: {organization_id, namespace, room, host, port}
+         * config: {organization_id, namespace, room, host}
          */
         async create(config) {
             const self = this;
@@ -102,30 +102,8 @@
                     this.setConfig('key', config.key)
                 }
 
-                // if (!config.key) {
-                //     config.key = this.getConfig('key')
-                // if (!config.key) {
-                //     let data = await indexeddb.readDocument({
-                //         database: config.organization_id,
-                //         collection: 'keys',
-                //         filter: {
-                //             query: [
-                //                 { name: 'type', value: 'key', operator: '$eq' },
-                //                 { name: 'primary', value: true, operator: '$eq' }
-                //             ]
-                //         }
-                //     })
-                //     if (data.document && data.document[0])
-                //         config.key = data.document[0].key
-
-                // }
-                // if (config.key)
-                //     this.setConfig('key', config.key)
-                // else
-                //     return
-                // }
                 if (!config.host) {
-                    config.host = this.getConfig('host') || window.location.hostname
+                    config.host = this.getConfig('host') || window.location.host
                     this.setConfig('host', config.host)
                 }
                 if (!config.user_id) {
@@ -136,10 +114,6 @@
                     config.balancer = this.getConfig('balancer') || ''
                     this.setConfig('balancer', config.balancer)
                 }
-                // if (!config.port) {
-                // 	config.port = this.getConfig('port') || ''
-                // 	this.setConfig('port', config.port) 				
-                // }
                 // if (!config.prefix) {
                 // 	config.prefix = "ws"; // previously 'crud'
                 // }
@@ -515,11 +489,9 @@
 
         getUrls(data = {}) {
             let protocol = 'wss';
-            if (location.protocol !== "https:") {
+            if (isBrowser && location.protocol !== "https:")
                 protocol = "ws";
-            }
 
-            let port = data.port || this.config.port || '';
             let url, urls = [], hostUrls = [];
             let hosts = data.host || this.config.host
             let balancer = data.balancer || this.config.balancer
@@ -527,15 +499,14 @@
                 hosts = hosts.split(",");
                 for (let host of hosts) {
                     host = host.trim()
-                    if (host.includes("://")) {
+                    if (host[host.length - 1] === '/')
+                        host = host.slice(0, -1)
+
+                    if (host.includes("://"))
                         url = `${host}`;
-                    } else {
-                        if (host.includes(":")) {
-                            url = `${protocol}://${host}`;
-                        } else {
-                            url = `${protocol}://${host}${port}`;
-                        }
-                    }
+                    else
+                        url = `${protocol}://${host}`;
+
                     url = this.addSocketPath(data, url)
                     if (balancer == "mesh")
                         urls.push(url)
@@ -556,7 +527,7 @@
 
                 }
             } else if (isBrowser) {
-                url = [`${protocol}://${window.location.host}${port}/`];
+                url = [`${protocol}://${window.location.host}`];
                 url = this.addSocketPath(data, url)
                 urls.push(url)
             } else {
