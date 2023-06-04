@@ -1,3 +1,10 @@
+## [1.23.12](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.11...v1.23.12) (2023-06-04)
+
+
+### Bug Fixes
+
+* Refactor CoCreate.config.js to remove hard-coded credentials ([08fb920](https://github.com/CoCreate-app/CoCreate-socket-client/commit/08fb920491dea1b3a120312e247d730c9e721a83))
+
 ## [1.23.11](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.10...v1.23.11) (2023-06-04)
 
 
