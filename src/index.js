@@ -493,19 +493,19 @@
                 protocol = "ws";
 
             let url, urls = [], hostUrls = [];
-            let hosts = data.host || this.config.host
+            let host = data.host || this.config.host
             let balancer = data.balancer || this.config.balancer
-            if (hosts) {
-                hosts = hosts.split(",");
-                for (let host of hosts) {
-                    host = host.trim()
-                    if (host[host.length - 1] === '/')
-                        host = host.slice(0, -1)
+            if (host) {
+                host = host.split(",");
+                for (let i = 0; i < host.length; i++) {
+                    host[i] = host[i].trim()
+                    if (host[i][host[i].length - 1] === '/')
+                        host[i] = host[i].slice(0, -1)
 
-                    if (host.includes("://"))
-                        url = `${host}`;
+                    if (host[i].includes("://"))
+                        url = `${host[i]}`;
                     else
-                        url = `${protocol}://${host}`;
+                        url = `${protocol}://${host[i]}`;
 
                     url = this.addSocketPath(data, url)
                     if (balancer == "mesh")
