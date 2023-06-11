@@ -200,7 +200,7 @@
                         }
                         let { action, data } = JSON.parse(message.data);
                         if (action === 'Access Denied' && data.permission) {
-                            if (data.permission.dbUrl === false)
+                            if (data.permission.storage === false)
                                 self.serverDB = false
                             if (data.permission.organization === false)
                                 self.serverOrganization = false
@@ -407,7 +407,7 @@
                     if (isBrowser && indexeddb.status && (data.status == "queued" || data.broadcastBrowser != false)) {
                         const self = this
 
-                        if (data.db && data.db.includes('indexeddb')) {
+                        if (data.storage && data.storage.includes('indexeddb')) {
                             let type = action.match(/[A-Z][a-z]+/g);
                             type = type[0].toLowerCase()
                             if (type && data[type]) {
