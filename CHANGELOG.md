@@ -1,3 +1,11 @@
+## [1.23.15](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.14...v1.23.15) (2023-06-11)
+
+
+### Bug Fixes
+
+* renamed db to storage ([ae30d3a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ae30d3abf74c61661257ccdd3621746f04298f10))
+* renamed hosts to host. the value can be a string or an array of strings ([f871cd2](https://github.com/CoCreate-app/CoCreate-socket-client/commit/f871cd2415abf0e90e3b8e9d836d0522ed8aba02))
+
 ## [1.23.14](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.13...v1.23.14) (2023-06-10)
 
 
