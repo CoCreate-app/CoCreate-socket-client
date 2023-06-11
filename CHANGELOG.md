@@ -1,3 +1,10 @@
+## [1.23.20](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.19...v1.23.20) (2023-06-11)
+
+
+### Bug Fixes
+
+* testing workflow ([8ad993a](https://github.com/CoCreate-app/CoCreate-socket-client/commit/8ad993a37d22599fb65f6d6de05995fee0c1595a))
+
 ## [1.23.19](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.18...v1.23.19) (2023-06-11)
 
 
