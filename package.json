@@ -58,10 +58,10 @@
     "webpack-log": "^3.0.1"
   },
   "dependencies": {
-    "@cocreate/cli": "^1.33.4",
-    "@cocreate/indexeddb": "^1.10.13",
-    "@cocreate/local-storage": "^1.7.14",
-    "@cocreate/uuid": "^1.4.21",
+    "@cocreate/cli": "^1.33.6",
+    "@cocreate/indexeddb": "^1.10.16",
+    "@cocreate/local-storage": "^1.7.17",
+    "@cocreate/uuid": "^1.4.24",
     "ws": "7.5.9"
   }
 }
