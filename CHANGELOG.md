@@ -1,3 +1,10 @@
+## [1.23.18](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.17...v1.23.18) (2023-06-11)
+
+
+### Bug Fixes
+
+* postintall error ([4ecb54d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4ecb54d6b73dcb696c6c7d69374dabd443b4058c))
+
 ## [1.23.17](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.16...v1.23.17) (2023-06-11)
 
 
