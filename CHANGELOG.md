@@ -1,3 +1,10 @@
+## [1.23.26](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.25...v1.23.26) (2023-06-14)
+
+
+### Bug Fixes
+
+* Update dependencies versions for [@cocreate](https://github.com/cocreate) libraries ([dc3f751](https://github.com/CoCreate-app/CoCreate-socket-client/commit/dc3f751eafe06b8e5b1862fb22304642275191d7))
+
 ## [1.23.25](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.24...v1.23.25) (2023-06-11)
 
 
