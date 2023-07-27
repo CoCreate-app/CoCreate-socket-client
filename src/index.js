@@ -411,7 +411,7 @@
                             let type = action.match(/[A-Z][a-z]+/g);
                             type = type[0].toLowerCase()
                             if (type && data[type]) {
-                                if (data[type].length || !this.serverOrganization || !this.serverDB)
+                                if (data[type].length || !this.serverOrganization || !this.serverDB || !socket.connected)
                                     resolve(data);
                             }
                         }
