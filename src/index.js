@@ -1,3 +1,25 @@
+/********************************************************************************
+ * Copyright (C) 2023 CoCreate and Contributors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program. If not, see <https://www.gnu.org/licenses/>.
+ ********************************************************************************/
+
+// Commercial Licensing Information:
+// For commercial use of this software without the copyleft provisions of the AGPLv3,
+// you must obtain a commercial license from CoCreate LLC.
+// For details, visit <https://cocreate.app/licenses/> or contact us at sales@cocreate.app.
+
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
@@ -59,7 +81,7 @@
                     if (config.organization_id)
                         this.setConfig('organization_id', config.organization_id)
                     else {
-                        let data = await indexeddb.readDatabase()
+                        let data = await indexeddb.process({ method: 'read.database' })
                         for (let database of data.database) {
                             let name = database.database.name
                             if (name.match(/^[0-9a-fA-F]{24}$/)) {
@@ -214,12 +236,13 @@
                             }
 
                             if (isBrowser && indexeddb.status && data.uid && data.broadcastBrowser == 'once') {
-                                indexeddb.readDocument({
+                                indexeddb.process({
+                                    method: 'read.object',
                                     database: 'socketSync',
-                                    collection: socket.url,
-                                    document: { _id: data.uid }
+                                    array: socket.url,
+                                    object: { _id: data.uid }
                                 }).then((message) => {
-                                    if (!message.document[0]) {
+                                    if (!message.object[0]) {
                                         self.__fireListeners(action, data)
                                     }
                                 })
@@ -246,8 +269,8 @@
                     config.organization_id = config.organization_id || indexeddb.ObjectId()
                     config.key = uuid.generate(32)
                     config.user_id = indexeddb.ObjectId()
-                    let organization = { document: { _id: config.organization_id, key: config.key } }
-                    let user = { document: { _id: config.user_id } }
+                    let organization = { object: { _id: config.organization_id, key: config.key } }
+                    let user = { object: { _id: config.user_id } }
                     let Data = await indexeddb.generateDB(organization, user)
                     if (Data) {
                         this.setConfig('organization_id', config.organization_id)
@@ -288,25 +311,26 @@
         checkMessageQueue(config) {
             let socketUrl = config.previousUrl || config.url
             if (isBrowser && indexeddb.status) {
-                indexeddb.readDocument({
+                indexeddb.process({
+                    method: 'read.object',
                     database: 'socketSync',
-                    collection: socketUrl,
+                    array: socketUrl,
                 }).then((data) => {
-                    if (data.document) {
-                        for (let Data of data.document) {
-                            if (Data.document.status == 'queued') {
+                    if (data.object) {
+                        for (let Data of data.object) {
+                            if (Data.object.status == 'queued') {
                                 if (config.previousUrl)
-                                    Data.document.previousUrl = config.previousUrl
-                                this.send(Data.action, Data.document)
-                                Data.document = { _id: Data._id }
-                                indexeddb.deleteDocument(Data)
-                            } else if (Data.document.status == 'sent') {
-                                let messageTime = new Date(Data.document.timeStamp);
+                                    Data.object.previousUrl = config.previousUrl
+                                this.send(Data.object)
+                                indexeddb.process({ method: 'delete.object', object: { _id: Data._id } })
+                            } else if (Data.object.status == 'sent') {
+                                let messageTime = new Date(Data.object.timeStamp);
                                 let currentTime = new Date();
                                 let diff = (currentTime - messageTime) / 1000;
                                 if (diff > 180) {
-                                    Data.document = { _id: Data._id }
-                                    indexeddb.deleteDocument(Data)
+                                    Data.method = 'delete.object'
+                                    Data.object = { _id: Data._id }
+                                    indexeddb.process(Data)
                                 }
                             }
                         }
@@ -315,15 +339,15 @@
             } else {
                 // TODO: set and get messageQueue per socket.url
                 if (this.messageQueue.size > 0) {
-                    for (let [uid, { action, data }] of this.messageQueue) {
-                        this.send(action, data)
+                    for (let [uid, data] of this.messageQueue) {
+                        this.send(data)
                         this.messageQueue.delete(uid);
                     }
                 }
             }
         },
 
-        send(action, data) {
+        send(data) {
             return new Promise((resolve, reject) => {
                 if (!data['timeStamp'])
                     data['timeStamp'] = new Date().toISOString()
@@ -389,17 +413,18 @@
                     if (isBrowser)
                         token = this.getConfig("token");
 
-                    if (this.serverOrganization && (this.serverDB ||
-                        token && action.includes('Document') && data.collection && (data.collection.includes('organizations') || data.collection.includes("users")) ||
-                        ['signIn', 'addOrg'].includes(action))) {
+                    if (this.serverOrganization && (this.serverDB
+                        || token && data.method.includes('object') && data.array && (data.array.includes('organizations')
+                            || data.array.includes("users")) ||
+                        ['signIn', 'addOrg'].includes(data.method))) {
                         if (socket && socket.connected && online) {
                             delete data.status
-                            socket.send(JSON.stringify({ action, data }));
+                            socket.send(JSON.stringify(data));
                             data.status = "sent"
                         } else {
                             data.status = "queued"
                             if (!isBrowser || !indexeddb.status)
-                                this.messageQueue.set(uid, { action, data });
+                                this.messageQueue.set(uid, data);
                         }
                     } else
                         data.status = "queued"
@@ -408,29 +433,30 @@
                         const self = this
 
                         if (data.storage && data.storage.includes('indexeddb')) {
-                            let type = action.match(/[A-Z][a-z]+/g);
-                            type = type[0].toLowerCase()
+                            let type = data.method.split('.');
+                            type = type[type.length - 1];
+
                             if (type && data[type]) {
                                 if (data[type].length || !this.serverOrganization || !this.serverDB || !socket.connected)
                                     resolve(data);
                             }
                         }
 
-                        indexeddb.createDocument({
+                        indexeddb.process({
+                            method: 'create.object',
                             database: 'socketSync',
-                            collection: socket.url,
-                            document: { _id: uid, action, document: data }
+                            array: socket.url,
+                            object: { _id: uid, object: data }
                         }).then(() => {
-                            if (action !== 'readDocument') {
+                            if (!data.method.startsWith('read')) {
                                 if (data.broadcastSender !== false)
-                                    self.sendLocalMessage(action, data)
+                                    self.sendLocalMessage(data)
                                 if (data.broadcastBrowser != false) {
                                     let browserMessage = {
-                                        action,
                                         data: {
                                             database: 'socketSync',
-                                            collection: socket.url,
-                                            document: { _id: uid },
+                                            array: socket.url,
+                                            object: { _id: uid },
                                             clientId: this.clientId
                                         }
                                     }
@@ -570,10 +596,10 @@
             return sockets;
         },
 
-        sendLocalMessage(action, data) {
-            if (action == 'sendMessage')
-                action = data.message
-            this.__fireListeners(action, data)
+        sendLocalMessage(data) {
+            if (data.method == 'sendMessage')
+                data.method = data.message
+            this.__fireListeners(data.method, data)
         }
     }
 
@@ -582,10 +608,10 @@
             if (e.key == 'localSocketMessage' && indexeddb.status && e.newValue) {
                 let Data = JSON.parse(e.newValue)
 
-                indexeddb.readDocument(Data.data).then((data) => {
-                    if (data.document[0]) {
-                        CoCreateSocketClient.sendLocalMessage(data.document[0].action, data.document[0].document);
-                        // TODO: stage document to be deleted
+                indexeddb.process(Data.data).then((data) => {
+                    if (data.object[0]) {
+                        CoCreateSocketClient.sendLocalMessage(data.object[0].object);
+                        // TODO: stage object to be deleted
                     }
                 })
 
