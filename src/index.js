@@ -81,7 +81,7 @@
                     if (config.organization_id)
                         this.setConfig('organization_id', config.organization_id)
                     else {
-                        let data = await indexeddb.process({ method: 'read.database' })
+                        let data = await indexeddb({ method: 'read.database' })
                         for (let database of data.database) {
                             let name = database.database.name
                             if (name.match(/^[0-9a-fA-F]{24}$/)) {
@@ -235,8 +235,8 @@
                                 self.__fireEvent(data.uid, data);
                             }
 
-                            if (isBrowser && indexeddb.status && data.uid && data.broadcastBrowser == 'once') {
-                                indexeddb.process({
+                            if (isBrowser && indexeddb && data.uid && data.broadcastBrowser == 'once') {
+                                indexeddb({
                                     method: 'read.object',
                                     database: 'socketSync',
                                     array: socket.url,
@@ -265,25 +265,30 @@
 
             if (!createOrganization && confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
                 this.organization = 'pending'
-                if (indexeddb.status) {
-                    config.organization_id = config.organization_id || indexeddb.ObjectId()
-                    config.key = uuid.generate(32)
-                    config.user_id = indexeddb.ObjectId()
-                    let organization = { object: { _id: config.organization_id, key: config.key } }
-                    let user = { object: { _id: config.user_id } }
-                    let Data = await indexeddb.generateDB(organization, user)
-                    if (Data) {
-                        this.setConfig('organization_id', config.organization_id)
-                        this.setConfig('key', config.key)
-                        this.setConfig('user_id', config.user_id)
-                        this.organization = true
-                        return config
+                if (indexeddb) {
+                    try {
+                        const Organization = await import('@cocreate/organizations')
+
+                        let org = { object: {} }
+                        if (config.organization_id)
+                            org.object._id = config.organization_id
+                        let { organization, key, user } = await Organization.generateDB(org)
+                        if (organization && key && user) {
+                            config.organization_id = organization._id
+                            config.key = key.key
+                            config.user_id = user._id
+                            this.setConfig('organization_id', organization._id)
+                            this.setConfig('key', key.key)
+                            this.setConfig('user_id', user._id)
+                            this.organization = true
+                            return config
+                        }
+                    } catch (error) {
+                        console.error('Failed to load the script:', error);
                     }
                 }
-                return
             } else {
                 this.organization = 'canceled'
-                return
             }
         },
 
@@ -310,8 +315,8 @@
 
         checkMessageQueue(config) {
             let socketUrl = config.previousUrl || config.url
-            if (isBrowser && indexeddb.status) {
-                indexeddb.process({
+            if (isBrowser && indexeddb) {
+                indexeddb({
                     method: 'read.object',
                     database: 'socketSync',
                     array: socketUrl,
@@ -322,7 +327,7 @@
                                 if (config.previousUrl)
                                     Data.object.previousUrl = config.previousUrl
                                 this.send(Data.object)
-                                indexeddb.process({ method: 'delete.object', object: { _id: Data._id } })
+                                indexeddb({ method: 'delete.object', object: { _id: Data._id } })
                             } else if (Data.object.status == 'sent') {
                                 let messageTime = new Date(Data.object.timeStamp);
                                 let currentTime = new Date();
@@ -330,7 +335,7 @@
                                 if (diff > 180) {
                                     Data.method = 'delete.object'
                                     Data.object = { _id: Data._id }
-                                    indexeddb.process(Data)
+                                    indexeddb(Data)
                                 }
                             }
                         }
@@ -423,13 +428,13 @@
                             data.status = "sent"
                         } else {
                             data.status = "queued"
-                            if (!isBrowser || !indexeddb.status)
+                            if (!isBrowser || !indexeddb)
                                 this.messageQueue.set(uid, data);
                         }
                     } else
                         data.status = "queued"
 
-                    if (isBrowser && indexeddb.status && (data.status == "queued" || data.broadcastBrowser != false)) {
+                    if (isBrowser && indexeddb && (data.status == "queued" || data.broadcastBrowser != false)) {
                         const self = this
 
                         if (data.storage && data.storage.includes('indexeddb')) {
@@ -442,7 +447,7 @@
                             }
                         }
 
-                        indexeddb.process({
+                        indexeddb({
                             method: 'create.object',
                             database: 'socketSync',
                             array: socket.url,
@@ -605,10 +610,10 @@
 
     if (isBrowser) {
         window.onstorage = (e) => {
-            if (e.key == 'localSocketMessage' && indexeddb.status && e.newValue) {
+            if (e.key == 'localSocketMessage' && indexeddb && e.newValue) {
                 let Data = JSON.parse(e.newValue)
 
-                indexeddb.process(Data.data).then((data) => {
+                indexeddb(Data.data).then((data) => {
                     if (data.object[0]) {
                         CoCreateSocketClient.sendLocalMessage(data.object[0].object);
                         // TODO: stage object to be deleted
