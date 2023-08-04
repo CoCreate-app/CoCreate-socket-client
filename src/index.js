@@ -355,8 +355,8 @@
                 if (!data['organization_id'])
                     data['organization_id'] = this.config.organization_id;
 
-                if (!data['key'])
-                    data['key'] = this.config.key;
+                if (!data['apikey'])
+                    data['apikey'] = this.config.key;
 
                 if (!data['user_id'])
                     data['user_id'] = this.config.user_id;
