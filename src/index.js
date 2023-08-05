@@ -612,7 +612,7 @@
         window.onstorage = (e) => {
             if (e.key == 'localSocketMessage' && indexeddb && e.newValue) {
                 let Data = JSON.parse(e.newValue)
-
+                Data.data.method = 'read.object'
                 indexeddb(Data.data).then((data) => {
                     if (data.object[0]) {
                         CoCreateSocketClient.sendLocalMessage(data.object[0].object);
