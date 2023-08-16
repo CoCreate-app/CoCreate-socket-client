@@ -1,3 +1,21 @@
+# [1.24.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.26...v1.24.0) (2023-08-16)
+
+
+### Bug Fixes
+
+* Add method to read object from indexedDB in window.onstorage event. ([1e48212](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1e48212c6f6a3889bbcffc177b2b6ec464dc7619))
+* crud attributes renamed ([da8fd57](https://github.com/CoCreate-app/CoCreate-socket-client/commit/da8fd5714c84c184103b5fa5ad96c9a61e1844c5))
+* Refactor conditional statement to include check for socket connection in index.js ([5e30e37](https://github.com/CoCreate-app/CoCreate-socket-client/commit/5e30e37813a9dd2962ef845e1bcac7d20d41eed0))
+* renamed key to apikey in data object, as crud name has been renamed to key ([cc85858](https://github.com/CoCreate-app/CoCreate-socket-client/commit/cc85858e07e55f6e3541971cedb12593f155973e))
+* replace -target -selector ([7c41f2f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7c41f2fca5cbe1ae8c1a8c88cf448f5f3841f9ee))
+* webpack.config and package.json make use of mode=production instead of process.env ([6dc2e9f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/6dc2e9f56db2f54bb4c1f61e3e1c86d6d51df26b))
+
+
+### Features
+
+* Add @cocreate/organization as a dependency in package.json ([a55d970](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a55d970b8bc5ab0ffb14469c1774a2c81309abe9))
+* name attribute and variable renamed to key ([229076f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/229076fef6119ae3ca2bd8d442acf6cf14a42b14))
+
 ## [1.23.26](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.23.25...v1.23.26) (2023-06-14)
 
 
