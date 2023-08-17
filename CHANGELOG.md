@@ -1,3 +1,10 @@
+## [1.25.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.25.0...v1.25.1) (2023-08-17)
+
+
+### Bug Fixes
+
+* dependency typo organization to organizations ([3b73906](https://github.com/CoCreate-app/CoCreate-socket-client/commit/3b73906f102f85c8cfb7f1a8081edc09157bee15))
+
 # [1.25.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.24.0...v1.25.0) (2023-08-17)
 
 
