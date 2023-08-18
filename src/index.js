@@ -206,7 +206,9 @@
                 };
 
                 socket.onerror = function (event) {
-                    if (isBrowser && !window.navigator.onLine)
+                    if (!isBrowser)
+                        console.log(event.error);
+                    else if (!window.navigator.onLine)
                         console.log("offline");
 
                     self.reconnect(config, socket);
@@ -220,15 +222,15 @@
                                 return;
                             }
                         }
-                        let { action, data } = JSON.parse(message.data);
-                        if (action === 'Access Denied' && data.permission) {
+                        let data = JSON.parse(message.data);
+                        if (data.method === 'Access Denied' && data.permission) {
                             if (data.permission.storage === false)
                                 self.serverDB = false
                             if (data.permission.organization === false)
                                 self.serverOrganization = false
                             console.log(data.permission.error)
                         }
-                        if (action != 'connect' && typeof data == 'object') {
+                        if (data.method != 'connect' && typeof data == 'object') {
                             data.status = "received"
 
                             if (data && data.uid) {
@@ -243,11 +245,11 @@
                                     object: { _id: data.uid }
                                 }).then((message) => {
                                     if (!message.object[0]) {
-                                        self.__fireListeners(action, data)
+                                        self.__fireListeners(data.method, data)
                                     }
                                 })
                             } else {
-                                self.__fireListeners(action, data)
+                                self.__fireListeners(data.method, data)
                             }
                         }
                     } catch (e) {
