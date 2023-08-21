@@ -1,3 +1,13 @@
+## [1.25.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.25.1...v1.25.2) (2023-08-21)
+
+
+### Bug Fixes
+
+* /dist/CoCreate.js updated to https://CoCreate.app/dist/CoCreate.js ([7d6d125](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7d6d125030b02f2177280d12bc4f09bcacf7d660))
+* onmessage action renamed to method ([1c28187](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1c2818724e0e5090f11ace6458182b5ea5f554e5))
+* replace cdn with /dist ([0d9686b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/0d9686b176dfbc029370c3df33757c8c5515d343))
+* update file uploader ([dd9ecf6](https://github.com/CoCreate-app/CoCreate-socket-client/commit/dd9ecf6fe7fd0be5c5f446d666269c00f2857851))
+
 ## [1.25.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.25.0...v1.25.1) (2023-08-17)
 
 
