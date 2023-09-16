@@ -15,10 +15,12 @@
  * along with this program. If not, see <https://www.gnu.org/licenses/>.
  ********************************************************************************/
 
-// Commercial Licensing Information:
-// For commercial use of this software without the copyleft provisions of the AGPLv3,
-// you must obtain a commercial license from CoCreate LLC.
-// For details, visit <https://cocreate.app/licenses/> or contact us at sales@cocreate.app.
+/**
+ * Commercial Licensing Information:
+ * For commercial use of this software without the copyleft provisions of the AGPLv3,
+ * you must obtain a commercial license from CoCreate LLC.
+ * For details, visit <https://cocreate.app/licenses/> or contact us at sales@cocreate.app.
+ */
 
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
@@ -81,7 +83,7 @@
                     if (config.organization_id)
                         this.setConfig('organization_id', config.organization_id)
                     else {
-                        let data = await indexeddb({ method: 'read.database' })
+                        let data = await indexeddb.send({ method: 'read.database' })
                         for (let database of data.database) {
                             let name = database.database.name
                             if (name.match(/^[0-9a-fA-F]{24}$/)) {
@@ -238,7 +240,7 @@
                             }
 
                             if (isBrowser && indexeddb && data.uid && data.broadcastBrowser == 'once') {
-                                indexeddb({
+                                indexeddb.send({
                                     method: 'read.object',
                                     database: 'socketSync',
                                     array: socket.url,
@@ -318,7 +320,7 @@
         checkMessageQueue(config) {
             let socketUrl = config.previousUrl || config.url
             if (isBrowser && indexeddb) {
-                indexeddb({
+                indexeddb.send({
                     method: 'read.object',
                     database: 'socketSync',
                     array: socketUrl,
@@ -329,7 +331,7 @@
                                 if (config.previousUrl)
                                     Data.object.previousUrl = config.previousUrl
                                 this.send(Data.object)
-                                indexeddb({ method: 'delete.object', object: { _id: Data._id } })
+                                indexeddb.send({ method: 'delete.object', object: { _id: Data._id } })
                             } else if (Data.object.status == 'sent') {
                                 let messageTime = new Date(Data.object.timeStamp);
                                 let currentTime = new Date();
@@ -337,7 +339,7 @@
                                 if (diff > 180) {
                                     Data.method = 'delete.object'
                                     Data.object = { _id: Data._id }
-                                    indexeddb(Data)
+                                    indexeddb.send(Data)
                                 }
                             }
                         }
@@ -449,7 +451,7 @@
                             }
                         }
 
-                        indexeddb({
+                        indexeddb.send({
                             method: 'create.object',
                             database: 'socketSync',
                             array: socket.url,
@@ -615,7 +617,7 @@
             if (e.key == 'localSocketMessage' && indexeddb && e.newValue) {
                 let Data = JSON.parse(e.newValue)
                 Data.data.method = 'read.object'
-                indexeddb(Data.data).then((data) => {
+                indexeddb.send(Data.data).then((data) => {
                     if (data.object[0]) {
                         CoCreateSocketClient.sendLocalMessage(data.object[0].object);
                         // TODO: stage object to be deleted
