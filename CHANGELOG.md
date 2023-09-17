@@ -1,3 +1,10 @@
+## [1.26.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.26.1...v1.26.2) (2023-09-17)
+
+
+### Bug Fixes
+
+* update indexeddb() to indexeddb.send() ([dfc326e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/dfc326e0f639318d62aae4c9657f31d42cb14151))
+
 ## [1.26.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.26.0...v1.26.1) (2023-08-21)
 
 
