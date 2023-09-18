@@ -55,6 +55,7 @@
         serverDB: true,
         serverOrganization: true,
 
+        // TODO: replace with @cocreate/config
         getConfig(key) {
             let value = window.CoCreateConfig[key]
             if (!value)
@@ -121,11 +122,10 @@
                     }
 
                 }
-                if (!config.key) {
-                    config.key = this.getConfig('key')
-                    this.setConfig('key', config.key)
+                if (!config.apikey) {
+                    config.apikey = this.getConfig('apikey')
+                    this.setConfig('apikey', config.apikey)
                 }
-
                 if (!config.host) {
                     config.host = this.getConfig('host') || window.location.host
                     this.setConfig('host', config.host)
@@ -276,13 +276,13 @@
                         let org = { object: {} }
                         if (config.organization_id)
                             org.object._id = config.organization_id
-                        let { organization, key, user } = await Organization.generateDB(org)
-                        if (organization && key && user) {
+                        let { organization, apikey, user } = await Organization.generateDB(org)
+                        if (organization && apikey && user) {
                             config.organization_id = organization._id
-                            config.key = key.key
+                            config.apikey = apikey
                             config.user_id = user._id
                             this.setConfig('organization_id', organization._id)
-                            this.setConfig('key', key.key)
+                            this.setConfig('apikey', apikey)
                             this.setConfig('user_id', user._id)
                             this.organization = true
                             return config
@@ -365,7 +365,7 @@
                     data['organization_id'] = this.config.organization_id;
 
                 if (!data['apikey'])
-                    data['apikey'] = this.config.key;
+                    data['apikey'] = this.config.apikey;
 
                 if (!data['user_id'])
                     data['user_id'] = this.config.user_id;
@@ -397,12 +397,13 @@
                 if (!data['room'])
                     delete data.room;
 
-                const uid = data['uid'];
-                const sockets = this.getSockets(data);
-
                 let online = true;
                 if (isBrowser && !window.navigator.onLine)
                     online = false
+
+                const uid = data['uid'];
+                const sockets = this.getSockets(data);
+
                 for (let socket of sockets) {
                     // TODO: uid per each socket?
                     let status = data.status
@@ -574,13 +575,15 @@
 
         addSocketPath(data, url) {
             let prefix = data.prefix || 'ws';
-            let organization_id = data.organization_id || this.config.organization_id;
-            let namespace = data.namespace || '';
             let room = data.room || '';
             if (prefix && prefix != '')
                 url += `/${prefix}`
+
+            let organization_id = data.organization_id || this.config.organization_id;
             if (organization_id && organization_id != '')
                 url += `/${organization_id}`
+
+            let namespace = data.namespace || '';
             if (namespace && namespace != '')
                 url += `/${namespace}`
             if (room && room != '')
