@@ -1,3 +1,11 @@
+## [1.26.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.26.2...v1.26.3) (2023-09-18)
+
+
+### Bug Fixes
+
+*  Add path and pathname ([824d836](https://github.com/CoCreate-app/CoCreate-socket-client/commit/824d8367cc8cfb00caa802f929ef19b45887da09))
+* Update dCoCreate dpendencies to latest versions ([314408b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/314408b90e88b1b608434ce760c049fd880aff95))
+
 ## [1.26.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.26.1...v1.26.2) (2023-09-17)
 
 
