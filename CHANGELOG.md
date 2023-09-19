@@ -1,3 +1,10 @@
+## [1.26.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.26.3...v1.26.4) (2023-09-19)
+
+
+### Bug Fixes
+
+* conflict with config.key and apikey ([6daa902](https://github.com/CoCreate-app/CoCreate-socket-client/commit/6daa90278afcdffa7621c7a84a1593ecf49eded8))
+
 ## [1.26.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.26.2...v1.26.3) (2023-09-18)
 
 
