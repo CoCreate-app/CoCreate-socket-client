@@ -60,7 +60,7 @@
   "dependencies": {
     "@cocreate/indexeddb": "^1.13.5",
     "@cocreate/local-storage": "^1.10.2",
-    "@cocreate/organizations": "^1.20.0",
+    "@cocreate/organizations": "^1.21.0",
     "@cocreate/uuid": "^1.7.2",
     "ws": "7.5.9"
   }
