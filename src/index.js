@@ -364,10 +364,10 @@
                 if (!data['organization_id'])
                     data['organization_id'] = this.config.organization_id;
 
-                if (!data['apikey'])
+                if (!data['apikey'] && this.config.apikey)
                     data['apikey'] = this.config.apikey;
 
-                if (!data['user_id'])
+                if (!data['user_id'] && this.config.user_id)
                     data['user_id'] = this.config.user_id;
 
                 if (data['broadcast'] === 'false' || data['broadcast'] === false)
