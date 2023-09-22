@@ -45,7 +45,6 @@
         listeners: new Map(),
         messageQueue: new Map(),
         configQueue: new Map(),
-        saveFileName: '',
         clientId: uuid.generate(8),
         config: {},
         initialReconnectDelay: delay,
@@ -239,7 +238,7 @@
                                 self.__fireEvent(data.uid, data);
                             }
 
-                            if (isBrowser && indexeddb && data.uid && data.broadcastBrowser == 'once') {
+                            if (isBrowser && indexeddb && data.uid && data.broadcastBrowser) {
                                 indexeddb.send({
                                     method: 'read.object',
                                     database: 'socketSync',
@@ -380,10 +379,10 @@
                 else
                     data['broadcastSender'] = true;
 
-                if (data['broadcastBrowser'] === 'false' || data['broadcastBrowser'] === false)
-                    data['broadcastBrowser'] = false;
-                else if (data['broadcastBrowser'] !== 'once')
+                if (data['broadcastBrowser'] === 'true' || data['broadcastBrowser'] === true || data['broadcastBrowser'] === 'once')
                     data['broadcastBrowser'] = true;
+                else
+                    data['broadcastBrowser'] = false;
 
                 if (!data['uid'])
                     data['uid'] = uuid.generate();
@@ -439,7 +438,7 @@
                     } else
                         data.status = "queued"
 
-                    if (isBrowser && indexeddb && (data.status == "queued" || data.broadcastBrowser != false)) {
+                    if (isBrowser && indexeddb && (data.status == "queued" || data.broadcastBrowser)) {
                         const self = this
 
                         if (data.storage && data.storage.includes('indexeddb')) {
@@ -461,7 +460,7 @@
                             if (!data.method.startsWith('read')) {
                                 if (data.broadcastSender !== false)
                                     self.sendLocalMessage(data)
-                                if (data.broadcastBrowser != false) {
+                                if (data.broadcastBrowser) {
                                     let browserMessage = {
                                         data: {
                                             database: 'socketSync',
