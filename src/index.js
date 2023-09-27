@@ -45,7 +45,8 @@
         listeners: new Map(),
         messageQueue: new Map(),
         configQueue: new Map(),
-        clientId: uuid.generate(8),
+        clientId: '',
+        socketId: uuid.generate(8),
         config: {},
         initialReconnectDelay: delay,
         currentReconnectDelay: delay,
@@ -56,15 +57,28 @@
 
         // TODO: replace with @cocreate/config
         getConfig(key) {
-            let value = window.CoCreateConfig[key]
-            if (!value)
+            let value
+            if (window.CoCreateConfig && window.CoCreateConfig[key])
+                value = window.CoCreateConfig[key]
+            else
                 value = localStorage.getItem(key)
             return value
         },
 
         setConfig(key, value) {
-            window.CoCreateConfig[key] = value
+            if (!window.CoCreateConfig)
+                window.CoCreateConfig = { [key]: value }
+            else
+                window.CoCreateConfig[key] = value
             localStorage.setItem(key, value)
+        },
+
+        getClientId() {
+            this.clientId = this.getConfig('clientId')
+            if (!this.clientId) {
+                this.clientId = indexeddb.ObjectId()
+                this.setConfig('clientId', this.clientId)
+            }
         },
 
         /**
@@ -96,17 +110,18 @@
                         if (!config.organization_id) {
                             if (navigator.serviceWorker) {
                                 navigator.serviceWorker.addEventListener("message", (event) => {
-                                    config.organization_id = event.data
-                                    if (!config.organization_id)
-                                        this.createOrganization(config).then((config) => {
-                                            if (config)
-                                                self.create(config)
-                                        });
-                                    else {
-                                        self.setConfig('organization_id', config.organization_id)
-                                        self.create(config)
+                                    if (event.data.action === 'getOrganiztion') {
+                                        config.organization_id = event.data.organization_id
+                                        if (!config.organization_id)
+                                            this.createOrganization(config).then((config) => {
+                                                if (config)
+                                                    self.create(config)
+                                            });
+                                        else {
+                                            self.setConfig('organization_id', config.organization_id)
+                                            self.create(config)
+                                        }
                                     }
-
                                 });
 
                                 // Send message to SW
@@ -223,6 +238,7 @@
                                 return;
                             }
                         }
+
                         let data = JSON.parse(message.data);
                         if (data.method === 'Access Denied' && data.permission) {
                             if (data.permission.storage === false)
@@ -231,6 +247,7 @@
                                 self.serverOrganization = false
                             console.log(data.permission.error)
                         }
+
                         if (data.method != 'connect' && typeof data == 'object') {
                             data.status = "received"
 
@@ -358,7 +375,7 @@
         send(data) {
             return new Promise((resolve, reject) => {
                 if (!data['timeStamp'])
-                    data['timeStamp'] = new Date().toISOString()
+                    data['timeStamp'] = new Date();
 
                 if (!data['organization_id'])
                     data['organization_id'] = this.config.organization_id;
@@ -614,7 +631,10 @@
         }
     }
 
+
     if (isBrowser) {
+        CoCreateSocketClient.getClientId()
+
         window.onstorage = (e) => {
             if (e.key == 'localSocketMessage' && indexeddb && e.newValue) {
                 let Data = JSON.parse(e.newValue)
