@@ -40,13 +40,13 @@
 
     const delay = 1000 + Math.floor(Math.random() * 3000)
     const CoCreateSocketClient = {
+        id: uuid.generate(12),
         connected: false,
         sockets: new Map(),
         listeners: new Map(),
         messageQueue: new Map(),
         configQueue: new Map(),
         clientId: '',
-        socketId: uuid.generate(8),
         config: {},
         initialReconnectDelay: delay,
         currentReconnectDelay: delay,
@@ -183,6 +183,7 @@
                         token = this.getConfig("token");
                     }
                     socket = new WebSocket(url, token)
+                    socket.id = uuid.generate(8);
                     socket.connected = false;
                     socket.clientId = this.clientId;
                     socket.organization_id = config.organization_id;
@@ -374,6 +375,9 @@
 
         send(data) {
             return new Promise((resolve, reject) => {
+                data.clientId = this.clientId;
+                data.socketId = this.id;
+
                 if (!data['timeStamp'])
                     data['timeStamp'] = new Date();
 
@@ -403,9 +407,6 @@
 
                 if (!data['uid'])
                     data['uid'] = uuid.generate();
-
-                if (!data['clientId'])
-                    data['clientId'] = this.clientId;;
 
                 if (!data['namespace'])
                     delete data.namespace;
