@@ -38,11 +38,11 @@
     }
 }(typeof self !== 'undefined' ? self : this, function (isBrowser, WebSocket, Blob, uuid, indexeddb, localStorage) {
 
+    const socketsByUrl = new Map()
+    const socketsById = new Map()
     const delay = 1000 + Math.floor(Math.random() * 3000)
     const CoCreateSocketClient = {
-        id: uuid.generate(12),
         connected: false,
-        sockets: new Map(),
         listeners: new Map(),
         messageQueue: new Map(),
         configQueue: new Map(),
@@ -54,6 +54,34 @@
         organization: false,
         serverDB: true,
         serverOrganization: true,
+
+        set(socket, option) {
+            if (option === false || option === null) {
+                socketsByUrl.set(socket.url, option);
+                socketsById.set(socket.id, option);
+            } else {
+                socketsByUrl.set(socket.url, socket);
+                socketsById.set(socket.id, socket);
+            }
+        },
+
+        get(key) {
+            return socketsByUrl.get(key) || socketsById.get(key)
+        },
+
+        has(key) {
+            return socketsByUrl.has(key) || socketsById.has(key)
+        },
+
+        delete(key) {
+            let socket
+            if (typeof key === 'string')
+                socket = this.get(key)
+            if (!socket || !socket.id && !socket.url)
+                return
+            socketsByUrl.delete(socket.url)
+            socketsById.delete(socket.id)
+        },
 
         // TODO: replace with @cocreate/config
         getConfig(key) {
@@ -173,7 +201,7 @@
 
             const urls = this.getUrls(config);
             for (let url of urls) {
-                let socket = this.sockets.get(url);
+                let socket = this.get(url);
                 if (socket)
                     return;
 
@@ -192,7 +220,7 @@
                     socket.prefix = config.prefix || 'ws';
                     socket.config = { ...config, prefix: socket.prefix };
 
-                    this.sockets.set(url, socket);
+                    this.set(socket);
                 } catch (error) {
                     console.log(error);
                     return;
@@ -522,7 +550,7 @@
                 if (!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
                     if (config.balancer !== 'mesh') {
                         config.previousUrl = url
-                        self.sockets.set(url, false)
+                        self.set(url, false)
                     }
                     self.currentReconnectDelay *= 2;
                     self.create(config);
@@ -535,7 +563,7 @@
             if (socket) {
                 socket.onerror = socket.onopen = socket.onclose = null;
                 socket.close();
-                this.sockets.set(socket.url, null);
+                this.set(socket.url, null);
                 socket = null;
             }
         },
@@ -564,7 +592,7 @@
                     if (balancer == "mesh")
                         urls.push(url)
                     else {
-                        let socket = this.sockets.get(url)
+                        let socket = this.get(url)
                         if (socket !== false) {
                             urls.push(url)
                             break;
@@ -574,7 +602,7 @@
                 }
                 if (!urls.length && hostUrls.length) {
                     for (let i = 0; i < hostUrls.length; i++) {
-                        this.sockets.set(hostUrls[i], null)
+                        this.set(hostUrls[i], null)
                         urls.push(hostUrls[i])
                     }
 
@@ -612,10 +640,10 @@
             let sockets = [];
             let urls = this.getUrls(data)
             for (let url of urls) {
-                let socket = this.sockets.get(url)
+                let socket = this.get(url)
                 if (!socket) {
                     this.create(data)
-                    socket = this.sockets.get(url)
+                    socket = this.get(url)
                     if (socket)
                         sockets.push(socket)
                 } else {
