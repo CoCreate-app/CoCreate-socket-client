@@ -404,7 +404,6 @@
         send(data) {
             return new Promise((resolve, reject) => {
                 data.clientId = this.clientId;
-                data.socketId = this.id;
 
                 if (!data['timeStamp'])
                     data['timeStamp'] = new Date();
@@ -450,6 +449,8 @@
                 const sockets = this.getSockets(data);
 
                 for (let socket of sockets) {
+                    data.socketId = socket.id;
+
                     // TODO: uid per each socket?
                     let status = data.status
                     if (status != "queued") {
