@@ -284,20 +284,7 @@
                                 self.__fireEvent(data.uid, data);
                             }
 
-                            if (isBrowser && indexeddb && data.uid && data.broadcastBrowser) {
-                                indexeddb.send({
-                                    method: 'read.object',
-                                    database: 'socketSync',
-                                    array: socket.url,
-                                    object: { _id: data.uid }
-                                }).then((message) => {
-                                    if (!message.object[0]) {
-                                        self.__fireListeners(data.method, data)
-                                    }
-                                })
-                            } else {
-                                self.__fireListeners(data.method, data)
-                            }
+                            self.__fireListeners(data.method, data)
                         }
                     } catch (e) {
                         console.log(e);
@@ -365,6 +352,7 @@
         checkMessageQueue(config) {
             let socketUrl = config.previousUrl || config.url
             if (isBrowser && indexeddb) {
+                // TODO: read and delete atomically to enforce the message is sent once per client
                 indexeddb.send({
                     method: 'read.object',
                     database: 'socketSync',
@@ -372,20 +360,17 @@
                 }).then((data) => {
                     if (data.object) {
                         for (let Data of data.object) {
-                            if (Data.object.status == 'queued') {
+                            if (Data.status == 'queued') {
                                 if (config.previousUrl)
-                                    Data.object.previousUrl = config.previousUrl
-                                this.send(Data.object)
-                                indexeddb.send({ method: 'delete.object', object: { _id: Data._id } })
-                            } else if (Data.object.status == 'sent') {
-                                let messageTime = new Date(Data.object.timeStamp);
-                                let currentTime = new Date();
-                                let diff = (currentTime - messageTime) / 1000;
-                                if (diff > 180) {
-                                    Data.method = 'delete.object'
-                                    Data.object = { _id: Data._id }
-                                    indexeddb.send(Data)
-                                }
+                                    Data.previousUrl = config.previousUrl
+                                indexeddb.send({
+                                    method: 'delete.object',
+                                    database: 'socketSync',
+                                    array: socketUrl,
+                                    object: { _id: Data._id }
+                                })
+
+                                this.send(Data)
                             }
                         }
                     }
@@ -422,15 +407,15 @@
                 else
                     data['broadcast'] = true;
 
+                if (data['broadcastClient'] && data['broadcastClient'] !== 'false')
+                    data['broadcastClient'] = true;
+                else
+                    data['broadcastClient'] = false;
+
                 if (data['broadcastSender'] === 'false' || data['broadcastSender'] === false)
                     data['broadcastSender'] = false;
                 else
                     data['broadcastSender'] = true;
-
-                if (data['broadcastBrowser'] === 'true' || data['broadcastBrowser'] === true || data['broadcastBrowser'] === 'once')
-                    data['broadcastBrowser'] = true;
-                else
-                    data['broadcastBrowser'] = false;
 
                 if (!data['uid'])
                     data['uid'] = uuid.generate();
@@ -440,6 +425,12 @@
 
                 if (!data['room'])
                     delete data.room;
+
+                let broadcastBrowser = false
+                if (data['broadcastBrowser'] && data['broadcastBrowser'] !== 'false') {
+                    broadcastBrowser = true;
+                    delete data['broadcastBrowser']
+                }
 
                 let online = true;
                 if (isBrowser && !window.navigator.onLine)
@@ -485,9 +476,14 @@
                     } else
                         data.status = "queued"
 
-                    if (isBrowser && indexeddb && (data.status == "queued" || data.broadcastBrowser)) {
-                        const self = this
+                    if (isBrowser && !data.method.startsWith('read')) {
+                        if (data.broadcastSender)
+                            this.sendLocalMessage(data)
+                        if (broadcastBrowser)
+                            this.setConfig('localSocketMessage', JSON.stringify(data))
+                    }
 
+                    if (isBrowser && indexeddb && data.status == "queued") {
                         if (data.storage && data.storage.includes('indexeddb')) {
                             let type = data.method.split('.');
                             type = type[type.length - 1];
@@ -502,26 +498,9 @@
                             method: 'create.object',
                             database: 'socketSync',
                             array: socket.url,
-                            object: { _id: uid, object: data }
-                        }).then(() => {
-                            if (!data.method.startsWith('read')) {
-                                if (data.broadcastSender !== false)
-                                    self.sendLocalMessage(data)
-                                if (data.broadcastBrowser) {
-                                    let browserMessage = {
-                                        data: {
-                                            database: 'socketSync',
-                                            array: socket.url,
-                                            object: { _id: uid },
-                                            clientId: this.clientId
-                                        }
-                                    }
-                                    self.setConfig('localSocketMessage', JSON.stringify(browserMessage))
-                                }
-                            }
+                            object: { _id: uid, ...data }
                         })
                     }
-
                 }
             });
         },
@@ -667,15 +646,8 @@
 
         window.onstorage = (e) => {
             if (e.key == 'localSocketMessage' && indexeddb && e.newValue) {
-                let Data = JSON.parse(e.newValue)
-                Data.data.method = 'read.object'
-                indexeddb.send(Data.data).then((data) => {
-                    if (data.object[0]) {
-                        CoCreateSocketClient.sendLocalMessage(data.object[0].object);
-                        // TODO: stage object to be deleted
-                    }
-                })
-
+                let data = JSON.parse(e.newValue)
+                CoCreateSocketClient.sendLocalMessage(data)
             }
         };
     }
