@@ -38,49 +38,50 @@
     }
 }(typeof self !== 'undefined' ? self : this, function (isBrowser, WebSocket, Blob, uuid, indexeddb, localStorage) {
 
-    const socketsByUrl = new Map()
+    const socketsByKey = new Map()
     const socketsById = new Map()
     const delay = 1000 + Math.floor(Math.random() * 3000)
     const CoCreateSocketClient = {
         connected: false,
         listeners: new Map(),
-        messageQueue: new Map(),
+        messageQueue: new Map(), // required per url already per url when isBrowser and indexeddb
         configQueue: new Map(),
         clientId: '',
         config: {},
-        initialReconnectDelay: delay,
-        currentReconnectDelay: delay,
-        maxReconnectDelay: 600000,
-        organization: false,
-        serverDB: true,
-        serverOrganization: true,
+        initialReconnectDelay: delay, // required per url
+        currentReconnectDelay: delay, // required per url
+        maxReconnectDelay: 600000, // required per url
+        organization: false, // required per url
+        serverDB: true, // required per url
+        serverOrganization: true, // required per url
+        syncedMessages: [], // required per url and needs to be persistent
+        lastSynced: '', // required per url and needs to be persistent
 
-        set(socket, option) {
-            if (option === false || option === null) {
-                socketsByUrl.set(socket.url, option);
-                socketsById.set(socket.id, option);
-            } else {
-                socketsByUrl.set(socket.url, socket);
-                socketsById.set(socket.id, socket);
-            }
+        //TODO: on app start up we can get the port and ip and public dns. using config we can define if this app is behind an lb.
+        // If behind an lb it can create a socket connection to the lb node in order to add node to the lb backend list.
+
+        set(socket) {
+            socketsByKey.set(socket.key, socket);
+            socketsById.set(socket.id, socket);
         },
 
         get(key) {
-            return socketsByUrl.get(key) || socketsById.get(key)
+            return socketsByKey.get(key) || socketsById.get(key)
         },
 
         has(key) {
-            return socketsByUrl.has(key) || socketsById.has(key)
+            return socketsByKey.has(key) || socketsById.has(key)
         },
 
         delete(key) {
             let socket
             if (typeof key === 'string')
                 socket = this.get(key)
-            if (!socket || !socket.id && !socket.url)
+            if (!socket || !socket.id && !socket.key)
                 return
-            socketsByUrl.delete(socket.url)
+            socketsByKey.delete(socket.key)
             socketsById.delete(socket.id)
+            socket.close()
         },
 
         // TODO: replace with @cocreate/config
@@ -92,7 +93,7 @@
                 value = localStorage.getItem(key)
             return value
         },
-
+        // TODO: replace with @cocreate/config
         setConfig(key, value) {
             if (!window.CoCreateConfig)
                 window.CoCreateConfig = { [key]: value }
@@ -100,7 +101,7 @@
                 window.CoCreateConfig[key] = value
             localStorage.setItem(key, value)
         },
-
+        // TODO: replace with @cocreate/config
         getClientId() {
             this.clientId = this.getConfig('clientId')
             if (!this.clientId) {
@@ -180,12 +181,13 @@
                     config.balancer = this.getConfig('balancer') || ''
                     this.setConfig('balancer', config.balancer)
                 }
-                // if (!config.prefix) {
-                // 	config.prefix = "ws"; // previously 'crud'
-                // }
+                if (!config.prefix) {
+                    config.prefix = this.getConfig('prefix') || 'ws'
+                    this.setConfig('prefix', config.prefix)
+                }
 
                 if (!window.navigator.onLine && !this.configQueue.has(config)) {
-                    // TODO: create a key string using host, org_id tp prevent duplicate events
+                    // TODO: create a key string using host, org_id to prevent duplicate events
                     // this.configQueue.set(config,'')
                     const online = () => {
                         window.removeEventListener("online", online)
@@ -210,15 +212,30 @@
                     if (isBrowser) {
                         token = this.getConfig("token");
                     }
-                    socket = new WebSocket(url, token)
-                    socket.id = uuid.generate(8);
+
+                    const Config = {
+                        socketId: uuid.generate(8),
+                        clientId: this.clientId,
+                        lastSynced: this.lastSynced, // config.get('lastSynced')  using config to ensure accesiblity through fallbacks
+                        syncedMessages: this.syncedMessages // has to have indexeddb to sync else where would the return data sync to. config.get('syncedMessage')  using config to ensure accesiblity through fallbacks
+                    }
+
+                    let urlEncodedString = encodeURIComponent(JSON.stringify(Config));
+                    if (urlEncodedString)
+                        urlEncodedString = `${url}/${urlEncodedString}`
+                    else
+                        urlEncodedString = url
+
+                    socket = new WebSocket(urlEncodedString, token)
+                    socket.id = Config.socketId;
                     socket.connected = false;
                     socket.clientId = this.clientId;
                     socket.organization_id = config.organization_id;
                     socket.user_id = config.user_id;
                     socket.host = config.host;
                     socket.prefix = config.prefix || 'ws';
-                    socket.config = { ...config, prefix: socket.prefix };
+                    socket.config = { ...config };
+                    socket.key = url;
 
                     this.set(socket);
                 } catch (error) {
@@ -230,8 +247,9 @@
                     self.connected = true
                     socket.connected = true;
                     config.url = socket.url
+                    config.key = socket.key
                     self.currentReconnectDelay = self.initialReconnectDelay
-                    if (config.balancer != "mesh" && config.previousUrl && config.previousUrl !== socket.url)
+                    if (config.balancer != "mesh" && config.previousKey && config.previousKey !== socket.key)
                         self.checkMessageQueue(config);
                     else
                         self.checkMessageQueue(config);
@@ -278,6 +296,17 @@
                         }
 
                         if (data.method != 'connect' && typeof data == 'object') {
+                            if (isBrowser && indexeddb && data.syncedMessage)
+                                self.syncedMessages.push(data.syncedMessage) // needs to be persistent
+                            else if (!isBrowser && data.syncedMessage && data.isRegionalStorage)
+                                console.log('Multi-master regional database')
+
+                            if (method === 'sync') {
+                                self.lastSynced = data.lastSynced
+                                if (data.syncedMessages)
+                                    self.syncedMessages = self.syncedMessages.filter(item => !data.syncedMessages.includes(item));
+                            }
+
                             data.status = "received"
 
                             if (data && data.uid) {
@@ -349,24 +378,27 @@
             }
         },
 
+        // TODO: could be rquired in the serverside when handeling server to server mesh socket
         checkMessageQueue(config) {
-            let socketUrl = config.previousUrl || config.url
+            let socketKey = config.previousKey || config.key
             if (isBrowser && indexeddb) {
                 // TODO: read and delete atomically to enforce the message is sent once per client
                 indexeddb.send({
                     method: 'read.object',
                     database: 'socketSync',
-                    array: socketUrl,
+                    array: socketKey,
                 }).then((data) => {
                     if (data.object) {
                         for (let Data of data.object) {
                             if (Data.status == 'queued') {
-                                if (config.previousUrl)
-                                    Data.previousUrl = config.previousUrl
+                                if (config.previousKey)
+                                    Data.previousKey = config.previousKey
+
+
                                 indexeddb.send({
                                     method: 'delete.object',
                                     database: 'socketSync',
-                                    array: socketUrl,
+                                    array: socketKey,
                                     object: { _id: Data._id }
                                 })
 
@@ -376,7 +408,7 @@
                     }
                 })
             } else {
-                // TODO: set and get messageQueue per socket.url
+                // TODO: set and get messageQueue per socket.key 
                 if (this.messageQueue.size > 0) {
                     for (let [uid, data] of this.messageQueue) {
                         this.send(data)
@@ -385,6 +417,7 @@
                 }
             }
         },
+
 
         send(data) {
             return new Promise((resolve, reject) => {
@@ -442,7 +475,6 @@
                 for (let socket of sockets) {
                     data.socketId = socket.id;
 
-                    // TODO: uid per each socket?
                     let status = data.status
                     if (status != "queued") {
                         if (isBrowser) {
@@ -497,14 +529,13 @@
                         indexeddb.send({
                             method: 'create.object',
                             database: 'socketSync',
-                            array: socket.url,
+                            array: socket.key,
                             object: { _id: uid, ...data }
                         })
                     }
                 }
             });
         },
-
 
         sendFile(file, room) {
             const socket = this.getByRoom(room);
@@ -523,29 +554,19 @@
 
         reconnect(config, socket) {
             let self = this;
-            let url = socket.url
-            this.destroy(socket)
+            let key = socket.key
 
             setTimeout(() => {
                 if (!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
                     if (config.balancer !== 'mesh') {
-                        config.previousUrl = url
-                        self.set(url, false)
+                        config.previousKey = key
+                        self.delete(key)
                     }
                     self.currentReconnectDelay *= 2;
                     self.create(config);
                 }
             }, self.currentReconnectDelay);
 
-        },
-
-        destroy(socket) {
-            if (socket) {
-                socket.onerror = socket.onopen = socket.onclose = null;
-                socket.close();
-                this.set(socket.url, null);
-                socket = null;
-            }
         },
 
         getUrls(data = {}) {
@@ -556,7 +577,7 @@
             let url, urls = [], hostUrls = [];
             let host = data.host || this.config.host
             let balancer = data.balancer || this.config.balancer
-            if (host) {
+            if (typeof host === 'string') {
                 host = host.split(",");
                 for (let i = 0; i < host.length; i++) {
                     host[i] = host[i].trim()
@@ -582,7 +603,7 @@
                 }
                 if (!urls.length && hostUrls.length) {
                     for (let i = 0; i < hostUrls.length; i++) {
-                        this.set(hostUrls[i], null)
+                        this.delete(hostUrls[i])
                         urls.push(hostUrls[i])
                     }
 
@@ -592,29 +613,24 @@
                 url = this.addSocketPath(data, url)
                 urls.push(url)
             } else {
-                return console.log('missing host')
+                console.log('missing host')
             }
 
             return urls;
         },
 
         addSocketPath(data, url) {
-            let prefix = data.prefix || 'ws';
-            let room = data.room || '';
+            let prefix = data.prefix || this.config.prefix || 'ws';
             if (prefix && prefix != '')
                 url += `/${prefix}`
 
             let organization_id = data.organization_id || this.config.organization_id;
-            if (organization_id && organization_id != '')
+            if (organization_id)
                 url += `/${organization_id}`
 
-            let namespace = data.namespace || '';
-            if (namespace && namespace != '')
-                url += `/${namespace}`
-            if (room && room != '')
-                url += `/${room}`
             return url
         },
+
 
         getSockets(data) {
             let sockets = [];
@@ -639,7 +655,6 @@
             this.__fireListeners(data.method, data)
         }
     }
-
 
     if (isBrowser) {
         CoCreateSocketClient.getClientId()
