@@ -257,6 +257,8 @@
                             } else if (!isBrowser && data.syncedMessage && data.isRegionalStorage)
                                 console.log('Multi-master regional database')
 
+                            if (data.broadcastBrowser || (data.broadcastClient && data.broadcastBrowser !== false)) && isBrowser && data.broadcastBrowser && !data.method.startsWith('read'))
+                                configHandler.set('localSocketMessage', JSON.stringify(data))
 
                             data.status = "received"
 
@@ -492,7 +494,7 @@
                     if (isBrowser && !data.method.startsWith('read')) {
                         if (data.broadcastSender)
                             this.sendLocalMessage(data)
-                        if (broadcastBrowser)
+                        if (data.broadcastBrowser)
                             configHandler.set('localSocketMessage', JSON.stringify(data))
                     }
 
