@@ -46,8 +46,6 @@
         messageQueue: new Map(), // required per url already per url when isBrowser and indexeddb
         configQueue: new Map(),
         config: {},
-        initialReconnectDelay: delay, // required per url
-        currentReconnectDelay: delay, // required per url
         maxReconnectDelay: 600000, // required per url
         organization: false, // required per url
         serverDB: true, // required per url
@@ -102,15 +100,6 @@
             if (!config.organization_id && !this.config.organization_id)
                 return console.log('organization_id not found and config should be added to a queue until organization_id is created')
 
-            if (isBrowser && !window.navigator.onLine && !config.clientId) {
-                const online = () => {
-                    window.removeEventListener("online", online)
-                    self.create(config)
-                }
-                window.addEventListener("online", online);
-                return
-            }
-
             const urls = this.getUrls(config);
             for (let url of urls) {
                 let socket = this.get(url);
@@ -136,20 +125,24 @@
                     if (isBrowser && indexeddb) {
                         let data = await indexeddb.send({
                             method: 'read.object',
-                            database: 'socketSync',
-                            array: url,
-                            filter: {
+                            array: 'message_log',
+                            $filter: {
                                 query: [
-                                    { key: 'type', value: 'lastSynced', operator: '$eq' }
+                                    { key: 'status', value: 'synced', operator: '$eq' },
                                 ]
-                            }
+                            },
+                            organization_id: config.organization_id
                         })
 
-                        if (data && data.object && data.object[0]) {
-                            console.log('Config', data.object[0])
-                            options.lastSynced = data.object[0].lastSynced
-                            options.syncedMessages = data.object[0].syncedMessages
-                            // TODO: create an array called message_log with type queued, sent, received.
+                        if (data && data.object) {
+                            options.syncedMessages = []
+                            for (let i = 0; i < data.object.length; i++) {
+                                if (data.object[i].lastSynced)
+                                    options.lastSynced = data.object[i].lastSynced
+                                else
+                                    options.syncedMessages.push(data.object[i]._id)
+                            }
+                            console.log('options', options)
                         }
                     }
 
@@ -174,11 +167,8 @@
                     self.connected = true
                     socket.connected = true;
                     config.url = socket.url
-                    self.currentReconnectDelay = self.initialReconnectDelay
-                    if (config.balancer != "mesh" && config.previousUrl && config.previousUrl !== socket.url)
-                        self.checkMessageQueue(config);
-                    else
-                        self.checkMessageQueue(config);
+                    delete config.currentReconnectDelay
+                    self.checkMessageQueue(config);
                 };
 
                 socket.onclose = function (event) {
@@ -219,29 +209,29 @@
 
                                 indexeddb.send({
                                     method: 'update.object',
-                                    database: 'socketSync',
-                                    array: socket.url,
-                                    object: { lastSyned: data.lastSynced, type: 'lastSynced' },
-                                    filter: {
+                                    array: 'message_log',
+                                    object: { url: socket.url, lastSynced: data.lastSynced, type: 'lastSynced', status: 'synced' },
+                                    $filter: {
                                         query: [
-                                            { key: 'type', value: 'lastSynced', operator: '$eq' }
+                                            { key: 'type', value: 'lastSynced', operator: '$eq' },
+                                            { key: 'status', value: 'synced', operator: '$eq' }
                                         ]
                                     },
-                                    upsert: true
+                                    upsert: true,
+                                    organization_id: socket.organization_id
                                 })
 
                                 if (data.syncedMessages && data.syncedMessages.length) {
                                     indexeddb.send({
                                         method: 'delete.object',
-                                        database: 'socketSync',
-                                        array: socket.url,
-                                        object: { _id: data.syncedMessage, type: 'synced' },
-                                        filter: {
+                                        array: 'message_log',
+                                        $filter: {
                                             query: [
                                                 { key: '_id', value: data.syncedMessages, operator: '$includes' },
-                                                { key: 'type', value: 'synced', operator: '$eq' }
+                                                { key: 'status', value: 'synced', operator: '$eq' }
                                             ]
-                                        }
+                                        },
+                                        organization_id: socket.organization_id
                                     })
                                 }
                                 return
@@ -250,9 +240,9 @@
                             if (isBrowser && indexeddb && data.syncedMessage) {
                                 indexeddb.send({
                                     method: 'create.object',
-                                    database: 'socketSync',
-                                    array: socket.url,
-                                    object: { _id: data.syncedMessage, type: 'synced' }
+                                    array: 'message_log',
+                                    object: { _id: data.syncedMessage, url: socket.url, status: 'synced' },
+                                    organization_id: socket.organization_id
                                 })
                             } else if (!isBrowser && data.syncedMessage && data.isRegionalStorage)
                                 console.log('Multi-master regional database')
@@ -371,22 +361,22 @@
 
         // TODO: could be rquired in the serverside when handeling server to server mesh socket using crud-server instead
         checkMessageQueue(config) {
-            let url = config.previousUrl || config.url
             if (isBrowser && indexeddb) {
                 indexeddb.send({
                     method: 'delete.object',
-                    database: 'socketSync',
-                    array: url,
-                    filter: {
-                        query: [{ key: 'status', value: 'queued', operator: '$eq' }]
-                    }
+                    array: 'message_log',
+                    $filter: {
+                        query: [
+                            { key: 'status', value: 'queued', operator: '$eq' }
+                        ]
+                    },
+                    organization_id: config.organization_id
+
                 }).then((data) => {
                     if (data) {
                         console.log('messageQueue', data.object)
                         for (let i = 0; i < data.object.length; i++) {
-                            if (config.previousUrl)
-                                data.object[i].previousUrl = config.previousUrl
-                            this.send(data.object[i])
+                            this.send(data.object[i].data)
                         }
                     }
                 })
@@ -511,9 +501,9 @@
 
                         indexeddb.send({
                             method: 'create.object',
-                            database: 'socketSync',
-                            array: socket.url,
-                            object: { _id: uid, ...data }
+                            array: 'message_log',
+                            object: { _id: uid, data, status: 'queued' },
+                            organization_id: data.organization_id
                         })
                     }
                 }
@@ -530,19 +520,26 @@
 
         reconnect(config, socket) {
             let self = this;
-            let url = socket.url
+            if (!config.currentReconnectDelay)
+                config.currentReconnectDelay = delay
 
-            setTimeout(() => {
-                if (!self.maxReconnectDelay || self.currentReconnectDelay < self.maxReconnectDelay) {
-                    if (config.balancer !== 'mesh') {
-                        config.previousUrl = url
-                        self.delete(url)
-                    }
-                    self.currentReconnectDelay *= 2;
+            let url = socket.url
+            if (isBrowser && !window.navigator.onLine) {
+                const online = () => {
+                    window.removeEventListener("online", online)
+                    self.delete(url)
                     self.create(config);
                 }
-            }, self.currentReconnectDelay);
-
+                window.addEventListener("online", online);
+            } else {
+                setTimeout(() => {
+                    if (!self.maxReconnectDelay || config.currentReconnectDelay < self.maxReconnectDelay) {
+                        self.delete(url)
+                        config.currentReconnectDelay *= 2;
+                        self.create(config);
+                    }
+                }, config.currentReconnectDelay);
+            }
         },
 
         getUrls(data = {}) {
