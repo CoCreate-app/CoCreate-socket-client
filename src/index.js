@@ -128,7 +128,6 @@
 
                     let opt = JSON.stringify(options)
                     opt = encodeURIComponent(opt)
-                    console.log('options', { options, opt })
 
                     socket = new WebSocket(url, opt)
                     socket.id = options.socketId;
@@ -334,7 +333,6 @@
 
                 }).then((data) => {
                     if (data) {
-                        console.log('messageQueue', data.object)
                         for (let i = 0; i < data.object.length; i++) {
                             this.send(data.object[i].data)
                         }
