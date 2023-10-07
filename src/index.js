@@ -118,36 +118,18 @@
                     const options = {
                         socketId: uuid.generate(8),
                         clientId: this.clientId,
-                        token: token || ''
+                        token: token || '',
                     }
 
-                    // indexeddb required to sync else where would the return data sync to?
-                    if (isBrowser && indexeddb) {
-                        let data = await indexeddb.send({
-                            method: 'read.object',
-                            array: 'message_log',
-                            $filter: {
-                                query: [
-                                    { key: 'status', value: 'synced', operator: '$eq' },
-                                ]
-                            },
-                            organization_id: config.organization_id
-                        })
+                    if (isBrowser) {
+                        options.lastSynced = configHandler.get(url)
 
-                        if (data && data.object) {
-                            options.syncedMessages = []
-                            for (let i = 0; i < data.object.length; i++) {
-                                if (data.object[i].lastSynced)
-                                    options.lastSynced = data.object[i].lastSynced
-                                else
-                                    options.syncedMessages.push(data.object[i]._id)
-                            }
-                            console.log('options', options)
-                        }
                     }
 
                     let opt = JSON.stringify(options)
                     opt = encodeURIComponent(opt)
+                    console.log('options', { options, opt })
+
                     socket = new WebSocket(url, opt)
                     socket.id = options.socketId;
                     socket.connected = false;
@@ -205,47 +187,15 @@
                         }
 
                         if (data.method != 'connect' && typeof data == 'object') {
-                            if (isBrowser && indexeddb && data.method === 'sync') {
+                            if (isBrowser && data._id) {
+                                let lastSynced = configHandler.get(socket.url) //test
 
-                                indexeddb.send({
-                                    method: 'update.object',
-                                    array: 'message_log',
-                                    object: { url: socket.url, lastSynced: data.lastSynced, type: 'lastSynced', status: 'synced' },
-                                    $filter: {
-                                        query: [
-                                            { key: 'type', value: 'lastSynced', operator: '$eq' },
-                                            { key: 'status', value: 'synced', operator: '$eq' }
-                                        ]
-                                    },
-                                    upsert: true,
-                                    organization_id: socket.organization_id
-                                })
-
-                                if (data.syncedMessages && data.syncedMessages.length) {
-                                    indexeddb.send({
-                                        method: 'delete.object',
-                                        array: 'message_log',
-                                        $filter: {
-                                            query: [
-                                                { key: '_id', value: data.syncedMessages, operator: '$includes' },
-                                                { key: 'status', value: 'synced', operator: '$eq' }
-                                            ]
-                                        },
-                                        organization_id: socket.organization_id
-                                    })
+                                if (!lastSynced || lastSynced !== data._id) {
+                                    if (self.getDateFromObjectId(lastSynced) < self.getDateFromObjectId(data._id)) {
+                                        configHandler.set(socket.url, data._id)
+                                    }
                                 }
-                                return
                             }
-
-                            if (isBrowser && indexeddb && data.syncedMessage) {
-                                indexeddb.send({
-                                    method: 'create.object',
-                                    array: 'message_log',
-                                    object: { _id: data.syncedMessage, url: socket.url, status: 'synced' },
-                                    organization_id: socket.organization_id
-                                })
-                            } else if (!isBrowser && data.syncedMessage && data.isRegionalStorage)
-                                console.log('Multi-master regional database')
 
                             if (data.broadcastClient && data.broadcastBrowser !== false && isBrowser && data.broadcastBrowser && !data.method.startsWith('read'))
                                 configHandler.set('localSocketMessage', JSON.stringify(data))
@@ -264,6 +214,16 @@
                 };
 
             }
+        },
+
+        getDateFromObjectId(objectIdStr) {
+            if (objectIdStr.length !== 24) {
+                throw new Error('Invalid ObjectId string');
+            }
+
+            const timestampHex = objectIdStr.substring(0, 8);
+            const timestampInt = parseInt(timestampHex, 16) * 1000; // Multiply by 1000 to get milliseconds
+            return new Date(timestampInt);
         },
 
         async getOrganization() {
