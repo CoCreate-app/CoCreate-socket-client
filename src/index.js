@@ -46,12 +46,12 @@
         messageQueue: new Map(), // required per url already per url when isBrowser and indexeddb
         configQueue: new Map(),
         config: {},
-        maxReconnectDelay: 600000, // required per url
+        maxReconnectDelay: 600000,
         organization: false, // required per url
         serverDB: true, // required per url
         serverOrganization: true, // required per url
 
-        //TODO: on app start up we can get the port and ip and public dns. using config we can define if this app is behind an lb.
+        //TODO: on app start up we can get the port and ip and public dns. Using config we can define if this app is behind an lb.
         // If behind an lb it can create a socket connection to the lb node in order to add node to the lb backend list.
 
         async init() {
@@ -187,13 +187,17 @@
 
                         if (data.method != 'connect' && typeof data == 'object') {
                             if (isBrowser && data._id) {
-                                let lastSynced = configHandler.get(socket.url) //test
+                                let lastSynced = configHandler.get(socket.url)
 
-                                if (!lastSynced || lastSynced !== data._id) {
+                                if (!lastSynced) {
+                                    configHandler.set(socket.url, data._id)
+                                } else if (lastSynced !== data._id) {
                                     if (self.getDateFromObjectId(lastSynced) < self.getDateFromObjectId(data._id)) {
                                         configHandler.set(socket.url, data._id)
                                     }
                                 }
+                                // TODO: check message_log for status queued objects and decide if it should be sent to server?
+                                // Is it stale or will it cause a conflict
                             }
 
                             if (data.broadcastClient && data.broadcastBrowser !== false && isBrowser && data.broadcastBrowser && !data.method.startsWith('read'))
@@ -551,11 +555,7 @@
         },
 
         addSocketPath(data, url) {
-            let organization_id = data.organization_id || this.config.organization_id;
-            if (organization_id)
-                url += `/${organization_id}`
-
-            return url
+            return url += `/${data.organization_id || this.config.organization_id || ''}`
         },
 
         getSockets(data) {
