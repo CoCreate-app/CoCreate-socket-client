@@ -196,21 +196,43 @@
                                         configHandler.set(socket.url, data._id)
                                     }
                                 }
-                                // TODO: check message_log for status queued objects and decide if it should be sent to server?
-                                // Is it stale or will it cause a conflict
+
+                                // here we can handle crud types inorder to avoid conflicts simply by deleting queued items prior to sending
+                                let Data = {
+                                    method: 'delete.object',
+                                    array: 'message_log',
+                                    $filter: {
+                                        query: [
+                                            { key: 'modified.on', value: data.timestamp, operator: '$gt' },
+                                            { key: 'status', value: 'queued', operator: '$eq' }
+                                        ]
+                                    }
+                                }
+
+                                // TODO: we need to delete the item based on some conditions
+                                // what are the conditions?
+                                let type = data.method.split('.').pop()
+                                for (let item of data[type]) {
+                                    if (type == 'object') {
+                                        Data.$filter.query.push({ key: 'data._id', value: item._id, operator: '$eq' })
+                                    } else if (['database', 'array', 'index',].includes(type)) {
+                                        Data.$filter.query.push({ key: 'data.name', value: item.name, operator: '$eq' })
+                                    }
+                                }
+                                // indexeddb.send(Data)
                             }
-
-                            if (data.broadcastClient && data.broadcastBrowser !== false && isBrowser && data.broadcastBrowser && !data.method.startsWith('read'))
-                                configHandler.set('localSocketMessage', JSON.stringify(data))
-
-                            data.status = "received"
-
-                            if (data && data.uid) {
-                                self.__fireEvent(data.uid, data);
-                            }
-
-                            self.__fireListeners(data.method, data)
                         }
+
+                        if (data.broadcastClient && data.broadcastBrowser !== false && isBrowser && data.broadcastBrowser && !data.method.startsWith('read'))
+                            configHandler.set('localSocketMessage', JSON.stringify(data))
+
+                        data.status = "received"
+
+                        if (data && data.uid) {
+                            self.__fireEvent(data.uid, data);
+                        }
+
+                        self.__fireListeners(data.method, data)
                     } catch (e) {
                         console.log(e);
                     }
