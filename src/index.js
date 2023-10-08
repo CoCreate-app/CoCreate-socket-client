@@ -40,27 +40,28 @@
     const socketsByUrl = new Map()
     const socketsById = new Map()
     const delay = 1000 + Math.floor(Math.random() * 3000)
+    let organizationPromise = null;
     const CoCreateSocketClient = {
         connected: false,
         listeners: new Map(),
         messageQueue: new Map(), // required per url already per url when isBrowser and indexeddb
         configQueue: new Map(),
-        config: {},
         maxReconnectDelay: 600000,
         organization: false, // required per url
         serverDB: true, // required per url
         serverOrganization: true, // required per url
+        organization_id: async () => {
+            return organizationPromise || (organizationPromise = this.getOrganization());
+        },
 
         //TODO: on app start up we can get the port and ip and public dns. Using config we can define if this app is behind an lb.
         // If behind an lb it can create a socket connection to the lb node in order to add node to the lb backend list.
 
         async init() {
             const defaults = { clientId: indexeddb.ObjectId(), host: window.location.host }
-            const keys = ['clientId', 'organization_id', 'apikey', 'host', 'user_id', 'balancer']
+            const keys = ['clientId', 'apikey', 'host', 'user_id', 'balancer']
             for (let i = 0; i < keys.length; i++) {
                 this[keys[i]] = configHandler.get(keys[i]) || defaults[keys[i]] || ''
-                if (!this[keys[i]] && keys[i] === 'organization_id')
-                    this[keys[i]] = await this.getOrganization()
                 configHandler.set(keys[i], this[keys[i]])
             }
         },
@@ -95,10 +96,7 @@
          */
         async create(config = {}) {
             const self = this;
-            if (!config.organization_id && !this.organization_id)
-                return console.log('organization_id not found and config should be added to a queue until organization_id is created')
-
-            const urls = this.getUrls(config);
+            const urls = await this.getUrls(config);
             for (let url of urls) {
                 let socket = this.get(url);
                 if (socket)
@@ -131,7 +129,7 @@
                     socket.id = options.socketId;
                     socket.connected = false;
                     socket.clientId = this.clientId;
-                    socket.organization_id = config.organization_id || this.organization_id;
+                    socket.organization_id = config.organization_id || await this.organization_id();
                     socket.user_id = config.user_id || this.user_id;
                     socket.host = config.host || this.host;
                     socket.key = url;
@@ -237,6 +235,7 @@
                 };
 
             }
+            return socket
         },
 
         getDateFromObjectId(objectIdStr) {
@@ -250,19 +249,27 @@
         },
 
         async getOrganization() {
-            let data = await indexeddb.send({ method: 'read.database' })
-            for (let database of data.database) {
-                let name = database.database.name
-                if (name.match(/^[0-9a-fA-F]{24}$/)) {
-                    return name
+            let organization_id = configHandler.get('organization_id')
+            if (!organization_id) {
+                let data = await indexeddb.send({ method: 'read.database' })
+                for (let database of data.database) {
+                    let name = database.database.name
+                    if (name.match(/^[0-9a-fA-F]{24}$/)) {
+                        organization_id = name
+                    }
                 }
             }
 
-            let orgainization_id = await getOrganizationFromServiceWorker()
-            if (orgainization_id)
-                return orgainization_id
-            else
-                return await this.createOrganization()
+            if (!organization_id)
+                organization_id = await getOrganizationFromServiceWorker()
+
+            if (!organization_id)
+                organization_id = await this.createOrganization()
+
+            if (organization_id)
+                configHandler.set('organization_id', organization_id)
+
+            return organization_id
         },
 
         async getOrganizationFromServiceWorker() {
@@ -303,7 +310,6 @@
                         let org = { object: {} }
                         let { organization, apikey, user } = await Organization.generateDB(org)
                         if (organization && apikey && user) {
-                            this.organization_id = organization._id
                             this.apikey = apikey
                             this.user_id = user._id
                             configHandler.set('organization_id', organization._id)
@@ -375,14 +381,14 @@
 
 
         send(data) {
-            return new Promise((resolve, reject) => {
+            return new Promise(async (resolve, reject) => {
                 data.clientId = this.clientId;
 
                 if (!data['timeStamp'])
                     data['timeStamp'] = new Date();
 
                 if (!data['organization_id'])
-                    data['organization_id'] = this.organization_id;
+                    data['organization_id'] = await this.organization_id();
 
                 if (!data['apikey'] && this.apikey)
                     data['apikey'] = this.apikey;
@@ -425,7 +431,7 @@
                     online = false
 
                 const uid = data['uid'];
-                const sockets = this.getSockets(data);
+                const sockets = await this.getSockets(data);
 
                 for (let socket of sockets) {
                     data.socketId = socket.id;
@@ -524,7 +530,7 @@
             }
         },
 
-        getUrls(data = {}) {
+        async getUrls(data = {}) {
             let protocol = 'wss';
             if (isBrowser && location.protocol !== "https:")
                 protocol = "ws";
@@ -544,7 +550,7 @@
                     else
                         url = `${protocol}://${host[i]}`;
 
-                    url = this.addSocketPath(data, url)
+                    url += `/${data.organization_id || await this.organization_id() || ''}`
                     if (balancer == "mesh")
                         urls.push(url)
                     else {
@@ -565,7 +571,7 @@
                 }
             } else if (isBrowser) {
                 url = [`${protocol}://${window.location.host}`];
-                url = this.addSocketPath(data, url)
+                url += `/${data.organization_id || await this.organization_id() || ''}`
                 urls.push(url)
             } else {
                 console.log('missing host')
@@ -574,13 +580,9 @@
             return urls;
         },
 
-        addSocketPath(data, url) {
-            return url += `/${data.organization_id || this.organization_id || ''}`
-        },
-
-        getSockets(data) {
+        async getSockets(data) {
             let sockets = [];
-            let urls = this.getUrls(data)
+            let urls = await this.getUrls(data)
             for (let url of urls) {
                 let socket = this.get(url)
                 if (!socket) {
