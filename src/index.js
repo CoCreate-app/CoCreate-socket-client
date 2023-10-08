@@ -58,12 +58,10 @@
             const defaults = { clientId: indexeddb.ObjectId(), host: window.location.host }
             const keys = ['clientId', 'organization_id', 'apikey', 'host', 'user_id', 'balancer']
             for (let i = 0; i < keys.length; i++) {
-                this.config[keys[i]] = configHandler.get(keys[i]) || defaults[keys[i]] || ''
-                if (!this.config[keys[i]] && keys[i] === 'organization_id')
-                    this.config[keys[i]] = await this.getOrganization()
-                configHandler.set(keys[i], this.config[keys[i]])
-                if (keys[i] === 'clientId')
-                    this.clientId = this.config[keys[i]]
+                this[keys[i]] = configHandler.get(keys[i]) || defaults[keys[i]] || ''
+                if (!this[keys[i]] && keys[i] === 'organization_id')
+                    this[keys[i]] = await this.getOrganization()
+                configHandler.set(keys[i], this[keys[i]])
             }
         },
 
@@ -97,7 +95,7 @@
          */
         async create(config = {}) {
             const self = this;
-            if (!config.organization_id && !this.config.organization_id)
+            if (!config.organization_id && !this.organization_id)
                 return console.log('organization_id not found and config should be added to a queue until organization_id is created')
 
             const urls = this.getUrls(config);
@@ -133,9 +131,9 @@
                     socket.id = options.socketId;
                     socket.connected = false;
                     socket.clientId = this.clientId;
-                    socket.organization_id = config.organization_id || this.config.organization_id;
-                    socket.user_id = config.user_id || this.config.user_id;
-                    socket.host = config.host || this.config.host;
+                    socket.organization_id = config.organization_id || this.organization_id;
+                    socket.user_id = config.user_id || this.user_id;
+                    socket.host = config.host || this.host;
                     socket.key = url;
 
                     this.set(socket);
@@ -305,9 +303,9 @@
                         let org = { object: {} }
                         let { organization, apikey, user } = await Organization.generateDB(org)
                         if (organization && apikey && user) {
-                            this.config.organization_id = organization._id
-                            this.config.apikey = apikey
-                            this.config.user_id = user._id
+                            this.organization_id = organization._id
+                            this.apikey = apikey
+                            this.user_id = user._id
                             configHandler.set('organization_id', organization._id)
                             configHandler.set('apikey', apikey)
                             configHandler.set('user_id', user._id)
@@ -384,13 +382,13 @@
                     data['timeStamp'] = new Date();
 
                 if (!data['organization_id'])
-                    data['organization_id'] = this.config.organization_id;
+                    data['organization_id'] = this.organization_id;
 
-                if (!data['apikey'] && this.config.apikey)
-                    data['apikey'] = this.config.apikey;
+                if (!data['apikey'] && this.apikey)
+                    data['apikey'] = this.apikey;
 
-                if (!data['user_id'] && this.config.user_id)
-                    data['user_id'] = this.config.user_id;
+                if (!data['user_id'] && this.user_id)
+                    data['user_id'] = this.user_id;
 
                 if (data['broadcast'] === 'false' || data['broadcast'] === false)
                     data['broadcast'] = false;
@@ -532,8 +530,8 @@
                 protocol = "ws";
 
             let url, urls = [], hostUrls = [];
-            let host = data.host || this.config.host
-            let balancer = data.balancer || this.config.balancer
+            let host = data.host || this.host
+            let balancer = data.balancer || this.balancer
             if (typeof host === 'string') {
                 host = host.split(",");
                 for (let i = 0; i < host.length; i++) {
@@ -577,7 +575,7 @@
         },
 
         addSocketPath(data, url) {
-            return url += `/${data.organization_id || this.config.organization_id || ''}`
+            return url += `/${data.organization_id || this.organization_id || ''}`
         },
 
         getSockets(data) {
