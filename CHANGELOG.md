@@ -1,3 +1,31 @@
+# [1.29.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.28.0...v1.29.0) (2023-10-09)
+
+
+### Bug Fixes
+
+* Adding data.socketId in send() ([a9a76ab](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a9a76ab9eea310e5f16a97ebf1cda2d846406fa9))
+* broadcastBrowser defaults to false. ([4e2756c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4e2756c6aea4f1223ad89621e4ffc96b9086898b))
+* if condition for data.apikey and data.user_id ([dec59f0](https://github.com/CoCreate-app/CoCreate-socket-client/commit/dec59f007f5374f012d66eb2d3458c54903a60d8))
+* onMessage broadcastClient ([afd8c9d](https://github.com/CoCreate-app/CoCreate-socket-client/commit/afd8c9d2818e1f0c1adf8999c168951221e95439))
+* removed console.logs ([6ea5b22](https://github.com/CoCreate-app/CoCreate-socket-client/commit/6ea5b2214477c9d3ddbf34f91cb1037a637fda9b))
+* socket.config items moved to socket ([8d269b3](https://github.com/CoCreate-app/CoCreate-socket-client/commit/8d269b388b19c235b5c7bf0df2c53d4bbf96d507))
+* status resolved ([5025f64](https://github.com/CoCreate-app/CoCreate-socket-client/commit/5025f64f75062473db686da5b73b9c91590c896f))
+* update to use data.socketId and data.clientId ([b67b2a4](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b67b2a4957b4658a1665de02307d74ce99ba760e))
+* use message_log ([866e7d7](https://github.com/CoCreate-app/CoCreate-socket-client/commit/866e7d7a54bb9fdcd33128d2c7ae88325d843b14))
+
+
+### Features
+
+* add urlEndcode to socket url so that the server can return un synced messages ([5784a87](https://github.com/CoCreate-app/CoCreate-socket-client/commit/5784a876544f07d409c0bb6e510a7227eea03969))
+* Applied '@cocreate/config' to get and set config data ([695fa42](https://github.com/CoCreate-app/CoCreate-socket-client/commit/695fa4231729a0fec5935f703418831210284528))
+* await organization_id()  returns promise and stores for future request ([760dc66](https://github.com/CoCreate-app/CoCreate-socket-client/commit/760dc66bda8fd4465965641e67548c201edd3d45))
+* broadcastBrowser and broadcastClient ([566b06b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/566b06b02d85fb64f55ac8ae4deffe7c36a4ec60))
+* get(), set(), has() and delete() to manage sockets by id or url ([4579988](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4579988732a316a2812fd3846e74e2ee2337a03e))
+* getClientId() to return clientId created for the origin, follows same origin policies ([b7854c1](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b7854c11b32c65ae46ed624590d32e646dea9f13))
+* getDate from ObjectId and use for lastSynced ([5be2dc3](https://github.com/CoCreate-app/CoCreate-socket-client/commit/5be2dc30e5b65bd277a325687562402245a64ed1))
+* onMessage handling of broadcastClient and broadcastBrowser ([a22fd82](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a22fd82bc2bc2f959e4b99e3c9945d03de53200d))
+* Update token to options object containing token and options ([c4c2f1b](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c4c2f1b4a9e72a8d173fec036470b0418b42d186))
+
 # [1.28.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.27.0...v1.28.0) (2023-09-19)
 
 
