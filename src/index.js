@@ -25,8 +25,8 @@
 (function (root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(["@cocreate/uuid", "@cocreate/indexeddb", "@cocreate/config"], function (uuid, indexeddb, configHandler) {
-            return factory(true, WebSocket, uuid, indexeddb = indexeddb.default, configHandler = configHandler.default)
+        define(["@cocreate/uuid", "@cocreate/indexeddb", "@cocreate/config"], function (uuid, indexeddb, config) {
+            return factory(true, WebSocket, uuid, indexeddb = indexeddb.default, config = config.default)
         });
     } else if (typeof module === 'object' && module.exports) {
         const WebSocket = require("ws")
@@ -36,22 +36,35 @@
         // Browser globals (root is window)
         root.returnExports = factory(true, WebSocket, root["@cocreate/uuid"], root["@cocreate/indexeddb"], root["@cocreate/config"]);
     }
-}(typeof self !== 'undefined' ? self : this, function (isBrowser, WebSocket, uuid, indexeddb, configHandler) {
+}(typeof self !== 'undefined' ? self : this, function (isBrowser, WebSocket, uuid, indexeddb, config) {
     const socketsByUrl = new Map()
     const socketsById = new Map()
     const delay = 1000 + Math.floor(Math.random() * 3000)
+
     let organizationPromise = null;
+    async function getOrganization() {
+        let organization_id = config.get('organization_id')
+        if (!organization_id) {
+            const Organization = await import('@cocreate/organizations')
+            organization_id = await Organization.get()
+        }
+        if (organization_id)
+            config.set('organization_id', organization_id)
+
+        return organization_id
+    }
+
     const CoCreateSocketClient = {
         connected: false,
         listeners: new Map(),
-        messageQueue: new Map(), // required per url already per url when isBrowser and indexeddb
+        messageQueue: new Map(), // required per url already per url when isBrowser and indexeddb.
         configQueue: new Map(),
         maxReconnectDelay: 600000,
         organization: false, // required per url
         serverDB: true, // required per url
         serverOrganization: true, // required per url
         organization_id: async () => {
-            return organizationPromise || (organizationPromise = this.getOrganization());
+            return organizationPromise || (organizationPromise = getOrganization());
         },
 
         //TODO: on app start up we can get the port and ip and public dns. Using config we can define if this app is behind an lb.
@@ -61,8 +74,8 @@
             const defaults = { clientId: indexeddb.ObjectId(), host: window.location.host }
             const keys = ['clientId', 'apikey', 'host', 'user_id', 'balancer']
             for (let i = 0; i < keys.length; i++) {
-                this[keys[i]] = configHandler.get(keys[i]) || defaults[keys[i]] || ''
-                configHandler.set(keys[i], this[keys[i]])
+                this[keys[i]] = config.get(keys[i]) || defaults[keys[i]] || ''
+                config.set(keys[i], this[keys[i]])
             }
         },
 
@@ -94,9 +107,9 @@
         /**
          * config: {organization_id, namespace, room, host}
          */
-        async create(config = {}) {
+        async create(data = {}) {
             const self = this;
-            const urls = await this.getUrls(config);
+            const urls = await this.getUrls(data);
             for (let url of urls) {
                 let socket = this.get(url);
                 if (socket)
@@ -108,7 +121,7 @@
 
                     let token = null;
                     if (isBrowser) {
-                        token = configHandler.get("token");
+                        token = config.get("token");
                     }
 
                     const options = {
@@ -118,7 +131,7 @@
                     }
 
                     if (isBrowser) {
-                        options.lastSynced = configHandler.get(url)
+                        options.lastSynced = config.get(url)
 
                     }
 
@@ -129,9 +142,9 @@
                     socket.id = options.socketId;
                     socket.connected = false;
                     socket.clientId = this.clientId;
-                    socket.organization_id = config.organization_id || await this.organization_id();
-                    socket.user_id = config.user_id || this.user_id;
-                    socket.host = config.host || this.host;
+                    socket.organization_id = data.organization_id || await this.organization_id();
+                    socket.user_id = data.user_id || this.user_id;
+                    socket.host = data.host || this.host;
                     socket.key = url;
 
                     this.set(socket);
@@ -143,20 +156,18 @@
                 socket.onopen = function (event) {
                     self.connected = true
                     socket.connected = true;
-                    config.url = socket.url
-                    delete config.currentReconnectDelay
-                    self.checkMessageQueue(config);
+                    delete data.currentReconnectDelay
+                    self.checkMessageQueue(data);
                 };
 
                 socket.onclose = function (event) {
                     socket.connected = false;
-
                     switch (event.code) {
                         case 1000: // close normal
                             console.log("websocket: closed");
                             break;
                         default:
-                            self.reconnect(config, socket);
+                            self.reconnect(data, socket);
                             break;
                     }
                 };
@@ -167,29 +178,29 @@
                     else if (!window.navigator.onLine)
                         console.log("offline");
 
-                    self.reconnect(config, socket);
+                    self.reconnect(data, socket);
                 };
 
                 socket.onmessage = function (message) {
                     try {
-                        let data = JSON.parse(message.data);
-                        if (data.method === 'Access Denied' && data.permission) {
-                            if (data.permission.storage === false)
+                        message = JSON.parse(message.data);
+                        if (message.method === 'Access Denied' && message.permission) {
+                            if (message.permission.storage === false)
                                 self.serverDB = false
-                            if (data.permission.organization === false)
+                            if (message.permission.organization === false)
                                 self.serverOrganization = false
-                            console.log(data.permission.error)
+                            console.log(message.permission.error)
                         }
 
-                        if (data.method != 'connect' && typeof data == 'object') {
-                            if (isBrowser && data._id) {
-                                let lastSynced = configHandler.get(socket.url)
+                        if (message.method != 'connect' && typeof message == 'object') {
+                            if (isBrowser && message._id) {
+                                let lastSynced = config.get(socket.url)
 
                                 if (!lastSynced) {
-                                    configHandler.set(socket.url, data._id)
-                                } else if (lastSynced !== data._id) {
-                                    if (self.getDateFromObjectId(lastSynced) < self.getDateFromObjectId(data._id)) {
-                                        configHandler.set(socket.url, data._id)
+                                    config.set(socket.url, message._id)
+                                } else if (lastSynced !== message._id) {
+                                    if (self.getDateFromObjectId(lastSynced) < self.getDateFromObjectId(message._id)) {
+                                        config.set(socket.url, message._id)
                                     }
                                 }
 
@@ -199,7 +210,7 @@
                                     array: 'message_log',
                                     $filter: {
                                         query: [
-                                            { key: 'modified.on', value: data.timestamp, operator: '$gt' },
+                                            { key: 'modified.on', value: message.timestamp, operator: '$gt' },
                                             { key: 'status', value: 'queued', operator: '$eq' }
                                         ]
                                     }
@@ -207,8 +218,8 @@
 
                                 // TODO: we need to delete the item based on some conditions
                                 // what are the conditions?
-                                let type = data.method.split('.').pop()
-                                for (let item of data[type]) {
+                                let type = message.method.split('.').pop()
+                                for (let item of message[type]) {
                                     if (type == 'object') {
                                         Data.$filter.query.push({ key: 'data._id', value: item._id, operator: '$eq' })
                                     } else if (['database', 'array', 'index',].includes(type)) {
@@ -219,111 +230,21 @@
                             }
                         }
 
-                        if (data.broadcastClient && data.broadcastBrowser !== false && isBrowser && data.broadcastBrowser && !data.method.startsWith('read'))
-                            configHandler.set('localSocketMessage', JSON.stringify(data))
+                        if (message.broadcastClient && message.broadcastBrowser !== false && isBrowser && message.broadcastBrowser && !message.method.startsWith('read'))
+                            config.set('localSocketMessage', JSON.stringify(message))
 
-                        data.status = "received"
+                        message.status = "received"
 
-                        if (data && data.uid) {
-                            self.__fireEvent(data.uid, data);
+                        if (message && message.uid) {
+                            self.__fireEvent(message.uid, message);
                         }
 
-                        self.__fireListeners(data.method, data)
+                        self.__fireListeners(message.method, message)
                     } catch (e) {
                         console.log(e);
                     }
                 };
 
-            }
-            return socket
-        },
-
-        getDateFromObjectId(objectIdStr) {
-            if (objectIdStr.length !== 24) {
-                throw new Error('Invalid ObjectId string');
-            }
-
-            const timestampHex = objectIdStr.substring(0, 8);
-            const timestampInt = parseInt(timestampHex, 16) * 1000; // Multiply by 1000 to get milliseconds
-            return new Date(timestampInt);
-        },
-
-        async getOrganization() {
-            let organization_id = configHandler.get('organization_id')
-            if (!organization_id) {
-                let data = await indexeddb.send({ method: 'read.database' })
-                for (let database of data.database) {
-                    let name = database.database.name
-                    if (name.match(/^[0-9a-fA-F]{24}$/)) {
-                        organization_id = name
-                    }
-                }
-            }
-
-            if (!organization_id)
-                organization_id = await getOrganizationFromServiceWorker()
-
-            if (!organization_id)
-                organization_id = await this.createOrganization()
-
-            if (organization_id)
-                configHandler.set('organization_id', organization_id)
-
-            return organization_id
-        },
-
-        async getOrganizationFromServiceWorker() {
-            return new Promise((resolve, reject) => {
-                if (!navigator.serviceWorker)
-                    return resolve()
-
-                const handleMessage = (event) => {
-                    if (event.data.action === 'getOrganization') {
-                        navigator.serviceWorker.removeEventListener('message', handleMessage); // Remove the event listener
-                        resolve(event.data.organization_id);
-                    }
-                };
-
-                navigator.serviceWorker.addEventListener('message', handleMessage);
-
-                // Send message to Service Worker
-                const msg = new MessageChannel();
-                navigator.serviceWorker.ready
-                    .then(() => {
-                        navigator.serviceWorker.controller.postMessage('getOrganization', [msg.port1]);
-                    })
-                    .catch(reject);
-            });
-        },
-
-        async createOrganization() {
-            let createOrganization = document.querySelector('[actions*="createOrganization"]')
-
-            if (this.organization == 'canceled' || this.organization == 'pending') return
-
-            if (!createOrganization && confirm("An organization_id could not be found, if you already have an organization_id add it to this html and refresh the page.\n\nOr click 'OK' create a new organization") == true) {
-                this.organization = 'pending'
-                if (indexeddb) {
-                    try {
-                        const Organization = await import('@cocreate/organizations')
-
-                        let org = { object: {} }
-                        let { organization, apikey, user } = await Organization.generateDB(org)
-                        if (organization && apikey && user) {
-                            this.apikey = apikey
-                            this.user_id = user._id
-                            configHandler.set('organization_id', organization._id)
-                            configHandler.set('apikey', apikey)
-                            configHandler.set('user_id', user._id)
-                            this.organization = true
-                            return organization._id
-                        }
-                    } catch (error) {
-                        console.error('Failed to load the script:', error);
-                    }
-                }
-            } else {
-                this.organization = 'canceled'
             }
         },
 
@@ -436,10 +357,12 @@
                 for (let socket of sockets) {
                     data.socketId = socket.id;
 
-                    let status = data.status
-                    if (status != "queued") {
+                    if (data.status === "resolved")
+                        resolve();
+                    else if (data.status !== "queued") {
                         if (isBrowser) {
                             window.addEventListener(uid, function (event) {
+                                // here we have access to request and new data
                                 resolve(event.detail);
                             }, { once: true });
                         } else {
@@ -451,7 +374,7 @@
 
                     let token
                     if (isBrowser)
-                        token = configHandler.get("token");
+                        token = config.get("token");
 
                     if (this.serverOrganization && (this.serverDB
                         || token && data.method.includes('object') && data.array && (data.array.includes('organizations')
@@ -469,24 +392,14 @@
                     } else
                         data.status = "queued"
 
-                    if (isBrowser && !data.method.startsWith('read')) {
+                    if (isBrowser) {
                         if (data.broadcastSender)
                             this.sendLocalMessage(data)
-                        if (data.broadcastBrowser)
-                            configHandler.set('localSocketMessage', JSON.stringify(data))
+                        if (broadcastBrowser)
+                            config.set('localSocketMessage', JSON.stringify(data))
                     }
 
                     if (isBrowser && indexeddb && data.status == "queued") {
-                        if (data.storage && data.storage.includes('indexeddb')) {
-                            let type = data.method.split('.');
-                            type = type[type.length - 1];
-
-                            if (type && data[type]) {
-                                if (data[type].length || !this.serverOrganization || !this.serverDB || !socket.connected)
-                                    resolve(data);
-                            }
-                        }
-
                         indexeddb.send({
                             method: 'create.object',
                             array: 'message_log',
@@ -586,7 +499,7 @@
             for (let url of urls) {
                 let socket = this.get(url)
                 if (!socket) {
-                    this.create(data)
+                    await this.create(data)
                     socket = this.get(url)
                     if (socket)
                         sockets.push(socket)
@@ -601,7 +514,20 @@
             if (data.method == 'sendMessage')
                 data.method = data.message
             this.__fireListeners(data.method, data)
+        },
+
+        // TODO: add to ObjectId function
+        getDateFromObjectId(objectIdStr) {
+            if (objectIdStr.length !== 24) {
+                throw new Error('Invalid ObjectId string');
+            }
+
+            const timestampHex = objectIdStr.substring(0, 8);
+            const timestampInt = parseInt(timestampHex, 16) * 1000; // Multiply by 1000 to get milliseconds
+            return new Date(timestampInt);
         }
+
+
     }
 
     if (isBrowser) {
@@ -614,7 +540,6 @@
             }
         };
     }
-
 
     return CoCreateSocketClient;
 })
