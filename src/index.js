@@ -46,7 +46,8 @@
         let organization_id = config.get('organization_id')
         if (!organization_id) {
             const Organization = await import('@cocreate/organizations')
-            organization_id = await Organization.get()
+            organization_id = await Organization.default.get()
+
         }
         if (organization_id)
             config.set('organization_id', organization_id)
