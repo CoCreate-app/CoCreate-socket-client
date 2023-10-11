@@ -217,7 +217,7 @@
                                     }
                                 }
 
-                                // TODO: we need to delete the item based on some conditions
+                                // TODO: we need to delete queued items based on some conditions to prevent conflicts
                                 // what are the conditions?
                                 let type = message.method.split('.').pop()
                                 for (let item of message[type]) {
