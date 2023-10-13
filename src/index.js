@@ -56,6 +56,7 @@
     }
 
     const CoCreateSocketClient = {
+        frameId: uuid.generate(8),
         connected: false,
         listeners: new Map(),
         messageQueue: new Map(), // required per url already per url when isBrowser and indexeddb.
@@ -143,6 +144,7 @@
                     socket.id = options.socketId;
                     socket.connected = false;
                     socket.clientId = this.clientId;
+                    socket.frameId = this.frameId;
                     socket.organization_id = data.organization_id || await this.organization_id();
                     socket.user_id = data.user_id || this.user_id;
                     socket.host = data.host || this.host;
@@ -304,7 +306,10 @@
 
         send(data) {
             return new Promise(async (resolve, reject) => {
+                if (!data)
+                    data = {}
                 data.clientId = this.clientId;
+                data.frameId = this.frameId;
 
                 if (!data['timeStamp'])
                     data['timeStamp'] = new Date();
