@@ -1,3 +1,10 @@
+# [1.30.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.29.4...v1.30.0) (2023-10-14)
+
+
+### Features
+
+* frameId to manage frames ([c8d7509](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c8d75098091fc59990fa83911cdcfaf6cfeb3b47))
+
 ## [1.29.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.29.3...v1.29.4) (2023-10-09)
 
 
