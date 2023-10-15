@@ -44,7 +44,7 @@
     let organizationPromise = null;
     async function getOrganization() {
         let organization_id = config.get('organization_id')
-        if (!organization_id) {
+        if (!organization_id || organization_id === 'canceled') {
             const Organization = await import('@cocreate/organizations')
             organization_id = await Organization.default.get()
 
@@ -102,7 +102,7 @@
                 return
             socketsByUrl.delete(socket.url)
             socketsById.delete(socket.id)
-            if (socket.close)
+            if (socket.readyState === WebSocket.OPEN)
                 socket.close()
         },
 
@@ -111,6 +111,10 @@
          */
         async create(data = {}) {
             const self = this;
+
+            if (this.organization === 'canceled')
+                return
+
             const urls = await this.getUrls(data);
             for (let url of urls) {
                 let socket = this.get(url);
