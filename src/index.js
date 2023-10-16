@@ -65,6 +65,7 @@
         organization: false, // required per url
         serverStorage: true, // required per url
         serverOrganization: true, // required per url
+        organizationBalance: true, // required per url
         organization_id: async () => {
             return organizationPromise || (organizationPromise = getOrganization());
         },
@@ -191,13 +192,14 @@
                 socket.onmessage = function (message) {
                     try {
                         message = JSON.parse(message.data);
-                        if (message.method === 'Access Denied') {
-                            if (message.serverOrganization === false) {
-                                self.serverOrganization = false
+                        if (message.error) {
+                            if (message.serverOrganization === false)
+                                self.serverOrganization = self.serverStorage = false
+                            else if (message.serverStorage === false)
                                 self.serverStorage = false
-                            } else if (message.serverStorage === false)
-                                self.serverStorage = false
-                            console.log('Server Access Denied: ', { serverOrganization: self.serverOrganization, serverStorage: self.serverStorage })
+                            else if (message.organizationBalance === false)
+                                self.organizationBalance = false
+                            console.log('Server Access Denied: ', { serverOrganization: self.serverOrganization, serverStorage: self.serverStorage, organizationBalance: self.organizationBalance })
                         }
 
                         if (message.method != 'connect' && typeof message == 'object') {
@@ -358,71 +360,60 @@
                     delete data['broadcastBrowser']
                 }
 
-                let online = true;
-                if (isBrowser && !window.navigator.onLine)
-                    online = false
-
                 const uid = data['uid'];
                 const sockets = await this.getSockets(data);
 
                 for (let socket of sockets) {
                     data.socketId = socket.id;
 
-                    if (data.status === "resolved")
+                    if (data.status === "resolved") {
+                        data.status = "queued"
                         resolve();
-                    else if (!socket.connected)
-                        resolve(data);
-                    else if (data.status !== "queued") {
-                        if (isBrowser) {
-                            window.addEventListener(uid, function (event) {
-                                // here we have access to request and new data
-                                resolve(event.detail);
-                            }, { once: true });
-                        } else {
-                            process.once(uid, (data) => {
-                                resolve(data);
-                            });
-                        }
                     }
 
-                    let token
-                    if (isBrowser)
-                        token = config.get("token");
-
-
-                    if (this.serverOrganization && (this.serverStorage
-                        || token && data.method.includes('object') && data.array && (data.array.includes('organizations')
-                            || data.array.includes("users")) ||
-                        ['signIn', 'addOrg'].includes(data.method))) {
-                        if (socket && socket.connected && online) {
-                            delete data.status
-                            socket.send(JSON.stringify(data));
-                            data.status = "sent"
-                        } else {
-                            data.status = "queued"
-                            if (!isBrowser || !indexeddb)
-                                this.messageQueue.set(uid, data);
-                        }
-                    } else
+                    if (socket.connected && this.serverOrganization && this.serverStorage && this.organizationBalance) {
+                        if (data.status !== 'queued')
+                            this.addListener(uid)
+                        delete data.status
+                        socket.send(JSON.stringify(data));
+                        data.status = "sent"
+                    } else {
                         data.status = "queued"
+                        resolve(data)
+                    }
+
 
                     if (isBrowser) {
                         if (data.broadcastSender)
                             this.sendLocalMessage(data)
                         if (broadcastBrowser)
                             config.set('localSocketMessage', JSON.stringify(data))
-                    }
+                        if (indexeddb && data.status == "queued") {
+                            indexeddb.send({
+                                method: 'create.object',
+                                array: 'message_log',
+                                object: { _id: uid, data, status: 'queued' },
+                                organization_id: data.organization_id
+                            })
+                        }
+                    } else if (!indexeddb)
+                        this.messageQueue.set(uid, data);
 
-                    if (isBrowser && indexeddb && data.status == "queued") {
-                        indexeddb.send({
-                            method: 'create.object',
-                            array: 'message_log',
-                            object: { _id: uid, data, status: 'queued' },
-                            organization_id: data.organization_id
-                        })
-                    }
                 }
             });
+        },
+
+        addListener(uid) {
+            if (isBrowser) {
+                window.addEventListener(uid, function (event) {
+                    // here we have access to request and new data
+                    resolve(event.detail);
+                }, { once: true });
+            } else {
+                process.once(uid, (data) => {
+                    resolve(data);
+                });
+            }
         },
 
         listen(action, callback) {
@@ -558,3 +549,4 @@
     return CoCreateSocketClient;
 })
 );
+
