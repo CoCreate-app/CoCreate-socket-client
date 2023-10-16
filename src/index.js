@@ -63,7 +63,7 @@
         configQueue: new Map(),
         maxReconnectDelay: 600000,
         organization: false, // required per url
-        serverDB: true, // required per url
+        serverStorage: true, // required per url
         serverOrganization: true, // required per url
         organization_id: async () => {
             return organizationPromise || (organizationPromise = getOrganization());
@@ -191,12 +191,13 @@
                 socket.onmessage = function (message) {
                     try {
                         message = JSON.parse(message.data);
-                        if (message.method === 'Access Denied' && message.permission) {
-                            if (message.permission.storage === false)
-                                self.serverDB = false
-                            if (message.permission.organization === false)
+                        if (message.method === 'Access Denied') {
+                            if (message.serverOrganization === false) {
                                 self.serverOrganization = false
-                            console.log(message.permission.error)
+                                self.serverStorage = false
+                            } else if (message.serverStorage === false)
+                                self.serverStorage = false
+                            console.log('Server Access Denied: ', { serverOrganization: self.serverOrganization, serverStorage: self.serverStorage })
                         }
 
                         if (message.method != 'connect' && typeof message == 'object') {
@@ -369,6 +370,8 @@
 
                     if (data.status === "resolved")
                         resolve();
+                    else if (!socket.connected)
+                        resolve(data);
                     else if (data.status !== "queued") {
                         if (isBrowser) {
                             window.addEventListener(uid, function (event) {
@@ -386,7 +389,8 @@
                     if (isBrowser)
                         token = config.get("token");
 
-                    if (this.serverOrganization && (this.serverDB
+
+                    if (this.serverOrganization && (this.serverStorage
                         || token && data.method.includes('object') && data.array && (data.array.includes('organizations')
                             || data.array.includes("users")) ||
                         ['signIn', 'addOrg'].includes(data.method))) {
