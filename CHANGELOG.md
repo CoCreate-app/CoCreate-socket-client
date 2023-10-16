@@ -1,3 +1,11 @@
+## [1.30.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.30.0...v1.30.1) (2023-10-16)
+
+
+### Bug Fixes
+
+* get orhganization if id is 'canceled' ([65965d7](https://github.com/CoCreate-app/CoCreate-socket-client/commit/65965d717c233d9486401c970542ac0dee744d91))
+* serverStorage, serverOrganization ([63ec406](https://github.com/CoCreate-app/CoCreate-socket-client/commit/63ec40674a4304489f4804db2d1426a94a5678e4))
+
 # [1.30.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.29.4...v1.30.0) (2023-10-14)
 
 
