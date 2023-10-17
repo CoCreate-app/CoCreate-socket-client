@@ -199,7 +199,6 @@
                                 self.serverStorage = false
                             else if (message.organizationBalance === false)
                                 self.organizationBalance = false
-                            console.log('Server Access Denied: ', { serverOrganization: self.serverOrganization, serverStorage: self.serverStorage, organizationBalance: self.organizationBalance })
                         }
 
                         if (message.method != 'connect' && typeof message == 'object') {
@@ -311,10 +310,8 @@
         },
 
 
-        send(data) {
+        send(data = {}) {
             return new Promise(async (resolve, reject) => {
-                if (!data)
-                    data = {}
                 data.clientId = this.clientId;
                 data.frameId = this.frameId;
 
@@ -366,14 +363,12 @@
                 for (let socket of sockets) {
                     data.socketId = socket.id;
 
-                    if (data.status === "resolved") {
-                        data.status = "queued"
-                        resolve();
-                    }
-
                     if (socket.connected && this.serverOrganization && this.serverStorage && this.organizationBalance) {
-                        if (data.status !== 'queued')
-                            this.addListener(uid)
+                        if (data.status === 'resolve')
+                            resolve(data)
+                        else if (data.status !== 'queued')
+                            this.addListener(uid, resolve)
+
                         delete data.status
                         socket.send(JSON.stringify(data));
                         data.status = "sent"
@@ -381,7 +376,6 @@
                         data.status = "queued"
                         resolve(data)
                     }
-
 
                     if (isBrowser) {
                         if (data.broadcastSender)
@@ -403,7 +397,7 @@
             });
         },
 
-        addListener(uid) {
+        addListener(uid, resolve) {
             if (isBrowser) {
                 window.addEventListener(uid, function (event) {
                     // here we have access to request and new data
