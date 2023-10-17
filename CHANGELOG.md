@@ -1,3 +1,15 @@
+# [1.31.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.30.1...v1.31.0) (2023-10-17)
+
+
+### Bug Fixes
+
+* Improve socket.send() performance ([6839c89](https://github.com/CoCreate-app/CoCreate-socket-client/commit/6839c8914e9560840e19542f31aff89e8bf754e4))
+
+
+### Features
+
+* status 'resolve' ([b6769eb](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b6769eb190be343d06a64511e5ae4a013a199bee))
+
 ## [1.30.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.30.0...v1.30.1) (2023-10-16)
 
 
