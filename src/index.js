@@ -134,6 +134,7 @@
                     const options = {
                         socketId: uuid.generate(8),
                         clientId: this.clientId,
+                        user_id: data.user_id || this.user_id,
                         token: token || '',
                     }
 
