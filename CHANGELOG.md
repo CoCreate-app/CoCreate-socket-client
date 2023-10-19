@@ -1,3 +1,12 @@
+## [1.31.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.31.0...v1.31.1) (2023-10-19)
+
+
+### Bug Fixes
+
+* add options.user_id ([b6efeb1](https://github.com/CoCreate-app/CoCreate-socket-client/commit/b6efeb12737ce97cc047442035faa8cf49ebb4d5))
+* broadcastBrowser defaults to true ([4ea5a08](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4ea5a083d83183b4c20224152e716361e775efb4))
+* broadcastClient conditions ([238ba86](https://github.com/CoCreate-app/CoCreate-socket-client/commit/238ba86ebb041be85fed933bab17642bd767f4de))
+
 # [1.31.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.30.1...v1.31.0) (2023-10-17)
 
 
