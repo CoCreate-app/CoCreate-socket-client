@@ -246,7 +246,14 @@
                         message.status = "received"
 
                         if (message && message.uid) {
-                            self.__fireEvent(message.uid, message);
+                            if (isBrowser) {
+                                var event = new window.CustomEvent(message.uid, {
+                                    detail: data
+                                });
+                                window.dispatchEvent(event);
+                            } else {
+                                process.emit(message.uid, message);
+                            }
                         }
 
                         self.__fireListeners(message.method, message)
@@ -266,17 +273,6 @@
             listeners.forEach(listener => {
                 listener(data);
             });
-        },
-
-        __fireEvent(uid, data) {
-            if (isBrowser) {
-                var event = new window.CustomEvent(uid, {
-                    detail: data
-                });
-                window.dispatchEvent(event);
-            } else {
-                process.emit(uid, data);
-            }
         },
 
         // TODO: could be rquired in the serverside when handeling server to server mesh socket using crud-server instead
@@ -333,10 +329,10 @@
                 else
                     data['broadcast'] = true;
 
-                if (data['broadcastClient'] && data['broadcastClient'] !== 'false')
-                    data['broadcastClient'] = true;
-                else
+                if (data['broadcastClient'] === 'false' || data['broadcastClient'] === false)
                     data['broadcastClient'] = false;
+                else
+                    data['broadcastClient'] = true;
 
                 if (data['broadcastSender'] === 'false' || data['broadcastSender'] === false)
                     data['broadcastSender'] = false;
@@ -511,8 +507,6 @@
         },
 
         sendLocalMessage(data) {
-            if (data.method == 'sendMessage')
-                data.method = data.message
             this.__fireListeners(data.method, data)
         },
 
