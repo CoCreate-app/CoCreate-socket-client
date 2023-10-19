@@ -248,7 +248,7 @@
                         if (message && message.uid) {
                             if (isBrowser) {
                                 var event = new window.CustomEvent(message.uid, {
-                                    detail: data
+                                    detail: message
                                 });
                                 window.dispatchEvent(event);
                             } else {
@@ -256,7 +256,7 @@
                             }
                         }
 
-                        self.__fireListeners(message.method, message)
+                        self.__fireListeners(message)
                     } catch (e) {
                         console.log(e);
                     }
@@ -265,11 +265,8 @@
             }
         },
 
-        __fireListeners(action, data) {
-            const listeners = this.listeners.get(action);
-            if (!listeners) {
-                return;
-            }
+        __fireListeners(data) {
+            const listeners = this.listeners.get(data.method) || [];
             listeners.forEach(listener => {
                 listener(data);
             });
@@ -349,10 +346,12 @@
                     delete data.room;
 
                 let broadcastBrowser = false
-                if (data['broadcastBrowser'] && data['broadcastBrowser'] !== 'false') {
+                if (data['broadcastBrowser'] === 'false' && data['broadcastBrowser'] === false)
+                    broadcastBrowser = false;
+                else
                     broadcastBrowser = true;
-                    delete data['broadcastBrowser']
-                }
+
+                delete data['broadcastBrowser']
 
                 const uid = data['uid'];
                 const sockets = await this.getSockets(data);
@@ -507,7 +506,7 @@
         },
 
         sendLocalMessage(data) {
-            this.__fireListeners(data.method, data)
+            this.__fireListeners(data)
         },
 
         // TODO: add to ObjectId function
