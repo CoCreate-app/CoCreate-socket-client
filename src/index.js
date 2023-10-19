@@ -229,14 +229,16 @@
                                 // TODO: we need to delete queued items based on some conditions to prevent conflicts
                                 // what are the conditions?
                                 let type = message.method.split('.').pop()
-                                for (let item of message[type]) {
-                                    if (type == 'object') {
-                                        Data.$filter.query.push({ key: 'data._id', value: item._id, operator: '$eq' })
-                                    } else if (['database', 'array', 'index',].includes(type)) {
-                                        Data.$filter.query.push({ key: 'data.name', value: item.name, operator: '$eq' })
+                                if (Array.isArray(message[type])) {
+                                    for (let item of message[type]) {
+                                        if (type == 'object') {
+                                            Data.$filter.query.push({ key: 'data._id', value: item._id, operator: '$eq' })
+                                        } else if (['database', 'array', 'index',].includes(type)) {
+                                            Data.$filter.query.push({ key: 'data.name', value: item.name, operator: '$eq' })
+                                        }
                                     }
+                                    // indexeddb.send(Data)
                                 }
-                                // indexeddb.send(Data)
                             }
                         }
 
@@ -255,6 +257,8 @@
                                 process.emit(message.uid, message);
                             }
                         }
+                        if (message.method === 'updateUserStatus' && message.userStatus === 'on')
+                            console.log('test')
 
                         self.__fireListeners(message)
                     } catch (e) {
