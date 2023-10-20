@@ -257,6 +257,7 @@
                                 process.emit(message.uid, message);
                             }
                         }
+
                         if (message.method === 'updateUserStatus' && message.userStatus === 'on')
                             console.log('test')
 
