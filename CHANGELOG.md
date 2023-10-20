@@ -1,3 +1,10 @@
+## [1.31.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.31.1...v1.31.2) (2023-10-20)
+
+
+### Bug Fixes
+
+* condion for onMessage types ([1c7b131](https://github.com/CoCreate-app/CoCreate-socket-client/commit/1c7b13128e90d05511f142dff28cf6e8f1da5209))
+
 ## [1.31.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.31.0...v1.31.1) (2023-10-19)
 
 
