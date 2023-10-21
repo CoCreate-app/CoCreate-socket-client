@@ -209,7 +209,7 @@
                                 if (!lastSynced) {
                                     config.set(socket.url, message._id)
                                 } else if (lastSynced !== message._id) {
-                                    if (self.getDateFromObjectId(lastSynced) < self.getDateFromObjectId(message._id)) {
+                                    if (indexeddb.ObjectId(lastSynced).timestamp < indexeddb.ObjectId(message._id).timestamp) {
                                         config.set(socket.url, message._id)
                                     }
                                 }
@@ -509,20 +509,7 @@
 
         sendLocalMessage(data) {
             this.__fireListeners(data)
-        },
-
-        // TODO: add to ObjectId function
-        getDateFromObjectId(objectIdStr) {
-            if (objectIdStr.length !== 24) {
-                throw new Error('Invalid ObjectId string');
-            }
-
-            const timestampHex = objectIdStr.substring(0, 8);
-            const timestampInt = parseInt(timestampHex, 16) * 1000; // Multiply by 1000 to get milliseconds
-            return new Date(timestampInt);
         }
-
-
     }
 
     if (isBrowser) {
