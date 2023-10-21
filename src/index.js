@@ -74,7 +74,7 @@
         // If behind an lb it can create a socket connection to the lb node in order to add node to the lb backend list.
 
         async init() {
-            const defaults = { clientId: indexeddb.ObjectId(), host: window.location.host }
+            const defaults = { clientId: indexeddb.ObjectId().toString(), host: window.location.host }
             const keys = ['clientId', 'apikey', 'host', 'user_id', 'balancer']
             for (let i = 0; i < keys.length; i++) {
                 this[keys[i]] = config.get(keys[i]) || defaults[keys[i]] || ''
