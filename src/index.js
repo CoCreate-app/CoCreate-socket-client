@@ -258,9 +258,6 @@
                             }
                         }
 
-                        if (message.method === 'updateUserStatus' && message.userStatus === 'on')
-                            console.log('test')
-
                         self.__fireListeners(message)
                     } catch (e) {
                         console.log(e);
