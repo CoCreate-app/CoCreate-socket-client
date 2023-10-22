@@ -1,3 +1,10 @@
+## [1.32.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.32.0...v1.32.1) (2023-10-22)
+
+
+### Bug Fixes
+
+* replace getDataFromObjectId() with ObjectId() ([3bcc92e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/3bcc92ef433668e71197139ef3f230873012256e))
+
 # [1.32.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.31.2...v1.32.0) (2023-10-22)
 
 
