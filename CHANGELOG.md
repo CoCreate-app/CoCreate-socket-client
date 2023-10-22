@@ -1,3 +1,15 @@
+# [1.32.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.31.2...v1.32.0) (2023-10-22)
+
+
+### Bug Fixes
+
+* removed test console.log() ([492d7ee](https://github.com/CoCreate-app/CoCreate-socket-client/commit/492d7eee7c6b4bdcf6a06919de9724eca0bb3a54))
+
+
+### Features
+
+* ObjectId() returns an object containg the parts iof the _id along with a toString() function ([ae1a925](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ae1a925fb1b3934f7e276dfaef360b890b952deb))
+
 ## [1.31.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.31.1...v1.31.2) (2023-10-20)
 
 
