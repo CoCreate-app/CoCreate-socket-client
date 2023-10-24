@@ -374,7 +374,7 @@
                         delete data.status
                         socket.send(JSON.stringify(data));
                         data.status = "sent"
-                    } else {
+                    } else if (data.status !== "queued") {
                         data.status = "queued"
                         resolve(data)
                     }
