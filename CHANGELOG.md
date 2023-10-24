@@ -1,3 +1,11 @@
+## [1.32.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.32.1...v1.32.2) (2023-10-24)
+
+
+### Bug Fixes
+
+* init() handling of 'undefined' string ([7a9e88f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/7a9e88f35b445e708b86aab8efd5d715317c10f7))
+* resolve() conditions ([ffb5af7](https://github.com/CoCreate-app/CoCreate-socket-client/commit/ffb5af72a96d5ba14e4f29ad73353cdc6b99d961))
+
 ## [1.32.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.32.0...v1.32.1) (2023-10-22)
 
 
