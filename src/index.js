@@ -220,7 +220,7 @@
 
                                 // here we can handle crud types inorder to avoid conflicts simply by deleting queued items prior to sending
                                 let Data = {
-                                    method: 'delete.object',
+                                    method: 'object.delete',
                                     array: 'message_log',
                                     $filter: {
                                         query: [
@@ -232,7 +232,7 @@
 
                                 // TODO: we need to delete queued items based on some conditions to prevent conflicts
                                 // what are the conditions?
-                                let type = message.method.split('.').pop()
+                                let type = message.method.split('.')[0]
                                 if (Array.isArray(message[type])) {
                                     for (let item of message[type]) {
                                         if (type == 'object') {
@@ -246,7 +246,7 @@
                             }
                         }
 
-                        if (message.broadcastClient && message.broadcastBrowser !== false && isBrowser && message.broadcastBrowser && !message.method.startsWith('read'))
+                        if (message.broadcastClient && message.broadcastBrowser !== false && isBrowser && message.broadcastBrowser && !message.method.endsWith('.read'))
                             config.set('localSocketMessage', JSON.stringify(message))
 
                         message.status = "received"
@@ -282,7 +282,7 @@
         checkMessageQueue(config) {
             if (isBrowser && indexeddb) {
                 indexeddb.send({
-                    method: 'delete.object',
+                    method: 'object.delete',
                     array: 'message_log',
                     $filter: {
                         query: [
@@ -386,7 +386,7 @@
                             config.set('localSocketMessage', JSON.stringify(data))
                         if (indexeddb && data.status == "queued") {
                             indexeddb.send({
-                                method: 'create.object',
+                                method: 'object.create',
                                 array: 'message_log',
                                 object: { _id: uid, data, status: 'queued' },
                                 organization_id: data.organization_id
