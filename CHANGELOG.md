@@ -1,3 +1,12 @@
+## [1.32.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.32.3...v1.32.4) (2023-11-03)
+
+
+### Bug Fixes
+
+* favicon.ico path ([743610f](https://github.com/CoCreate-app/CoCreate-socket-client/commit/743610fd56be7384ef12e81b354205e7b548c558))
+* update dependencies to the lates versions ([c45b113](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c45b113152c083c35e2828bb8507f0c18ffad5c6))
+* update method to use object.update etc ([c391424](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c39142455b0541c92958a73137cae9b706f96a55))
+
 ## [1.32.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.32.2...v1.32.3) (2023-10-25)
 
 
