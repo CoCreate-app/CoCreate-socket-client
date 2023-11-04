@@ -75,7 +75,13 @@
 
 
         async init() {
-            const defaults = { clientId: indexeddb.ObjectId().toString(), host: window.location.host }
+            function defaultHost() {
+                let host = window.location.host
+                if (host.startsWith("127.0.0.1"))
+                    host = 'cocreate.app'
+                return host
+            }
+            const defaults = { clientId: indexeddb.ObjectId().toString(), host: defaultHost() }
             const keys = ['clientId', 'apikey', 'host', 'user_id', 'balancer']
             for (let i = 0; i < keys.length; i++) {
                 this[keys[i]] = config.get(keys[i])
@@ -374,17 +380,22 @@
                         delete data.status
                         socket.send(JSON.stringify(data));
                         data.status = "sent"
-                    } else if (data.status !== "queued") {
-                        data.status = "queued"
+                    } else if (data.status !== "queued" && data.status !== 'await') {
                         resolve(data)
                     }
 
                     if (isBrowser) {
-                        if (data.broadcastSender)
-                            this.sendLocalMessage(data)
-                        if (broadcastBrowser)
-                            config.set('localSocketMessage', JSON.stringify(data))
-                        if (indexeddb && data.status == "queued") {
+                        if (data.status !== 'await') {
+                            if (data.broadcastSender)
+                                this.sendLocalMessage(data)
+                            if (broadcastBrowser)
+                                config.set('localSocketMessage', JSON.stringify(data))
+                        }
+
+                        if (data.status !== 'sent')
+                            data.status = 'queued'
+
+                        if (indexeddb && data.status === "queued") {
                             indexeddb.send({
                                 method: 'object.create',
                                 array: 'message_log',
@@ -484,7 +495,11 @@
 
                 }
             } else if (isBrowser) {
-                url = [`${protocol}://${window.location.host}`];
+                let newhost = window.location.host
+                if (newhost.startsWith("127.0.0.1"))
+                    newhost = 'cocreate.app'
+
+                url = [`${protocol}://${newhost}`];
                 url += `/${data.organization_id || await this.organization_id() || ''}`
                 urls.push(url)
             } else {
