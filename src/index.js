@@ -321,53 +321,54 @@
                 data.clientId = this.clientId;
                 data.frameId = this.frameId;
 
-                if (!data['timeStamp'])
-                    data['timeStamp'] = new Date();
+                if (!data.timeStamp)
+                    data.timeStamp = new Date().toISOString();
 
-                if (!data['organization_id'])
-                    data['organization_id'] = await this.organization_id();
+                if (!data.organization_id)
+                    data.organization_id = await this.organization_id();
 
-                if (!data['apikey'] && this.apikey)
-                    data['apikey'] = this.apikey;
+                if (!data.apikey && this.apikey)
+                    data.apikey = this.apikey;
 
-                if (!data['user_id'] && this.user_id)
-                    data['user_id'] = this.user_id;
+                if (!data.user_id && this.user_id)
+                    data.user_id = this.user_id;
 
-                if (data['broadcast'] === 'false' || data['broadcast'] === false)
-                    data['broadcast'] = false;
+                if (data.broadcast === 'false' || data.broadcast === false)
+                    data.broadcast = false;
                 else
-                    data['broadcast'] = true;
+                    data.broadcast = true;
 
-                if (data['broadcastClient'] === 'false' || data['broadcastClient'] === false)
-                    data['broadcastClient'] = false;
+                if (data.broadcastClient === 'false' || data.broadcastClient === false)
+                    data.broadcastClient = false;
                 else
-                    data['broadcastClient'] = true;
+                    data.broadcastClient = true;
 
-                if (data['broadcastSender'] === 'false' || data['broadcastSender'] === false)
-                    data['broadcastSender'] = false;
+                if (data.broadcastSender === 'false' || data.broadcastSender === false)
+                    data.broadcastSender = false;
                 else
-                    data['broadcastSender'] = true;
+                    data.broadcastSender = true;
 
-                if (!data['uid'])
-                    data['uid'] = uuid.generate();
+                if (!data.uid)
+                    data.uid = uuid.generate();
 
-                if (!data['namespace'])
+                if (!data.namespace)
                     delete data.namespace;
 
-                if (!data['room'])
+                if (!data.room)
                     delete data.room;
 
                 let broadcastBrowser = false
-                if (data['broadcastBrowser'] === 'false' && data['broadcastBrowser'] === false)
+                if (data.broadcastBrowser === 'false' && data.broadcastBrowser === false)
                     broadcastBrowser = false;
                 else
                     broadcastBrowser = true;
 
-                delete data['broadcastBrowser']
+                delete data.broadcastBrowser
 
-                const uid = data['uid'];
+                const uid = data.uid;
                 const sockets = await this.getSockets(data);
 
+                let isAwait
                 for (let socket of sockets) {
                     data.socketId = socket.id;
 
@@ -377,6 +378,9 @@
                         else if (data.status !== 'queued')
                             this.addListener(uid, resolve)
 
+                        if (data.status === 'await')
+                            isAwait = true
+
                         delete data.status
                         socket.send(JSON.stringify(data));
                         data.status = "sent"
@@ -385,7 +389,7 @@
                     }
 
                     if (isBrowser) {
-                        if (data.status !== 'await') {
+                        if (!isAwait) {
                             if (data.broadcastSender)
                                 this.sendLocalMessage(data)
                             if (broadcastBrowser)
