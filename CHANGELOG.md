@@ -1,3 +1,17 @@
+# [1.33.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.32.4...v1.33.0) (2023-11-09)
+
+
+### Bug Fixes
+
+* meta name typo ([4135e60](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4135e60cb323de38eadcd0477f513c398ff3ed09))
+* update crud methods ([c329149](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c329149ffaa0dbdf0747f7f1d276e9ea98608822))
+* update host ([23d6b94](https://github.com/CoCreate-app/CoCreate-socket-client/commit/23d6b9423216222b81cf4643356dbbd5db0b3410))
+
+
+### Features
+
+* status=await force socket to await server ([8f85e36](https://github.com/CoCreate-app/CoCreate-socket-client/commit/8f85e36649bb092da468f834a506db25e1e25b9b))
+
 ## [1.32.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.32.3...v1.32.4) (2023-11-03)
 
 
