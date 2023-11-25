@@ -1,3 +1,15 @@
+# [1.35.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.34.0...v1.35.0) (2023-11-25)
+
+
+### Bug Fixes
+
+* update nav, edit button and css path ([30600bf](https://github.com/CoCreate-app/CoCreate-socket-client/commit/30600bf0afb38c5b56bf580293d284ee1d06074b))
+
+
+### Features
+
+* upgrade dependencies for latest features and fixes ([86226f1](https://github.com/CoCreate-app/CoCreate-socket-client/commit/86226f180f598929d26c2790d85c11b834273ccd))
+
 # [1.34.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.33.1...v1.34.0) (2023-11-19)
 
 
