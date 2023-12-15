@@ -59,6 +59,7 @@
         frameId: uuid.generate(8),
         connected: false,
         listeners: new Map(),
+        messageEvents: {},
         messageQueue: new Map(), // required per url already per url when isBrowser and indexeddb.
         configQueue: new Map(),
         maxReconnectDelay: 600000,
@@ -371,12 +372,12 @@
                 let isAwait
                 for (let socket of sockets) {
                     data.socketId = socket.id;
+                    if (!this.messageEvents[uid])
+                        this.addListener(uid, resolve)
 
                     if (socket.connected && this.serverOrganization && this.serverStorage && this.organizationBalance) {
                         if (data.status === 'resolve')
                             resolve(data)
-                        else if (data.status !== 'queued')
-                            this.addListener(uid, resolve)
 
                         if (data.status === 'await')
                             isAwait = true
@@ -409,7 +410,7 @@
                                 organization_id: data.organization_id
                             })
                         }
-                    } else if (!indexeddb)
+                    } else if (!indexeddb && data.status === "queued")
                         this.messageQueue.set(uid, data);
 
                 }
@@ -417,13 +418,17 @@
         },
 
         addListener(uid, resolve) {
+            this.messageEvents[uid] = resolve
             if (isBrowser) {
+                const self = this
                 window.addEventListener(uid, function (event) {
+                    delete self.messageEvents[uid]
                     // here we have access to request and new data
                     resolve(event.detail);
                 }, { once: true });
             } else {
                 process.once(uid, (data) => {
+                    delete this.messageEvents[uid]
                     resolve(data);
                 });
             }
