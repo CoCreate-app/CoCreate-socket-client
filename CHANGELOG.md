@@ -1,3 +1,11 @@
+## [1.36.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.36.0...v1.36.1) (2023-12-15)
+
+
+### Bug Fixes
+
+* data.status ([d87fd2e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/d87fd2e4d50b48943f7ecac3076adbeef8479e0a))
+* messageEvents object to manage uid and originating resolve ([22de227](https://github.com/CoCreate-app/CoCreate-socket-client/commit/22de227b2147dd808b105ffb407df9dcef69e15a))
+
 # [1.36.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.35.0...v1.36.0) (2023-11-25)
 
 
