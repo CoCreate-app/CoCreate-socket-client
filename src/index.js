@@ -230,10 +230,10 @@
                                     method: 'object.delete',
                                     array: 'message_log',
                                     $filter: {
-                                        query: [
-                                            { key: 'modified.on', value: message.timestamp, operator: '$gt' },
-                                            { key: 'status', value: 'queued', operator: '$eq' }
-                                        ]
+                                        query: {
+                                            'modified.on': { $gt: message.timestamp },
+                                            status: 'queued'
+                                        }
                                     }
                                 }
 
@@ -243,9 +243,10 @@
                                 if (Array.isArray(message[type])) {
                                     for (let item of message[type]) {
                                         if (type == 'object') {
-                                            Data.$filter.query.push({ key: 'data._id', value: item._id, operator: '$eq' })
+                                            Data.$filter.query['data._id'] = item._id
                                         } else if (['database', 'array', 'index',].includes(type)) {
-                                            Data.$filter.query.push({ key: 'data.name', value: item.name, operator: '$eq' })
+                                            Data.$filter.query['data.name'] = item.name
+
                                         }
                                     }
                                     // indexeddb.send(Data)
@@ -292,9 +293,7 @@
                     method: 'object.delete',
                     array: 'message_log',
                     $filter: {
-                        query: [
-                            { key: 'status', value: 'queued', operator: '$eq' }
-                        ]
+                        query: { status: 'queued' }
                     },
                     organization_id: config.organization_id
 
