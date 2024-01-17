@@ -1,3 +1,10 @@
+## [1.37.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.37.0...v1.37.1) (2024-01-17)
+
+
+### Bug Fixes
+
+* update to support new query system ([a5de658](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a5de658bf637beba06776a5cd4b3578fb4abb381))
+
 # [1.37.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.36.1...v1.37.0) (2024-01-08)
 
 
