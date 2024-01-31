@@ -358,7 +358,7 @@
                     delete data.room;
 
                 let broadcastBrowser = false
-                if (data.broadcastBrowser === 'false' && data.broadcastBrowser === false)
+                if (data.broadcastBrowser === 'false' || data.broadcastBrowser === false)
                     broadcastBrowser = false;
                 else
                     broadcastBrowser = true;
