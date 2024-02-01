@@ -284,6 +284,13 @@
             listeners.forEach(listener => {
                 listener(data);
             });
+
+            if (data.method.includes('.')) {
+                const listeners = this.listeners.get(data.method.split('.')[0]) || [];
+                listeners.forEach(listener => {
+                    listener(data);
+                });
+            }
         },
 
         // TODO: could be rquired in the serverside when handeling server to server mesh socket using crud-server instead
