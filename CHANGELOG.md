@@ -1,3 +1,10 @@
+## [1.37.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.37.1...v1.37.2) (2024-02-02)
+
+
+### Bug Fixes
+
+* broadcastBrowser conditions ([736b8c2](https://github.com/CoCreate-app/CoCreate-socket-client/commit/736b8c29d867b7d80bd2007f8a17f900f5be3ef0))
+
 ## [1.37.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.37.0...v1.37.1) (2024-01-17)
 
 
