@@ -1,3 +1,10 @@
+# [1.38.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.37.2...v1.38.0) (2024-02-03)
+
+
+### Features
+
+* methods containg '.' will be split as name and method ([a72fc3c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a72fc3c47e46c5d7d6f768e478ddb07ffc55e109))
+
 ## [1.37.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.37.1...v1.37.2) (2024-02-02)
 
 
