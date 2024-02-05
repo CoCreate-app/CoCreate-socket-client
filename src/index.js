@@ -389,6 +389,8 @@
                             isAwait = true
 
                         delete data.status
+                        let test = JSON.stringify(data)
+
                         socket.send(JSON.stringify(data));
                         data.status = "sent"
                     } else if (!data.status) {
