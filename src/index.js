@@ -142,8 +142,22 @@
                         token = config.get("token");
                     }
 
+                    let socketId
+                    if (isBrowser)
+                        socketId = sessionStorage.getItem('socketId');
+                    // else
+                    //     socketId = config.get('socketId');
+
+                    if (!socketId) {
+                        socketId = uuid.generate(8)
+                        if (isBrowser)
+                            socketId = sessionStorage.setItem('socketId', socketId);
+                        // else
+                        //     socketId = config.set('socketId', socketId);
+                    }
+
                     const options = {
-                        socketId: uuid.generate(8),
+                        socketId,
                         clientId: this.clientId,
                         user_id: data.user_id || this.user_id,
                         token: token || '',
