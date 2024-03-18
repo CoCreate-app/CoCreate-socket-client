@@ -1,3 +1,10 @@
+# [1.39.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.38.1...v1.39.0) (2024-03-18)
+
+
+### Features
+
+* sessionStorage to persist a socketId per tab ([c2ca7be](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c2ca7be6c25acf76e6cd391442a75063fc68ad37))
+
 ## [1.38.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.38.0...v1.38.1) (2024-02-05)
 
 
