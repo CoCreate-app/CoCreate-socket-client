@@ -403,7 +403,6 @@
                             isAwait = true
 
                         delete data.status
-                        let test = JSON.stringify(data)
 
                         socket.send(JSON.stringify(data));
                         data.status = "sent"
@@ -417,6 +416,8 @@
                         if (!isAwait) {
                             if (data.broadcastSender)
                                 this.sendLocalMessage(data)
+
+                            // TODO: set in indexeddb if above a specific size
                             if (broadcastBrowser)
                                 config.set('localSocketMessage', JSON.stringify(data))
                         }
