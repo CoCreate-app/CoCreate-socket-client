@@ -1,3 +1,11 @@
+## [1.39.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.39.1...v1.39.2) (2024-06-12)
+
+
+### Bug Fixes
+
+* bump cocreate dependencies ([a477e1e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/a477e1e267df863f033696835e54c24836d24dc4))
+* svg icon class ([353c5ac](https://github.com/CoCreate-app/CoCreate-socket-client/commit/353c5ac7db7497a05eca99b6978445aa8d0f4e72))
+
 ## [1.39.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.39.0...v1.39.1) (2024-04-29)
 
 
