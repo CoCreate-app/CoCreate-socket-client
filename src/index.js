@@ -491,8 +491,14 @@
 
         async getUrls(data = {}) {
             let protocol = 'wss';
-            if (isBrowser && location.protocol !== "https:")
-                protocol = "ws";
+            if (isBrowser) {
+                if (location.protocol.startsWith("about:")) {
+                    if (window.parent && window.parent.location.protocol !== "https:") {
+                        protocol = "ws";
+                    }
+                } else if (location.protocol !== "https:")
+                    protocol = "ws";
+            }
 
             let url, urls = [], hostUrls = [];
             let host = data.host || this.host
