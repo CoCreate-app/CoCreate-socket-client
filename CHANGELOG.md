@@ -1,3 +1,11 @@
+## [1.39.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.39.5...v1.39.6) (2024-11-02)
+
+
+### Bug Fixes
+
+* displaying error message from server ([1240712](https://github.com/CoCreate-app/CoCreate-socket-client/commit/124071290e2b5865fa59db97d08bc314d78c56d7))
+* location.protocol about fallback to parent protocol ([13fae7c](https://github.com/CoCreate-app/CoCreate-socket-client/commit/13fae7c08d9405d45459538adb5e2f21529aab31))
+
 ## [1.39.5](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.39.4...v1.39.5) (2024-06-23)
 
 
