@@ -219,6 +219,7 @@
                     try {
                         message = JSON.parse(message.data);
                         if (message.error) {
+                            console.error('Error:', message.error)
                             if (message.serverOrganization === false)
                                 self.serverOrganization = self.serverStorage = false
                             else if (message.serverStorage === false)
