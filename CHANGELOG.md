@@ -1,3 +1,16 @@
+# [1.40.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.39.6...v1.40.0) (2024-11-04)
+
+
+### Bug Fixes
+
+* pretier.config.js and file formating ([5ec26b5](https://github.com/CoCreate-app/CoCreate-socket-client/commit/5ec26b5d2f78fad62075b9e45156b8d0efbac10f))
+
+
+### Features
+
+* add prettier.config.js and format files ([4b2e0ef](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4b2e0ef70c0a7244d917d86c41961ead5f626546))
+* add prettier.config.js and format files ([4c83a7e](https://github.com/CoCreate-app/CoCreate-socket-client/commit/4c83a7efd1a3cd4bf17fcedb1fefd837e43bdbff))
+
 ## [1.39.6](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.39.5...v1.39.6) (2024-11-02)
 
 
