@@ -1,3 +1,11 @@
+## [1.40.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.40.0...v1.40.1) (2024-12-09)
+
+
+### Bug Fixes
+
+* add method to error ([c206396](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c20639649558619578277c02795ad552de122950))
+* used const instaed of var for event ([9b22f48](https://github.com/CoCreate-app/CoCreate-socket-client/commit/9b22f4865296c440d518abc819faffe1fb7b964f))
+
 # [1.40.0](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.39.6...v1.40.0) (2024-11-04)
 
 
