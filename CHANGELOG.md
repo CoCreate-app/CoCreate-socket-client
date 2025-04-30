@@ -1,3 +1,13 @@
+## [1.40.2](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.40.1...v1.40.2) (2025-04-30)
+
+
+### Bug Fixes
+
+* added css-loader ([c478082](https://github.com/CoCreate-app/CoCreate-socket-client/commit/c4780826d3802ab515c16a11fd0307cd3bd09ce0))
+* update query attributes ([75d29b3](https://github.com/CoCreate-app/CoCreate-socket-client/commit/75d29b36af81f29855db7d9424448eeb6707e9cd))
+* updated cocreate modules versions ([884dfe5](https://github.com/CoCreate-app/CoCreate-socket-client/commit/884dfe58d7123f4628bbfc86d1872590c9bce178))
+* webpack.config and devdependencies ([902ca61](https://github.com/CoCreate-app/CoCreate-socket-client/commit/902ca61d3cb3857640218fb2f2bc2591b18e291a))
+
 ## [1.40.1](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.40.0...v1.40.1) (2024-12-09)
 
 
