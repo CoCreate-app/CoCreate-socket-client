@@ -491,8 +491,9 @@
 
 							if (indexeddb && data.status === "queued") {
 								indexeddb.send({
-									method: "object.create",
+									method: "object.update",
 									array: "message_log",
+									upsert: true,
 									object: {
 										_id: uid,
 										data,
