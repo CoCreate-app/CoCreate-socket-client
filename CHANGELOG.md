@@ -1,3 +1,10 @@
+## [1.40.4](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.40.3...v1.40.4) (2025-09-01)
+
+
+### Bug Fixes
+
+* update method to object.update and add upsert option in message_log ([fa83762](https://github.com/CoCreate-app/CoCreate-socket-client/commit/fa8376223146ddbd28ac731803d8740fd17fc976))
+
 ## [1.40.3](https://github.com/CoCreate-app/CoCreate-socket-client/compare/v1.40.2...v1.40.3) (2025-05-01)
 
 
