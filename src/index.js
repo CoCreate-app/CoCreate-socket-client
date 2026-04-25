@@ -91,7 +91,7 @@
 			},
 
 			//TODO: on app start up we can get the port and ip and public dns. Using config we can define if this app is behind an lb.
-			// If behind an lb it can create a socket connection to the lb node in order to add node to the lb backend list..
+			// If behind an lb it can create a socket connection to the lb node in order to add node to the lb backend list.
 
 			async init() {
 				function defaultHost() {
